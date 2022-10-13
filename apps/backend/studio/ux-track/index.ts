@@ -9,7 +9,6 @@ const uxTrack = new KoaRouter();
 uxTrack.post("/:key", async (context) => {
   try {
     const { tenantId, userId } = context.userContext;
-    //                                    (parameter) context: ParameterizedContext<any, KoaRouter.IRouterParamContext<any, {}>, any>
     const body = assertBody(context) as any;
     const key = assertPathParam(context, "key");
 
