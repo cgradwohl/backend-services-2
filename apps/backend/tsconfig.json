@@ -1,8 +1,5 @@
 {
-  "forceConsistentCasingInFileNames": true,
-  "noImplicitReturns": true,
-  "strict": true,
-  "noUnusedLocals": true,
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "downlevelIteration": true,
     "esModuleInterop": true,
@@ -10,7 +7,6 @@
     "inlineSources": true,
     "lib": ["es5", "es6", "dom", "es2021", "esnext.asynciterable"],
     "sourceMap": true,
-    "sourceRoot": "/",
     "target": "ES2015",
     "baseUrl": ".",
     "paths": {
