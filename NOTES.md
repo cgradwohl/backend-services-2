@@ -32,8 +32,10 @@
 - copy `backend` serverless application to `backend-services-2/apps/backend` as is no file structure changes.
 - updated `backend-services-2/apps/backend/tsconfig.json` to extend ``backend-services-2/tsconfig.base.json`
 - remove `backend-services-2/apps/backend/.git`
+- 🟢 running `yarn nx typecheck backend` works (see #Breaking Folder Convention and Migration Suggestion below for details)
+- 🟢 running `yarn nx serverless:package backend` works (see #Breaking Folder Convention and Migration Suggestion below for details)
 
-### Breaking Convention
+### Breaking Folder Convention and Migration Suggestion
 
 - after following NX's migration sugestions I realized that splitting Configuration files to go in the root of your application, and application code goes into the src/app folder was problematic and required changing webpack config, tsconfig, and serverless webpack plugin. It is not clear why this is necessary, but it is NX's suggestion.
 
