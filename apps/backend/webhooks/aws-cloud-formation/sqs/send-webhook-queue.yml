@@ -1,0 +1,60 @@
+Resources:
+  SendWebhookQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId: !Ref AutoRotatedKmsKey
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "DLQ for retrying errors in Outbound Webhooks"
+      - Key: VantaContainsUserData
+        Value: false # true if contains user data
+      VisibilityTimeout: 180
+      RedrivePolicy:
+        deadLetterTargetArn:
+          "Fn::GetAtt":
+            - SendWebhookQueueDLQ
+            - Arn
+        # our FINAL_RETRY_ATTEMPT is the 298th attempt, therefore we send to DLQ on the 297th retry attempt.
+        maxReceiveCount: 297
+  
+  SendWebhookQueueDLQ:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      MessageRetentionPeriod: 1209600 # max retention of 14 days
+
+  # Eventbridge rule to filter events for deliver to the queue
+  SendWebhookEventRule: 
+    Type: AWS::Events::Rule
+    Properties:
+      Description: "Event filter rule for messagev3-updates and webhook-emit events."
+      EventBusName: ${opt:stage, self:provider.stage}-courier-event-bus
+      EventPattern:
+        account: 
+          - !Sub '${AWS::AccountId}'
+        source:
+          - courier.webhooks.emit
+          - courier.dynamo.messagesv3
+      Targets: 
+        - Arn: !GetAtt SendWebhookQueue.Arn
+          Id: "SendWebhookQueue"
+
+  # Policy Document to Allow EB --> SQS deliver permissions
+  EventBridgeSendWebhookPolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref SendWebhookQueue
+      PolicyDocument:
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "SQS:SendMessage"
+            Resource: !GetAtt SendWebhookQueue.Arn
+            Principal:
+              Service:
+                - "events.amazonaws.com"
+

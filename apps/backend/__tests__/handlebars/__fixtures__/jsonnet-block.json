@@ -1,0 +1,7 @@
+[
+  {
+    "config": "{\"template\":\"{\\n    \\\"type\\\": \\\"section\\\",\\n    \\\"text\\\": {\\n        \\\"type\\\": \\\"mrkdwn\\\",\\n        \\\"text\\\": data(\\\"characters.0.name\\\")\\n    },\\n    \\\"accessory\\\": {\\n        \\\"type\\\": \\\"image\\\",\\n        \\\"image_url\\\": \\\"https://example.com/\\\" + data(\\\"characters.0.id\\\") + \\\".png\\\",\\n        \\\"alt_text\\\": data(\\\"characters.0.name\\\", \\\"character\\\") + \\\" image\\\"\\n    }\\n}\"}",
+    "id": "d6ad9b9f-d51d-4040-ad21-ce393eb97546",
+    "type": "jsonnet"
+  }
+]

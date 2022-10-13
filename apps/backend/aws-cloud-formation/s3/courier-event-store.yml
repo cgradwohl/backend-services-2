@@ -1,0 +1,35 @@
+Resources:
+  CourierEventStore:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Data store for Courier Event Bus."
+      - Key: VantaContainsUserData
+        Value: true # true if contains user data
+      VersioningConfiguration:
+        Status: Enabled
+Outputs:
+  CourierEventStoreName:
+    Export:
+      Name: backend-${self:custom.stage}-CourierEventStoreName
+    Value:
+      Ref: CourierEventStore
+  CourierEventStoreArn:
+    Export:
+      Name: backend-${self:custom.stage}-CourierEventStoreArn
+    Value:
+      Fn::GetAtt: [CourierEventStore, Arn]

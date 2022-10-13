@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mailgun overrides send send should respect overrides: should match form data 1`] = `
+Object {
+  "bcc": "bcc@mail.com",
+  "cc": "cc@mail.com",
+  "from": "from@mail.com",
+  "h:Reply-To": "replyTo@mail.com",
+  "html": "",
+  "o:tag": "notifications",
+  "subject": "",
+  "text": "",
+  "to": "to@mail.com",
+}
+`;
+
+exports[`mailgun overrides send send should respect overrides: should match headers 1`] = `
+Array [
+  "auth",
+  "headers",
+  "timeout",
+  "timeoutErrorMessage",
+]
+`;

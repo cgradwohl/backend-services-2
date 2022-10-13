@@ -1,0 +1,89 @@
+Resources:
+  ElasticSearchKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: Key for Elasticsearch's encryption at rest.
+      # This seems to be OK to do: https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/encryption-at-rest.html
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              AWS:
+                Fn::Join:
+                  - ":"
+                  - - "arn:aws:iam:"
+                    - Ref: AWS::AccountId
+                    - "root"
+            Action: "kms:*"
+            Resource: "*"
+
+  ElasticSearch:
+    Type: AWS::Elasticsearch::Domain
+    Properties:
+      DomainName: ${self:custom.stage}-${self:service}-courier
+      ElasticsearchVersion: "7.1"
+      ElasticsearchClusterConfig:
+        DedicatedMasterCount: 3
+        DedicatedMasterEnabled: true
+        DedicatedMasterType: m5.xlarge.elasticsearch
+        InstanceCount: 12
+        InstanceType: m5.xlarge.elasticsearch
+        ZoneAwarenessConfig:
+          AvailabilityZoneCount: 3
+        ZoneAwarenessEnabled: true
+      EBSOptions:
+        EBSEnabled: true
+        VolumeSize: 256
+        VolumeType: gp2
+      EncryptionAtRestOptions:
+        Enabled: true
+        KmsKeyId:
+          Ref: ElasticSearchKey
+      NodeToNodeEncryptionOptions:
+        Enabled: true
+      SnapshotOptions:
+        AutomatedSnapshotStartHour: 8
+      AccessPolicies:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              AWS:
+                Fn::Join:
+                  - ":"
+                  - - "arn:aws:iam:"
+                    - Ref: AWS::AccountId
+                    - "root"
+            Action: "es:*"
+            Resource:
+              Fn::Join:
+                - ":"
+                - - "arn:aws:es"
+                  - Ref: AWS::Region
+                  - Ref: AWS::AccountId
+                  - "domain/*"
+      AdvancedOptions:
+        # IAM policies set restrictions based on urls. Allowing explicit indexes can allow users
+        # to get around the IAM restriction
+        rest.action.multi.allow_explicit_index: "false"
+      Tags:
+        - Key: tags.courier.com/elasticity
+          Value: fixed
+
+Outputs:
+  ElasticSearchDomainEndpoint:
+    Export:
+      Name: backend-${self:custom.stage}-ElasticSearchDomainEndpoint
+    Value:
+      Fn::GetAtt:
+        - ElasticSearch
+        - DomainEndpoint
+  ElasticSearchDomainArn:
+    Export:
+      Name: backend-${self:custom.stage}-ElasticSearchDomainArn
+    Value:
+      Fn::GetAtt:
+        - ElasticSearch
+        - DomainArn

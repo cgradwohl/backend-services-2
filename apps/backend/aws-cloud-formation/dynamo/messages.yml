@@ -1,0 +1,70 @@
+Resources:
+  MessagesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.prefix}-messages
+      AttributeDefinitions:
+        - AttributeName: tenantId
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: tenantId
+          KeyType: HASH
+        - AttributeName: id
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Stores logs of API requests sent to Courier."
+      - Key: VantaContainsUserData
+        Value: false
+  MessagesTableV2:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.prefix}-messages-v2
+      AttributeDefinitions:
+        - AttributeName: tenantId
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: enqueued
+          AttributeType: N
+      KeySchema:
+        - AttributeName: tenantId
+          KeyType: HASH
+        - AttributeName: id
+          KeyType: RANGE
+      LocalSecondaryIndexes:
+        - IndexName: ByEnqueuedDateIndex
+          KeySchema:
+            - AttributeName: tenantId
+              KeyType: HASH
+            - AttributeName: enqueued
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Stores logs of API requests sent to Courier."
+      - Key: VantaContainsUserData
+        Value: false
+Outputs:
+  MessagesTableV2Arn:
+    Export:
+      Name: backend-${self:custom.stage}-MessagesTableV2Arn
+    Value:
+      Fn::GetAtt: [MessagesTableV2, Arn]

@@ -1,0 +1,7 @@
+# infrastructure
+/aws-cloud-formation/cognito/ @troygoode @scarney81
+serverless.yml @scarney81 @rileylnapier @ryanknapp
+
+# idempotency
+/aws-cloud-formation/dynamo/idempotent-requests.yml @scarney81 @ryanknapp @tk26
+/lib/idempotent-requests/ @scarney81 @ryanknapp @tk26

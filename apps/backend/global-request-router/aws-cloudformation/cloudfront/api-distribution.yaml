@@ -1,0 +1,16 @@
+Resources:
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - api.${self:custom.apiDomainName.${self:custom.stage}}
+        Enabled: true
+        PriceClass: PriceClass_All
+        ViewerCertificate:
+          AcmCertificateArn: !Ref ApiCertificate
+          SslSupportMethod: sni-only
+
+      Tags:
+        - Key: tags.courier.com/service
+          Value: global-request-router

@@ -1,0 +1,15 @@
+Conditions:
+  IsHostedZoneIdAvailable:
+    Fn::Not:
+      - Fn::Equals:
+          - ${self:custom.hostedZoneId}
+          - ""
+  IsDnsAvailable:
+    Fn::Not:
+      - Fn::Equals:
+          - ${self:custom.apiDomainName.${self:custom.stage}}
+          - ""
+  ShouldCreateGlobalRoutingResources:
+    Fn::And:
+      - !Condition IsHostedZoneIdAvailable
+      - !Condition IsDnsAvailable

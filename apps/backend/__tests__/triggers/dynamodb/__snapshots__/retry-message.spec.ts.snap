@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[Retry Messages] should retry SQS message | check-delivery-status | events should retry expired (ttl < current-time) check-delivery message when removed from dynamodb 1`] = `
+Array [
+  Object {
+    "channel": Object {
+      "id": "99609c1f-2336-48ad-b154-616f9059cc7c",
+      "label": "",
+      "taxonomy": "email:*",
+    },
+    "configuration": "6e6adc5b-aaaa-4a68-9959-c8583a2d17ac",
+    "messageId": "1-6102ffcc-3ace4c3254dc19466d0f2724",
+    "messageLocation": Object {
+      "path": "b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302/delivery_status_1-6102ffcc-3ace4c3254dc19466d0f2724.json",
+      "type": "S3",
+    },
+    "provider": "postmark",
+    "retryCount": 6,
+    "tenantId": "b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302",
+    "ttl": 1627586589,
+    "type": "check-delivery-status",
+  },
+]
+`;
+
+exports[`[Retry Messages] should retry SQS message | check-delivery-status | events should retry expired (ttl < current-time) delivery event removed from dynamodb 1`] = `undefined`;
+
+exports[`[Retry Messages] should retry SQS message | check-delivery-status | events should retry prepare event 1`] = `
+Array [
+  Object {
+    "messageId": "1-61030155-7c676383352012960c65d423",
+    "messageLocation": Object {
+      "path": "b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302/prepare_1-61030155-7c676383352012960c65d423.json",
+      "type": "S3",
+    },
+    "retryCount": 11,
+    "tenantId": "b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302",
+    "ttl": 1627590508,
+    "type": "prepare",
+  },
+]
+`;
+
+exports[`[Retry Messages] should retry SQS message | check-delivery-status | events should retry route event 1`] = `
+Array [
+  Object {
+    "messageId": "1-610303c0-4a507ae4224b68fc1e4c7b91",
+    "messageLocation": Object {
+      "path": "b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302/1-610303c0-4a507ae4224b68fc1e4c7b91.json",
+      "type": "S3",
+    },
+    "retryCount": 11,
+    "tenantId": "b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302",
+    "ttl": 1627591134,
+    "type": "route",
+  },
+]
+`;

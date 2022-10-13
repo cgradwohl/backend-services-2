@@ -1,0 +1,30 @@
+{
+  "eventID": "a5846d3edc1612fe116a3c405b4c3733",
+  "eventName": "REMOVE",
+  "eventVersion": "1.1",
+  "eventSource": "aws:dynamodb",
+  "awsRegion": "us-east-1",
+  "dynamodb": {
+    "ApproximateCreationDateTime": 1627587534,
+    "Keys": {
+      "pk": {
+        "S": "b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302/route/1-610303c0-4a507ae4224b68fc1e4c7b91"
+      }
+    },
+    "OldImage": {
+      "pk": {
+        "S": "b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302/route/1-610303c0-4a507ae4224b68fc1e4c7b91"
+      },
+      "json": {
+        "S": "{\"messageId\":\"1-610303c0-4a507ae4224b68fc1e4c7b91\",\"messageLocation\":{\"path\":\"b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302/1-610303c0-4a507ae4224b68fc1e4c7b91.json\",\"type\":\"S3\"},\"tenantId\":\"b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302\",\"type\":\"route\",\"retryCount\":11,\"ttl\":1627591134}"
+      },
+      "ttl": {
+        "N": "1627591134"
+      }
+    },
+    "SequenceNumber": "911879700000000033354752182",
+    "SizeBytes": 455,
+    "StreamViewType": "NEW_AND_OLD_IMAGES"
+  },
+  "eventSourceARN": "arn:aws:dynamodb:us-east-1:680178896378:table/backend-dev-DeliveryStatusTableV2-L91JIRF3HZ9Y/stream/2022-09-17T00:27:27.666"
+}

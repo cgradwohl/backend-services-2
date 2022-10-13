@@ -1,0 +1,159 @@
+configValidationMode: warn
+custom:
+  actionStream: !ImportValue backend-${self:custom.stage}-ActionStream
+  authorizers:
+    api:
+      name: AudienceApiAuthorizer
+      arn:
+        "Fn::ImportValue": backend-${self:custom.stage}-ApiAuthorizerArn
+      resultTtlInSeconds: 15
+  audiencesTable: !Ref AudiencesTable
+  audiencesTriggerStreamSequenceTable: !Ref AudiencesTriggerStreamSequenceTable
+  audiencesStream: !ImportValue backend-${self:custom.stage}-AudienceStream
+  audiencesStreamArn: !ImportValue backend-${self:custom.stage}-AudienceStreamArn
+  elasticSearchEndpoint: !ImportValue backend-${self:custom.stage}-ElasticSearchDomainEndpoint
+  elasticSearchArn: !ImportValue backend-${self:custom.stage}-ElasticSearchDomainArn
+  eventLogsBucketName: !ImportValue backend-${self:custom.stage}-EventLogsBucketName
+  eventLogsTableName: !ImportValue backend-${self:custom.stage}-EventLogsTableName
+  cognitoUserPoolArn: !ImportValue backend-${self:custom.stage}-CognitoUserPoolArn
+  cognitoUserPoolAuthorizer:
+    type: COGNITO_USER_POOLS
+    name: AudiencesCognitoPoolAuthorizer
+    arn: ${self:custom.cognitoUserPoolArn}
+  courierEventBusName: !ImportValue backend-${self:custom.stage}-CourierEventBusName
+  prefix: ${self:custom.stage}
+  sessionManagementTable: !ImportValue backend-${self:custom.stage}-SessionManagementTable
+  profilesTableStreamArn: !ImportValue backend-${self:custom.stage}-ProfilesTableStreamArn
+  stage: ${opt:stage, self:provider.stage}
+  userRolesTable: !ImportValue backend-${self:custom.stage}-UserRolesTable
+  vanta:
+    disabled:
+      default: true
+      production: false
+    nonProd: ${self:custom.vanta.disabled.${self:custom.stage}, self:custom.vanta.disabled.default}
+    owner: "seth@courier.com"
+  lambda:
+    concurrencyAutoscaling:
+      production:
+        enabled: true
+        maximum: 25
+        minimum: 1
+      staging:
+        enabled: true
+        maximum: 25
+        minimum: 1
+      dev:
+        enabled: false
+    provisionedConcurrency:
+      production: 1
+      staging: 1
+      dev: 0
+  webpack:
+    webpackConfig: ./webpack.config.js
+    packager: "yarn"
+    includeModules:
+      forceExclude:
+        - aws-sdk
+      forceInclude:
+        - source-map-support
+    keepOutputDirectory: true
+
+functions:
+  - ${file(audiences/aws-cloud-formation/lambda/api.yml):functions}
+  - ${file(audiences/aws-cloud-formation/lambda/kinesis-triggers.yml):functions}
+  - ${file(audiences/aws-cloud-formation/lambda/jit-membership-calc-trigger.yml):functions}
+  - ${file(audiences/aws-cloud-formation/lambda/studio.yml):functions}
+
+package:
+  individually: true
+
+plugins:
+  - serverless-cloudformation-sub-variables
+  - serverless-plugin-conditional-functions
+  - serverless-stack-termination-protection
+  - serverless-webpack
+
+provider:
+  apiGateway:
+    restApiId:
+      "Fn::ImportValue": backend-${self:custom.stage}-ApiGatewayRestApiId
+    restApiRootResourceId:
+      "Fn::ImportValue": backend-${self:custom.stage}-ApiGatewayRestApiRootResourceId
+  architecture: arm64
+  deploymentBucket:
+    blockPublicAccess: true
+    tags:
+      VantaOwner: ${self:custom.vanta.owner}
+      VantaNonProd: ${self:custom.vanta.nonProd}
+      VantaDescription: Contains the Cloudfront distribution and the lambda@edge function to route requests to the regional API gateway
+      VantaContainsUserData: false
+
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "cognito-idp:*"
+          Resource: "arn:aws:cognito-idp:*:*:*"
+        - Effect: Allow
+          Action:
+            - dynamodb:DeleteItem
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:Query
+            - dynamodb:UpdateItem
+          Resource: "*"
+        - Effect: "Allow"
+          Action: "es:*"
+          Resource:
+            Fn::Join:
+              - ""
+              - - ${self:custom.elasticSearchArn}
+                - "/*"
+        - Effect: Allow
+          Action:
+            - events:PutEvents
+          Resource: "*"
+        - Effect: "Allow"
+          Action:
+            - kinesis:*
+          Resource: "*"
+        - Effect: "Allow"
+          Action:
+            - "kms:Encrypt"
+            - "kms:Decrypt"
+            - "kms:DescribeKey"
+            - "kms:GenerateDataKey"
+            - "kms:GenerateDataKeyWithoutPlaintext"
+            - "kms:ReEncrypt*"
+          Resource: "*"
+  environment:
+    ACTION_STREAM: ${self:custom.actionStream} # Used in action service to fire off audience sends
+    AUDIENCE_STREAM: ${self:custom.audiencesStream}
+    AUDIENCES_TABLE_NAME: ${self:custom.audiencesTable}
+    AUDIENCES_TRIGGER_STREAM_SEQUENCE_TABLE: ${self:custom.audiencesTriggerStreamSequenceTable}
+    ELASTIC_SEARCH_ENDPOINT: ${self:custom.elasticSearchEndpoint}
+    EVENT_LOGS_TABLE_NAME: ${self:custom.eventLogsTableName}
+    PREFIX: ${self:custom.stage}_backend
+    S3_EVENT_LOGS_BUCKET: ${self:custom.eventLogsBucketName}
+    STAGE: ${self:custom.stage}
+    USER_ROLES_TABLE_NAME: ${self:custom.userRolesTable}
+  memorySize: 512
+  name: aws
+  region: us-east-1
+  runtime: nodejs14.x
+  stage: dev
+  tags:
+    tags.courier.com/elasticity: variable
+    tags.courier.com/monitoring-level: high
+  timeout: 30
+  tracing:
+    lambda: PassThrough
+  versionFunctions: false
+
+resources:
+  - ${file(audiences/aws-cloud-formation/dynamo/table.yml)}
+  - ${file(audiences/aws-cloud-formation/kinesis/streams.yml)}
+  - ${file(audiences/aws-cloud-formation/kms/auto-rotated.yml)}
+
+service: audiences

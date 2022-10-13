@@ -1,0 +1,9 @@
+{{#courier-partial}}
+  {{#if @href}}
+    <a href="{{get-href @href text=@alt}}">
+      <img width="{{@width}}" src="{{@src}}" alt="{{@alt}}" style="vertical-align: middle"/>
+    </a>
+  {{else}}
+    <img width="{{@width}}" src="{{@src}}" alt="{{@alt}}" style="vertical-align: middle"/>
+  {{/if}}
+{{/courier-partial}}

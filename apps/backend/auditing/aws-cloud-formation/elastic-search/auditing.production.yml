@@ -1,0 +1,45 @@
+Resources:
+  ElasticSearch:
+    Type: AWS::Elasticsearch::Domain
+    Properties:
+      DomainName: ${self:custom.stage}-${self:service}
+      ElasticsearchVersion: "7.9"
+      ElasticsearchClusterConfig:
+        DedicatedMasterCount: 3
+        DedicatedMasterEnabled: true
+        DedicatedMasterType: t2.medium.elasticsearch
+        InstanceCount: 3
+        InstanceType: t2.medium.elasticsearch
+        ZoneAwarenessEnabled: false
+      EBSOptions:
+        EBSEnabled: true
+        VolumeSize: 16
+        VolumeType: gp2
+      SnapshotOptions:
+        AutomatedSnapshotStartHour: 8
+      AccessPolicies:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              AWS:
+                Fn::Join:
+                  - ":"
+                  - - "arn:aws:iam:"
+                    - Ref: AWS::AccountId
+                    - "root"
+            Action: "es:*"
+            Resource:
+              Fn::Join:
+                - ":"
+                - - "arn:aws:es"
+                  - Ref: AWS::Region
+                  - Ref: AWS::AccountId
+                  - "domain/${self:custom.stage}-${self:service}"
+      AdvancedOptions:
+        # IAM policies set restrictions based on urls. Allowing explicit indexes can allow users
+        # to get around the IAM restriction
+        rest.action.multi.allow_explicit_index: "false"
+      Tags:
+        - Key: tags.courier.com/elasticity
+          Value: fixed

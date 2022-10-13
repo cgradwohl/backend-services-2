@@ -1,0 +1,27 @@
+Resources:
+  TrackingRequestStore:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - ${self:custom.lifecyclePolicyRules.deleteAfter30Days}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "S3 Bucket that contains inbound tracking requests"
+      - Key: VantaContainsUserData
+        Value: true
+      VersioningConfiguration:
+        Status: Enabled

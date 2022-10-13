@@ -1,0 +1,12 @@
+{{#courier-partial}}
+{{#prerender "prerenderedText"}}{{> @partial-block}}{{/prerender}}
+{{#if (condition @style "===" "link")}}
+{{#slack-text-block}}<{{get-href @href disableLinkTracking=@disableLinkTracking context="action" text=@prerenderedText}}|{{{@prerenderedText}}}>{{/slack-text-block}}
+{{else}}
+{{#if @useWebhook}}
+{{#slack-action-block actionId=(get-action-id @actionId context="action" text=@prerenderedText)}}{{{@prerenderedText}}}{{/slack-action-block}}
+{{else}}
+{{#slack-action-block url=(get-href @href disableLinkTracking=@disableLinkTracking context="action" text=@prerenderedText)}}{{{@prerenderedText}}}{{/slack-action-block}}
+{{/if}}
+{{/if}}
+{{/courier-partial}}

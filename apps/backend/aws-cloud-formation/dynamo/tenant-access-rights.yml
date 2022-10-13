@@ -1,0 +1,36 @@
+Resources:
+  TenantAccessRightsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.prefix}-tenant-access-rights
+      AttributeDefinitions:
+        - AttributeName: tenantId
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: tenantId
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: by-tenant-index
+          KeySchema:
+            - AttributeName: tenantId
+              KeyType: HASH
+            - AttributeName: userId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL # Make All columns available in index
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Contains a mapping of user to Courier tenants."
+      - Key: VantaContainsUserData
+        Value: false

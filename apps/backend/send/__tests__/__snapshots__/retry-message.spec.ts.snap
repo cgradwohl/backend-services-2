@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`retry-message retry failures in send kinesis stream workers should retry using Dynamo TTL for last 15 retries: should match DynamoDb payload 1`] = `
+Object {
+  "messageId": "test-message-id",
+  "retryCount": 13,
+  "streamName": "test-send-stream",
+  "tenantId": "test-tenant",
+  "type": "render",
+}
+`;

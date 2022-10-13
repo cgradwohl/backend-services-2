@@ -1,0 +1,12 @@
+{{#courier-partial}}
+<mj-body css-class="c--email-body"{{#if (path "$.templateOverrides.width")}} width="{{path "$.templateOverrides.width"}}"{{/if}}{{#if (path "$.templateOverrides.backgroundColor")}} background-color="{{path "$.templateOverrides.backgroundColor"}}"{{/if}}>
+  <mj-wrapper>
+    <mj-section padding="0px">
+      <mj-column>
+        <mj-text>
+            {{> courier-brand-header @root}}
+            
+        </mj-text>
+      </mj-column>
+    </mj-section>
+{{/courier-partial}}

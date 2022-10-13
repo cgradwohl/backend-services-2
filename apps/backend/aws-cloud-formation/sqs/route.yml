@@ -1,0 +1,94 @@
+Resources:
+  SqsRoute:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId:
+        Ref: AutoRotatedKmsKey
+      QueueName: ${self:custom.prefix}-sqs-route
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+            - SqsRouteDLQ
+            - Arn
+        maxReceiveCount: 10
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Queue for notifications that are ready to be delivered to the end-user."
+      - Key: VantaContainsUserData
+        Value: false
+      VisibilityTimeout: 32
+
+  SqsRouteDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId:
+        Ref: AutoRotatedKmsKey
+      QueueName: ${self:custom.prefix}-sqs-route-dlq
+      MessageRetentionPeriod: 1209600
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Dead Letter Queue: these queues are used to handle messages that have failed too many times in a primary queue."
+      - Key: VantaContainsUserData
+        Value: false
+
+  ### Cloudwatch Monitors (only created in production)
+  SqsRouteAgeOfOldestMessage:
+    Type: AWS::CloudWatch::Alarm
+    Condition: IsProduction
+    Properties:
+      AlarmActions:
+        - Ref: AlertEngineeringTopic
+      AlarmDescription: "Alarm if queue contains messages older than 5000 seconds"
+      ComparisonOperator: GreaterThanThreshold
+      DatapointsToAlarm: 1
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::GetAtt:
+              - SqsRoute
+              - QueueName
+      EvaluationPeriods: 1
+      MetricName: ApproximateAgeOfOldestMessage
+      Namespace: "AWS/SQS"
+      Period: 900 # 15 minutes (60 * 15)
+      Statistic: Average
+      Threshold: 5000
+      TreatMissingData: missing
+
+  SqsRouteDLQAgeOfOldestMessage:
+    Type: AWS::CloudWatch::Alarm
+    Condition: IsProduction
+    Properties:
+      AlarmActions:
+        - Ref: AlertEngineeringTopic
+      AlarmDescription: "Alarm if queue contains messages older than 5000 seconds"
+      ComparisonOperator: GreaterThanThreshold
+      DatapointsToAlarm: 1
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::GetAtt:
+              - SqsRouteDLQ
+              - QueueName
+      EvaluationPeriods: 1
+      MetricName: ApproximateAgeOfOldestMessage
+      Namespace: "AWS/SQS"
+      Period: 900 # 15 minutes (60 * 15)
+      Statistic: Average
+      Threshold: 5000
+      TreatMissingData: missing
+Outputs:
+  SqsRouteDLQArn:
+    Export:
+      Name: backend-${self:custom.stage}-SqsRouteDLQArn
+    Value:
+      Fn::GetAtt: [SqsRouteDLQ, Arn]

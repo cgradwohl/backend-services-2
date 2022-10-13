@@ -1,0 +1,13 @@
+Resources:
+  ExampleKinesisStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      RetentionPeriodHours: 24
+      ShardCount: 1
+      StreamEncryption:
+        EncryptionType: KMS
+        KeyId:
+          Ref: AutoRotatedKmsKey
+      Tags:
+        - Key: tags.courier.com/elasticity
+          Value: fixed

@@ -1,0 +1,32 @@
+[
+  {
+    "config": "{\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"Welcome to Courier!\",\"marks\":[{\"object\":\"mark\",\"type\":\"bold\",\"data\":{}}]}]}]}},\"textStyle\":\"h1\"}",
+    "id": "ac76be0c-e122-416f-b5f0-e5770b8e4610",
+    "type": "text"
+  },
+  {
+    "config": "{\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"These are content blocks.\",\"marks\":[{\"object\":\"mark\",\"type\":\"bold\",\"data\":{}}]}]}]}}}",
+    "id": "435705dd-4b40-47fd-b459-7de80e5e5e3e",
+    "type": "text"
+  },
+  {
+    "config": "{\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"• Feel free to drag and drop me around. \\n• If you remove us don’t worry, We’ll simple move into the library under Channels for later use. \\n• A block can be shared across channels! \\n• When you are done, press Preview to send yourself a notification.\\n• Use curly brackets \",\"marks\":[]},{\"object\":\"text\",\"text\":\"{\",\"marks\":[{\"object\":\"mark\",\"type\":\"bold\",\"data\":{}}]},{\"object\":\"text\",\"text\":\" and \",\"marks\":[]},{\"object\":\"text\",\"text\":\"}\",\"marks\":[{\"object\":\"mark\",\"type\":\"bold\",\"data\":{}}]},{\"object\":\"text\",\"text\":\" to create \",\"marks\":[]},{\"object\":\"inline\",\"type\":\"variable\",\"data\":{\"value\":\"{variables}\"},\"nodes\":[{\"object\":\"text\",\"text\":\"{variables}\",\"marks\":[]}]},{\"object\":\"text\",\"text\":\".\",\"marks\":[]}]}]}}}",
+    "id": "854788b8-503f-4d5f-9123-8693280ece10",
+    "type": "text"
+  },
+  {
+    "config": "{\"align\":\"center\",\"backgroundColor\":\"#58C87A\",\"href\":\"https://www.courier.com\",\"style\":\"button\",\"text\":\"Click to edit my properties!\"}",
+    "id": "b2b92233-9daa-42b4-b053-b908f106d7ca",
+    "type": "action"
+  },
+  {
+    "config": "{\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"\",\"marks\":[]}]}]}}}",
+    "id": "cfd7022e-4031-49e8-a103-7ef091252f50",
+    "type": "text"
+  },
+  {
+    "config": "{\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"Cheers, \\n\",\"marks\":[]},{\"object\":\"text\",\"text\":\"The Courier Team\",\"marks\":[{\"object\":\"mark\",\"type\":\"bold\",\"data\":{}}]}]}]}}}",
+    "id": "fd9be503-c350-45b5-acad-babe87df3768",
+    "type": "text"
+  }
+]

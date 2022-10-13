@@ -1,0 +1,7 @@
+[
+  {
+    "type": "text",
+    "config": "{\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"Hello \",\"marks\":[]},{\"object\":\"inline\",\"type\":\"variable\",\"data\":{\"value\":\"name\"},\"nodes\":[{\"object\":\"text\",\"text\":\"{name}\",\"marks\":[]}]},{\"object\":\"text\",\"text\":\"\",\"marks\":[]}]}]}}}",
+    "id": "b7dc27b3-62c2-4fc8-8787-48b23336cbdd"
+  }
+]

@@ -1,0 +1,7 @@
+[
+  {
+    "config": "{\"align\":\"center\",\"backgroundColor\":\"#9D3789\",\"href\":\"https://www.courier.com\",\"style\":\"button\",\"text\":\"Click Here\",\"useWebhook\":true,\"actionId\":\"my-action-id\"}",
+    "id": "9bb67b21-2c98-48b3-ae16-d649f51b45ac",
+    "type": "action"
+  }
+]

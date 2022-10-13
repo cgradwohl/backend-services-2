@@ -1,0 +1,84 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`msteams template blocks should render dynamic adpative card json template 1`] = `
+Array [
+  "",
+  Object {
+    "actions": Array [
+      Object {
+        "title": "Learn more",
+        "type": "Action.OpenUrl",
+        "url": "http://adaptivecards.io",
+      },
+      Object {
+        "title": "github",
+        "type": "Action.OpenUrl",
+        "url": "http://github.com/Microsoft/AdaptiveCards",
+      },
+    ],
+    "body": Array [
+      Object {
+        "type": "Image",
+        "url": "https://github.com",
+      },
+      Object {
+        "text": "Hello **Argo**",
+        "type": "TextBlock",
+      },
+    ],
+    "type": "AdaptiveCard",
+    "version": "1.0",
+  },
+]
+`;
+
+exports[`msteams template blocks should render markdown template 1`] = `
+Array [
+  "Hello Argo.
+
+
+
+Welcome to the channel, here is link to get you [start](https://docs.courier.com/docs).
+
+
+
+Cheers,
+
+Suhas
+
+",
+  null,
+]
+`;
+
+exports[`msteams template blocks should render static adpative card json template 1`] = `
+Array [
+  "",
+  Object {
+    "actions": Array [
+      Object {
+        "title": "Learn more",
+        "type": "Action.OpenUrl",
+        "url": "http://adaptivecards.io",
+      },
+      Object {
+        "title": "GitHub",
+        "type": "Action.OpenUrl",
+        "url": "http://github.com/Microsoft/AdaptiveCards",
+      },
+    ],
+    "body": Array [
+      Object {
+        "type": "Image",
+        "url": "http://adaptivecards.io/content/adaptive-card-50.png",
+      },
+      Object {
+        "text": "Hello **Adaptive Cards!**",
+        "type": "TextBlock",
+      },
+    ],
+    "type": "AdaptiveCard",
+    "version": "1.0",
+  },
+]
+`;

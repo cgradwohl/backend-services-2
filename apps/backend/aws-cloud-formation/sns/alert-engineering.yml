@@ -1,0 +1,11 @@
+Resources:
+  AlertEngineeringTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      Subscription:
+        - Endpoint:
+            Fn::If:
+              - IsProduction
+              - R018KJMZYXR72J061HZ27IABF0TA3S22@trycourier.pagerduty.com
+              - ${env:PAGERDUTY_EMAIL, "systems@trycourier.com"}
+          Protocol: email

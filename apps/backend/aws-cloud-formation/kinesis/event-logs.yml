@@ -1,0 +1,15 @@
+Resources:
+  EventLogsKinesisStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      RetentionPeriodHours: 24
+      ShardCount: ${self:custom.eventLogs.kinesis.${self:custom.stage}.shardCount, 1}
+      StreamEncryption:
+        EncryptionType: KMS
+        KeyId:
+          Ref: AutoRotatedKmsKey
+      Tags:
+        - Key: tags.courier.com/elasticity
+          Value: fixed
+        - Key: tags.courier.com/service
+          Value: pipeline

@@ -1,0 +1,41 @@
+Resources:
+  CodesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.prefix}-codes
+      AttributeDefinitions:
+        - AttributeName: objtype
+          AttributeType: S
+        - AttributeName: code
+          AttributeType: S
+        - AttributeName: email
+          AttributeType: S
+      KeySchema:
+        - AttributeName: objtype
+          KeyType: HASH
+        - AttributeName: code
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: ByEmail
+          KeySchema:
+            - AttributeName: objtype
+              KeyType: HASH
+            - AttributeName: email
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Storage for temporary invitation codes used to bring new users into your Courier account."
+      - Key: VantaContainsUserData
+        Value: false

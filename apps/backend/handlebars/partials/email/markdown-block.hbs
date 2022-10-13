@@ -1,0 +1,6 @@
+{{#courier-partial}}{{#prerender "prerenderedText"}}{{#markdown}}{{> @partial-block}}{{/markdown}}{{/prerender}}<mj-section css-class="c--block c--block-markdown">
+  <mj-column padding="4px 0px">
+    <mj-text {{courier-email-text-style @textStyle}} css-class="{{trim (concat "c--text-" (default @textStyle "text") " " (text-direction @prerenderedText))}}">{{{@prerenderedText}}}</mj-text>
+  </mj-column>
+</mj-section>
+{{/courier-partial}}

@@ -1,0 +1,4 @@
+{{#courier-partial}}
+{{#prerender "prerenderedText"}}{{> @partial-block}}{{/prerender}}
+{{#in-app-action-block url=(get-href @href context="action" disableLinkTracking=@disableLinkTracking text=@prerenderedText)}}{{{@prerenderedText}}}{{/in-app-action-block}}
+{{/courier-partial}}

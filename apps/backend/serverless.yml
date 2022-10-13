@@ -1,0 +1,3770 @@
+service: backend
+
+plugins:
+  - serverless-cloudformation-sub-variables
+  - serverless-jest-plugin
+  - serverless-plugin-conditional-functions
+  - serverless-plugin-split-stacks
+  - serverless-provisioned-concurrency-autoscaling
+  - serverless-pseudo-parameters
+  - serverless-stack-termination-protection
+  - serverless-webpack
+  - serverless-iam-roles-per-function
+  - serverless-step-functions
+  - ./serverless-plugins/courier-policy-plugin
+  - serverless-plugin-log-retention
+
+provider:
+  apiGateway:
+    binaryMediaTypes:
+      - "image/gif"
+  deploymentBucket:
+    blockPublicAccess: true
+    tags:
+      VantaOwner: ${self:custom.vanta.owner}
+      VantaNonProd: ${self:custom.vanta.nonProd}
+      VantaDescription: Contains deployment assets for SQS drains
+      VantaContainsUserData: false
+  eventBridge:
+    useCloudFormation: true
+  lambdaHashingVersion: "20201221"
+  logs:
+    restApi:
+      format: "requestId: $context.requestId, ip: $context.identity.sourceIp, caller: $context.identity.caller, user: $context.identity.user, requestTime: $context.requestTime, httpMethod: $context.httpMethod, resourcePath: $context.resourcePath, status: $context.status, protocol: $context.protocol, responseLength: $context.responseLength, userAgent: $context.identity.userAgent, tenantId: $context.authorizer.tenantId"
+      fullExecutionData: ${file(./.dev-config.yml):AWS_APIGW_FULL_EXECUTION_DATA, false}
+  name: aws
+  memorySize: 512
+  region: ${opt:region, "us-east-1"}
+  runtime: nodejs14.x
+  stage: dev
+  tags:
+    tags.courier.com/elasticity: variable
+    tags.courier.com/monitoring-level: high
+  timeout: 30
+  tracing:
+    apiGateway: true
+    lambda: ${self:custom.tracing.lambda.${self:custom.stage}}
+  versionFunctions: false
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:BatchGetItem
+            - dynamodb:BatchWriteItem
+            - dynamodb:ConditionCheckItem
+            - dynamodb:DeleteItem
+            - dynamodb:GetItem
+            - dynamodb:GetRecords
+            - dynamodb:PutItem
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:UpdateItem
+            - events:PutEvents
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - events:PutEvents
+          Resource: "*"
+        - Effect: "Allow"
+          Action:
+            - "apigateway:*"
+          Resource:
+            Fn::Join:
+              - ""
+              - - "arn:aws:apigateway:"
+                - Ref: AWS::Region
+                - "::/*"
+        - Effect: "Allow"
+          Action:
+            - "sqs:*"
+          Resource:
+            Fn::Join:
+              - ""
+              - - "arn:aws:sqs:"
+                - Ref: AWS::Region
+                - ":"
+                - Ref: AWS::AccountId
+                - ":*"
+        - Effect: "Allow"
+          Action:
+            - "s3:*"
+          Resource: "arn:aws:s3:::*"
+        - Effect: "Allow"
+          Action:
+            - "cognito-idp:*"
+          Resource: "arn:aws:cognito-idp:*:*:*"
+        - Effect: "Allow"
+          Action: "es:*"
+          Resource:
+            Fn::Join:
+              - ""
+              - - !GetAtt [ElasticSearch, DomainArn]
+                - "/*"
+        - Effect: "Allow"
+          Action: "events:PutEvents"
+          Resource: "*"
+        - Effect: "Allow"
+          Action:
+            - lambda:InvokeFunction
+          Resource:
+            Fn::Join:
+              - ":"
+              - - "arn:aws:lambda"
+                - Ref: AWS::Region
+                - Ref: AWS::AccountId
+                - "function"
+                - "*"
+        - Effect: "Allow"
+          Action:
+            - kinesis:*
+          Resource: "*"
+        - Effect: "Allow"
+          Action:
+            - firehose:PutRecord
+            - firehose:PutRecordBatch
+          Resource:
+            - Fn::GetAtt: [ExperimentsFirehose, Arn]
+        - Effect: "Allow"
+          Action:
+            - "kms:Encrypt"
+            - "kms:Decrypt"
+            - "kms:DescribeKey"
+            - "kms:GenerateDataKey"
+            - "kms:GenerateDataKeyWithoutPlaintext"
+            - "kms:ReEncrypt*"
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - route53:ChangeResourceRecordSets
+          Resource: arn:aws:route53:::hostedzone/*
+        - Effect: Allow
+          Action:
+            - iam:AddUserToGroup
+            - iam:RemoveUserFromGroup
+          Resource: "*"
+        - Effect: "Allow"
+          Action:
+            - "states:StartExecution"
+          Resource:
+            - arn:aws:states:*:*:stateMachine:automation-delay
+        - Effect: "Allow"
+          Action:
+            - "cloudwatch:PutMetricData"
+          Resource: "*"
+
+  environment:
+    APP_URL: ${self:custom.appUrls.${self:custom.stage}}
+    CLICK_THROUGH_TRACKING_DOMAIN_NAME: ${self:custom.clickThroughTracking.domainName}
+    CLICK_THROUGH_TRACKING_HOSTED_ZONE: ${self:custom.clickThroughTracking.hostedZone}
+    COURIER_AUTH_TOKEN: ${env:COURIER_AUTH_TOKEN, file(./.dev-config.yml):COURIER_AUTH_TOKEN}
+    COURIER_EMAIL_CONFIG_ID: ${env:COURIER_EMAIL_CONFIG_ID, file(./.dev-config.yml):COURIER_EMAIL_CONFIG_ID}
+    COURIER_EVENT_STORE:
+      Ref: CourierEventStore
+    COURIER_SENDGRID_API_KEY: ${env:COURIER_SENDGRID_API_KEY, file(./.dev-config.yml):COURIER_SENDGRID_API_KEY}
+    COURIER_TENANT_ID: ${env:COURIER_TENANT_ID, file(./.dev-config.yml):COURIER_TENANT_ID}
+    DAILY_METRICS_TABLE_NAME:
+      Ref: DailyMetricsTable
+    DELIVERY_STATUS_TABLE_NAME:
+      Ref: DeliveryStatusTableV2
+    DD_API_KEY: ${self:custom.datadog.apiKey}
+    DYNAMO_TABLE_KINESIS_STREAM:
+      Ref: DynamoTableKinesisStream
+    EVENT_LOGS_KINESIS_STREAM:
+      Ref: EventLogsKinesisStream
+    EVENT_LOGS_TABLE_NAME:
+      Ref: EventLogsTable
+    USER_ROLES_TABLE_NAME:
+      Ref: UserRolesTable
+    LAUNCHDARKLY_SDK_KEY: ${env:LAUNCHDARKLY_SDK_KEY, file(./.dev-config.yml):LAUNCHDARKLY_SDK_KEY}
+    NODE_ENV: production
+    PREFIX: ${self:custom.prefix}
+    S3_TEMPLATE_VARIATIONS_BUCKET:
+      Ref: TemplateVariationsBucket
+    S3_EVENT_LOGS_BUCKET:
+      Ref: EventLogsBucket
+    S3_MESSAGES_BUCKET:
+      Ref: MessagesBucket
+    S3_TEST_EVENTS_BUCKET:
+      Ref: TestEventsBucket
+    S3_SEGMENT_EVENTS_BUCKET:
+      Ref: SegmentEventsBucket
+    SEGMENT_WRITE_KEY: ${self:custom.segmentWriteKey}
+    SQS_AUTOMATION_STEP_QUEUE_NAME:
+      Fn::GetAtt:
+        - SqsAutomationStep
+        - QueueName
+    SQS_CHECK_DELIVERY_STATUS_QUEUE_NAME:
+      Fn::GetAtt:
+        - SqsCheckDeliveryStatus
+        - QueueName
+    SQS_PREPARE_QUEUE_NAME: ${self:custom.prefix}-sqs-prepare
+    SQS_ROUTE_QUEUE_NAME: ${self:custom.prefix}-sqs-route
+    SQS_SEGMENT_EVENTS_QUEUE_NAME:
+      Fn::GetAtt:
+        - SqsSegmentEvents
+        - QueueName
+    SQS_TEST_NOTIFICATION_QUEUE_NAME:
+      Fn::GetAtt:
+        - SqsTestNotification
+        - QueueName
+    STAGE: ${self:custom.stage}
+    TENANT_METRICS_TABLE_NAME:
+      Ref: TenantMetricsTable
+
+package:
+  individually: true
+
+custom:
+  apiUrls:
+    dev:
+      Fn::Join:
+        - ""
+        - - "https://"
+          - Ref: ApiGatewayRestApi
+          - .execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}
+    staging:
+      Fn::Join:
+        - ""
+        - - "https://"
+          - Ref: ApiGatewayRestApi
+          - .execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}
+    production: https://api.courier.com
+  appUrls:
+    dev: http://localhost:3000
+    staging: https://staging.trycourier.app
+    production: https://app.courier.com
+  appSsoUrls:
+    dev:
+      signIn: [http://localhost:3000/login/callback]
+      signOut: [http://localhost:3000]
+    staging:
+      signIn: [https://staging.trycourier.app/login/callback]
+      signOut: [https://staging.trycourier.app/]
+    production:
+      # prettier-ignore
+      signIn:
+        - https://trycourier.app/login/callback
+        - https://www.trycourier.app/login/callback
+        - https://app.courier.com/login/callback
+      signOut:
+        - https://trycourier.app
+        - https://www.trycourier.app
+        - https://app.courier.com
+  apiDomainName:
+    dev: ${file(./.dev-config.yml):DEV_DOMAIN_NAME, ''} # Only if you have a domain bought from your aws account
+    staging: staging-trycourier.com
+    production: courier.com
+  authorizers:
+    api:
+      name: ApiAuthorizer
+      resultTtlInSeconds: 60
+    jwt:
+      name: JwtAuthorizer
+      resultTtlInSeconds: 15
+      type: REQUEST
+
+  automationRuns:
+    elasticsearch:
+      dev:
+        shards: 2
+      staging:
+        shards: 2
+      production:
+        shards: 10
+    kinesis:
+      dev:
+        shardCount: 1
+      staging:
+        shardCount: 1
+      production:
+        shardCount: 4
+  awsCognitoUserPoolDomain:
+    dev:
+      Fn::Join:
+        - ""
+        - - "courier-dev-"
+          - Ref: AWS::AccountId
+    staging:
+      Fn::Join:
+        - ""
+        - - "courier-staging-"
+          - Ref: AWS::AccountId
+    production: courier
+  awsCognitoUserPoolUri:
+    Fn::Join:
+      - ""
+      - - ${self:custom.awsCognitoUserPoolDomain.${self:custom.stage}}
+        - .auth.${self:provider.region}.amazoncognito.com
+  clickThroughTracking:
+    domainName: ${env:CLICK_THROUGH_TRACKING_DOMAIN_NAME, file(./.dev-config.yml):CLICK_THROUGH_TRACKING_DOMAIN_NAME, ''}
+    hostedZone: ${env:CLICK_THROUGH_TRACKING_HOSTED_ZONE, file(./.dev-config.yml):CLICK_THROUGH_TRACKING_HOSTED_ZONE, ''}
+    aliasTargetDnsName:
+      !GetAtt [ClickThroughTrackingDomain, DistributionDomainName]
+    aliasTargetHostedZoneId:
+      !GetAtt [ClickThroughTrackingDomain, DistributionHostedZoneId]
+  cognitoUserPoolAuthorizer:
+    name: CognitoPoolAuthorizer
+    arn: arn:aws:cognito-idp:#{AWS::Region}:#{AWS::AccountId}:userpool/#{CognitoUserPoolCognitoUserPool}
+  datadog:
+    apiKey: ${env:DD_API_KEY}
+  elasticsearch:
+    messages:
+      dev:
+        shards: 2
+      staging:
+        shards: 10
+      production:
+        shards: 10
+  eventLogs:
+    elasticsearch:
+      dev:
+        shards: 2
+      staging:
+        shards: 10
+      production:
+        shards: 10
+    kinesis:
+      dev:
+        shardCount: 1
+      staging:
+        shardCount: 36
+      production:
+        shardCount: 36
+
+  hostedZoneId: ${env:HOSTED_ZONE_ID, file(./.dev-config.yml):HOSTED_ZONE_ID, ''}
+  false: false
+  googleSso:
+    dev:
+      clientId: ${env:SSO_GOOGLE_CLIENT_ID, file(./.dev-config.yml):SSO_GOOGLE_CLIENT_ID, "GOOGLE CLIENT ID NOT FOUND"}
+      clientSecret: ${env:SSO_GOOGLE_CLIENT_SECRET, file(./.dev-config.yml):SSO_GOOGLE_CLIENT_SECRET, "GOOGLE CLIENT SECRET NOT FOUND"}
+    staging:
+      clientId: ${env:SSO_GOOGLE_CLIENT_ID, "GOOGLE CLIENT ID NOT FOUND"}
+      clientSecret: ${env:SSO_GOOGLE_CLIENT_SECRET, "GOOGLE CLIENT ID NOT FOUND"}
+    production:
+      clientId: ${env:SSO_GOOGLE_CLIENT_ID, "GOOGLE CLIENT ID NOT FOUND"}
+      clientSecret: ${env:SSO_GOOGLE_CLIENT_SECRET, "GOOGLE CLIENT SECRET NOT FOUND"}
+  jest:
+    collectCoverage: true
+  lambda:
+    concurrencyAutoscaling:
+      production:
+        enabled: true
+        maximum: 25
+        minimum: 1
+      staging:
+        enabled: false
+        maximum: 25
+        minimum: 1
+      dev:
+        enabled: false
+    provisionedConcurrency:
+      production: 1
+      staging: 0
+      dev: 0
+
+      # individual function overrides
+      apiAuthorizer:
+        production: 10
+        staging: 0
+        dev: 0
+
+      apiSend:
+        production: 20
+        staging: 0
+        dev: 0
+  logRetentionInDays: 365
+  lifecyclePolicyRules:
+    deleteAfter30Days:
+      Id: DeleteObjectsAfter30Days
+      AbortIncompleteMultipartUpload:
+        DaysAfterInitiation: 7
+      ExpirationInDays: 30
+      NoncurrentVersionExpiration:
+        NoncurrentDays: 30
+      Prefix: ""
+      Status: Enabled
+    deleteAfter7Days:
+      Id: DeleteObjectsAfter7Days
+      AbortIncompleteMultipartUpload:
+        DaysAfterInitiation: 7
+      ExpirationInDays: 7
+      NoncurrentVersionExpiration:
+        NoncurrentDays: 7
+      Prefix: ""
+      Status: Enabled
+  messages:
+    kinesis:
+      staging:
+        shardCount: 5
+      production:
+        shardCount: 5
+  messagesV3:
+    kinesis:
+      staging:
+        shardCount: 10
+      production:
+        shardCount: 10
+  sendPipelineV2:
+    lambda:
+      dev:
+        parallelizationFactor: 1
+        provisionedConcurrency: 0
+      staging:
+        parallelizationFactor: 1
+        provisionedConcurrency: 0
+      production:
+        parallelizationFactor: 10
+        provisionedConcurrency: 2
+    kinesis:
+      actionStream:
+        staging:
+          shardCount: 2
+        production:
+          shardCount: 8
+      sequenceProcessorStream:
+        staging:
+          shardCount: 2
+        production:
+          shardCount: 2
+      providerRenderStream:
+        staging:
+          shardCount: 2
+        production:
+          shardCount: 4
+      providerSendStream:
+        staging:
+          shardCount: 2
+        production:
+          shardCount: 4
+      scheduleStream:
+        staging:
+          shardCount: 1
+        production:
+          shardCount: 1
+  overflow:
+    tenantId: ${file(./.dev-config.yml):OVERFLOW_TENANT_ID, ""}
+  partitionShardRange: 10
+  recipients:
+    elasticsearch:
+      dev:
+        shards: 2
+      staging:
+        shards: 2
+      production:
+        shards: 10
+  segmentWriteKey: ${env:SEGMENT_WRITE_KEY, file(./.dev-config.yml):SEGMENT_WRITE_KEY}
+  splitStacks:
+    perFunction: true
+  stage: ${opt:stage, self:provider.stage}
+  stripe:
+    dev: ${env:STRIPE_ENABLED, self:custom.false}
+    staging: true
+    production: true
+  supportedIdentityProviders:
+    dev:
+      - COGNITO
+      - Google
+    staging:
+      - COGNITO
+      - Google
+      - Github
+      - OktaDrewDev
+    production:
+      - COGNITO
+      - Google
+      - Github
+      - OktaBenevity
+      - OktaColor
+      - OktaDrata
+      - OktaEarnestResearch
+      - OktaExpel
+      - OktaLattice
+      - OktaLaunchDarkly
+      - OktaOyster
+      - OktaNewRelic
+      - OktaSeer
+  prefix: ${self:custom.stage}_${self:service}
+  symAccountId: 803477428605
+  tenants:
+    kinesis:
+      shardCount:
+        dev: 1
+        staging: 10
+        production: 10
+  tracing:
+    lambda:
+      production: PassThrough
+      staging: true
+      dev: true
+  trackingRequest:
+    kinesis:
+      production:
+        shards: 5
+  vanta:
+    disabled:
+      default: true
+      production: false
+    owner: "seth@courier.com"
+    nonProd: ${self:custom.vanta.disabled.${self:custom.stage}, self:custom.vanta.disabled.default}
+  webpack:
+    webpackConfig: ./webpack.config.js
+    packager: "yarn"
+    includeModules:
+      forceExclude:
+        - aws-sdk
+      forceInclude:
+        - source-map-support
+    keepOutputDirectory: true
+
+stepFunctions:
+  stateMachines:
+    AutomationDelayStateMachine:
+      name: automation-delay
+      definition:
+        StartAt: Wait
+        States:
+          Wait:
+            Type: Wait
+            TimestampPath: "$.expirydate"
+            Next: InvokeStepWorker
+          InvokeStepWorker:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [AutomationDelayStepFunctionTrigger, Arn]
+            End: true
+
+functions:
+  # automations
+  ApiAutomations:
+    events:
+      - http:
+          path: automations/runs/{id}
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+    handler: automations/api/handler.default
+    environment:
+      AUTOMATION_STORE:
+        Ref: AutomationStore
+      AUTOMATION_DELAY_TABLE:
+        Ref: AutomationDelayTable
+      AUTOMATION_RUNS_TABLE:
+        Ref: AutomationRunsTable
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+
+  ApiAutomationInvoke:
+    events:
+      - http:
+          path: automations/invoke
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: automations/{templateId}/invoke
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                templateId: true
+    handler: automations/api/invoke.default
+    environment:
+      AUTOMATION_STORE:
+        Ref: AutomationStore
+      AUTOMATION_RUN_CONTEXT_STORE:
+        Ref: AutomationRunContextStore
+      AUTOMATION_DELAY_TABLE:
+        Ref: AutomationDelayTable
+      AUTOMATION_RUNS_TABLE:
+        Ref: AutomationRunsTable
+      AUTOMATION_TEMPLATE_STORE:
+        Ref: AutomationTemplateStore
+      AUTOMATION_TEMPLATES_TABLE:
+        Ref: AutomationTemplatesTable
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+
+  WorkersAutomation:
+    events:
+      - s3:
+          bucket:
+            Ref: AutomationStore
+          existing: true
+          event: s3:ObjectCreated:Put
+    handler: automations/triggers/s3/automation/worker.default
+    memorySize: 1024
+    timeout: 120
+    environment:
+      AUTOMATION_STORE:
+        Ref: AutomationStore
+      AUTOMATION_RUN_CONTEXT_STORE:
+        Ref: AutomationRunContextStore
+      AUTOMATION_RUNS_TABLE:
+        Ref: AutomationRunsTable
+      AUTOMATION_DELAY_TABLE:
+        Ref: AutomationDelayTable
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      SQS_AUTOMATION_STEP_QUEUE_NAME:
+        Fn::GetAtt:
+          - SqsAutomationStep
+          - QueueName
+
+  WorkersAutomationStep:
+    handler: automations/triggers/sqs/step/worker.default
+    memorySize: 1024
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - SqsAutomationStep
+              - Arn
+          batchSize: 1
+    environment:
+      AUTOMATION_STORE:
+        Ref: AutomationStore
+      AUTOMATION_RUN_CONTEXT_STORE:
+        Ref: AutomationRunContextStore
+      AUTOMATION_DELAY_TABLE:
+        Ref: AutomationDelayTable
+      AUTOMATION_RUNS_TABLE:
+        Ref: AutomationRunsTable
+      AUTOMATION_TEMPLATES_TABLE:
+        Ref: AutomationTemplatesTable
+      ACTION_STREAM:
+        Ref: ActionStream
+      ACTION_STREAM_BUCKET:
+        Ref: ActionStreamBucket
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      AUTOMATION_TEMPLATE_STORE:
+        Ref: AutomationTemplateStore
+      SQS_AUTOMATION_STEP_QUEUE_NAME:
+        Fn::GetAtt:
+          - SqsAutomationStep
+          - QueueName
+      S3_MESSAGES_BUCKET:
+        Ref: MessagesBucket
+      SQS_SEND_LIST_OR_PATTERN_QUEUE_NAME:
+        Fn::GetAtt:
+          - SqsSendListOrPattern
+          - QueueName
+      SQS_PREPARE_QUEUE_URL:
+        Ref: SqsPrepare
+      AUTOMATION_DELAY_STATE_MACHINE: arn:aws:states:#{AWS::Region}:#{AWS::AccountId}:stateMachine:automation-delay
+
+  AutomationDelayStepFunctionTrigger:
+    handler: automations/triggers/step-functions/delay/worker.default
+    environment:
+      SQS_AUTOMATION_STEP_QUEUE_NAME:
+        Fn::GetAtt:
+          - SqsAutomationStep
+          - QueueName
+      AUTOMATION_STORE:
+        Ref: AutomationStore
+      AUTOMATION_RUNS_TABLE:
+        Ref: AutomationRunsTable
+
+  AutomationDelayDynamoTrigger:
+    handler: automations/triggers/dynamo/delay/worker.default
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - AutomationDelayTable
+              - StreamArn
+          batchSize: 1
+          parallelizationFactor: 5
+    environment:
+      SQS_AUTOMATION_STEP_QUEUE_NAME:
+        Fn::GetAtt:
+          - SqsAutomationStep
+          - QueueName
+      AUTOMATION_STORE:
+        Ref: AutomationStore
+      AUTOMATION_DELAY_TABLE:
+        Ref: AutomationDelayTable
+      AUTOMATION_RUNS_TABLE:
+        Ref: AutomationRunsTable
+      AUTOMATION_DELAY_STATE_MACHINE: arn:aws:states:#{AWS::Region}:#{AWS::AccountId}:stateMachine:automation-delay
+
+  WorkersAutomationScheduler:
+    handler: automations/triggers/dynamo/scheduler/worker.default
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - AutomationSchedulerTable
+              - StreamArn
+          batchSize: 1
+          parallelizationFactor: 5
+    environment:
+      AUTOMATION_SCHEDULER_TABLE:
+        Ref: AutomationSchedulerTable
+      COURIER_EVENT_BUS_NAME:
+        Ref: CourierEventBus
+      COURIER_EVENT_BUS_ARN:
+        Fn::GetAtt: [CourierEventBus, Arn]
+
+  AutomationTrackingRequestListener:
+    handler: automations/triggers/kinesis/segment-requests.worker
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - TrackingRequestKinesisStream
+              - Arn
+          batchSize: 1
+          parallelizationFactor: 5
+          type: kinesis
+    environment:
+      AUTOMATION_RUN_CONTEXT_STORE:
+        Ref: AutomationRunContextStore
+      AUTOMATION_RUNS_TABLE:
+        Ref: AutomationRunsTable
+      AUTOMATION_STORE:
+        Ref: AutomationStore
+      AUTOMATION_TEMPLATE_STORE:
+        Ref: AutomationTemplateStore
+      AUTOMATION_TEMPLATES_TABLE:
+        Ref: AutomationTemplatesTable
+      TRACKING_REQUEST_STORE:
+        Ref: TrackingRequestStore
+
+  AutomationRunsPutIntoEs:
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - AutomationRunsStream
+              - Arn
+          batchSize: 100 # default
+          batchWindow: 2
+          bisectBatchOnFunctionError: true
+          consumer: true
+          functionResponseType: ReportBatchItemFailures
+          # maximumRetryAttempts: -1 # default (infinite)
+          parallelizationFactor: 5
+          # startingPosition: TRIM_HORIZON # default
+          type: kinesis
+    handler: automations/triggers/kinesis/automation-runs/put-into-es.handler
+    timeout: 120
+
+  AudiencesAutomationEventTrigger:
+    environment:
+      AUTOMATION_RUN_CONTEXT_STORE:
+        Ref: AutomationRunContextStore
+      AUTOMATION_RUNS_TABLE:
+        Ref: AutomationRunsTable
+      AUTOMATION_STORE:
+        Ref: AutomationStore
+      AUTOMATION_TEMPLATE_STORE:
+        Ref: AutomationTemplateStore
+      AUTOMATION_TEMPLATES_TABLE:
+        Ref: AutomationTemplatesTable
+    events:
+      - eventBridge:
+          eventBus:
+            Ref: CourierEventBus
+          pattern:
+            source:
+              - courier.automation.trigger
+    handler: automations/triggers/event-bridge/audiences-event-trigger.default
+
+  InboundAutomationEventsWorker:
+    events:
+      - eventBridge:
+          eventBus:
+            Ref: CourierEventBus
+          pattern:
+            source:
+              - courier.automation.invoke
+    handler: automations/triggers/event-bridge/automation/inbound.worker
+    environment:
+      AUTOMATION_STORE:
+        Ref: AutomationStore
+      AUTOMATION_RUN_CONTEXT_STORE:
+        Ref: AutomationRunContextStore
+      AUTOMATION_DELAY_TABLE:
+        Ref: AutomationDelayTable
+      AUTOMATION_RUNS_TABLE:
+        Ref: AutomationRunsTable
+      AUTOMATION_TEMPLATE_STORE:
+        Ref: AutomationTemplateStore
+      AUTOMATION_TEMPLATES_TABLE:
+        Ref: AutomationTemplatesTable
+  # end automations
+
+  # Objects
+  MaterializeObjectsTable:
+    environment:
+      MATERIALIZED_OBJECTS_JSON_STORE:
+        Ref: MaterializedObjectsJsonStore
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - ObjectsTable
+              - StreamArn
+          batchSize: 1
+          type: dynamodb
+    handler: objects/triggers/dynamo/materialize-objects-table.handle
+    timeout: 30
+
+  ObjectsPutIntoEs:
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      ELASTIC_SEARCH_RECIPIENTS_INDEX: recipients-2022-01-28
+    events:
+      - eventBridge:
+          eventBus:
+            Ref: CourierEventBus
+          pattern:
+            source:
+              - courier.dynamo.firehose
+    handler: triggers/event-bridge/put-into-es.handle
+
+  # Reprocessors
+  ReprocessRequestListener:
+    events:
+      - s3:
+          bucket:
+            Ref: ReprocessorStore
+          existing: true
+          event: s3:ObjectCreated:Put
+    handler: reprocessors/triggers/s3/reprocess.worker
+    environment:
+      REPROCESSOR_STORE:
+        Ref: ReprocessorStore
+
+  # tracking requests
+  ApiTrack:
+    architecture: arm64
+    handler: tracking-requests/api/handler.default
+    events:
+      - http:
+          path: track
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+    environment:
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+      TRACKING_REQUEST_STORE:
+        Ref: TrackingRequestStore
+
+  TrackingRequestListener:
+    architecture: arm64
+    events:
+      - s3:
+          bucket:
+            Ref: TrackingRequestStore
+          existing: true
+          event: s3:ObjectCreated:Put
+    handler: tracking-requests/triggers/s3/tracking-requests.worker
+    environment:
+      TRACKING_REQUEST_KINESIS_STREAM:
+        Ref: TrackingRequestKinesisStream
+      TRACKING_REQUEST_STORE:
+        Ref: TrackingRequestStore
+  # end tracking requests
+
+  # Webhooks
+
+  TriggerWebhook:
+    environment:
+      WEBHOOK_LOGS_TABLE_NAME:
+        Ref: WebhookLogsTable
+      WEBHOOK_LOGS_TABLE_V2_NAME:
+        Ref: WebhookLogsTableV2
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+    events:
+      - eventBridge:
+          eventBus:
+            Ref: CourierEventBus
+          pattern:
+            source:
+              - courier.dynamo.firehose
+    handler: webhooks/triggers/event-bridge/trigger-webhook.handle
+
+  SendWebhook:
+    environment:
+      WEBHOOK_LOGS_TABLE_NAME:
+        Ref: WebhookLogsTable
+      WEBHOOK_LOGS_TABLE_V2_NAME:
+        Ref: WebhookLogsTableV2
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      SEND_WEBHOOK_QUEUE_NAME:
+        Fn::GetAtt:
+          - SendWebhookQueue
+          - QueueName
+    events:
+      - sqs:
+          arn: !GetAtt SendWebhookQueue.Arn
+          batchSize: 10
+          batchWindow: 0
+    handler: webhooks/triggers/sqs/send-webhook.handle
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - dynamodb:Query
+          - dynamodb:DeleteItem
+          - dynamodb:PutItem
+          - dynamodb:GetItem
+          - dynamodb:UpdateItem
+        Resource: "*"
+      - Effect: "Allow"
+        Action:
+          - sqs:*
+        Resource:
+          - Fn::GetAtt: [SendWebhookQueue, Arn]
+      - Effect: "Allow"
+        Action:
+          - sqs:ListQueues
+        Resource:
+          Fn::Join:
+            - ""
+            - - "arn:aws:sqs:"
+              - Ref: AWS::Region
+              - ":"
+              - Ref: AWS::AccountId
+              - ":*"
+      - Effect: "Allow"
+        Action:
+          - "kms:Encrypt"
+          - "kms:Decrypt"
+          - "kms:DescribeKey"
+          - "kms:GenerateDataKey"
+          - "kms:GenerateDataKeyWithoutPlaintext"
+          - "kms:ReEncrypt*"
+        Resource: "*"
+
+  # end Webhooks
+
+  ClientGraphQL:
+    environment:
+      ACTION_STREAM_BUCKET:
+        Ref: ActionStreamBucket
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      CLICK_THROUGH_TRACKING_TABLE_NAME:
+        Ref: ClickThroughTrackingTable
+      EVENT_TRACKING_RECORDS_TABLE:
+        Ref: EventTrackingRecordsTable
+      PREFERENCE_TEMPLATES_TABLE:
+        Ref: PreferenceTemplatesTable
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      TRACKING_DOMAINS_TABLE_NAME:
+        Ref: TrackingDomains
+    events:
+      - http:
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - X-Courier-Client-Key
+              - X-Courier-User-Id
+              - X-Courier-User-Signature
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Headers
+            allowCredentials: true
+          authorizer:
+            name: ClientAuthorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.X-COURIER-CLIENT-KEY
+            type: REQUEST
+          method: post
+          path: client/q
+      - http:
+          cors: true
+          method: get
+          path: client/q
+    handler: client-routes/graphql/handler.default
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+    memorySize: 1024
+
+  StudioGraphQL:
+    environment:
+      PREBUILT_TEMPLATE_TENANT_ID: ${file(./.dev-config.yml):PREBUILT_TEMPLATE_TENANT_ID}
+      WELCOME_TEMPLATE_ID: ${file(./.dev-config.yml):WELCOME_TEMPLATE_ID}
+      USERVOICE_SSO_KEY: ${env:USERVOICE_SSO_KEY, file(./.dev-config.yml):USERVOICE_SSO_KEY}
+      AUTOMATION_STORE:
+        Ref: AutomationStore
+      AUTOMATION_RUN_CONTEXT_STORE:
+        Ref: AutomationRunContextStore
+      AUTOMATION_DELAY_TABLE:
+        Ref: AutomationDelayTable
+      AUTOMATION_RUNS_TABLE:
+        Ref: AutomationRunsTable
+      AUTOMATION_SCHEDULER_TABLE:
+        Ref: AutomationSchedulerTable
+      AUTOMATION_TEMPLATE_STORE:
+        Ref: AutomationTemplateStore
+      AUTOMATION_TEMPLATES_TABLE:
+        Ref: AutomationTemplatesTable
+      SEGMENT_EVENTS_TABLE:
+        Ref: SegmentEventsTable
+      SEGMENT_EVENT_HISTORY_STORE:
+        Ref: SegmentEventHistoryStore
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      EXPERIMENTS_FIREHOSE_STREAM:
+        Ref: ExperimentsFirehose
+      SESSION_MANAGEMENT_TABLE:
+        Ref: SessionManagementTable
+      TAGS_TABLE_NAME:
+        Ref: TagsTable
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+      PREFERENCE_TEMPLATES_TABLE:
+        Ref: PreferenceTemplatesTable
+      PROPEL_CLIENT_ID: ${env:PROPEL_CLIENT_ID, file(./.dev-config.yml):PROPEL_CLIENT_ID}
+      PROPEL_CLIENT_SECRET: ${env:PROPEL_CLIENT_SECRET, file(./.dev-config.yml):PROPEL_CLIENT_SECRET}
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      SEND_ROUTING_STRATEGY_BUCKET:
+        Ref: SendRoutingStrategyBucket
+      TENANT_VERCEL_ACCESS_TOKENS_TABLE_NAME:
+        Ref: TenantVercelAccessTokensTable
+      TOKEN_STORAGE_TABLE:
+        Ref: TokenStorageTable
+      VERCEL_CLIENT_SECRET: ${env:VERCEL_CLIENT_SECRET, file(./.dev-config.yml):VERCEL_CLIENT_SECRET}
+      API_URL: ${self:custom.apiUrls.${self:custom.stage}}
+    events:
+      - http:
+          authorizer: ${self:custom.cognitoUserPoolAuthorizer}
+          cors: true
+          method: post
+          path: studio/q
+      - http:
+          cors: true
+          method: get
+          path: studio/q
+    handler: studio/graphql/handler.default
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  TenantAddUser:
+    handler: studio/tenants.addUser
+    events:
+      - http:
+          path: studio/tenant
+          method: post
+          cors: true
+          authorizer: ${self:custom.cognitoUserPoolAuthorizer}
+    environment:
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  TenantsCreate:
+    handler: studio/tenants.create
+    events:
+      - http:
+          path: studio/tenants
+          method: post
+          cors: true
+          authorizer: ${self:custom.cognitoUserPoolAuthorizer}
+    environment:
+      DOMAINS_TABLE:
+        Ref: TenantDomainsTable
+      KICKBOX_API_KEY: ${env:KICKBOX_API_KEY, file(./.dev-config.yml):KICKBOX_API_KEY}
+      SESSION_MANAGEMENT_TABLE:
+        Ref: SessionManagementTable
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  TenantsGet:
+    handler: studio/tenants.get
+    events:
+      - http:
+          path: studio/tenant
+          method: get
+          cors: true
+          authorizer: ${self:custom.cognitoUserPoolAuthorizer}
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    environment:
+      SESSION_MANAGEMENT_TABLE:
+        Ref: SessionManagementTable
+
+  TenantsListUsers:
+    handler: studio/tenants.listUsers
+    events:
+      - http:
+          path: studio/tenant/users
+          method: get
+          cors: true
+          authorizer: ${self:custom.cognitoUserPoolAuthorizer}
+    environment:
+      SESSION_MANAGEMENT_TABLE:
+        Ref: SessionManagementTable
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  TenantsList:
+    handler: studio/tenants.list
+    events:
+      - http:
+          path: studio/tenants
+          method: get
+          cors: true
+          authorizer: ${self:custom.cognitoUserPoolAuthorizer}
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    environment:
+      DOMAINS_TABLE:
+        Ref: TenantDomainsTable
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+      SESSION_MANAGEMENT_TABLE:
+        Ref: SessionManagementTable
+
+  TenantsListAltAccounts:
+    handler: studio/tenants.listAltAccounts
+    events:
+      - http:
+          path: studio/tenants/altAccounts
+          method: get
+          cors: true
+          authorizer: ${self:custom.cognitoUserPoolAuthorizer}
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    environment:
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+      SESSION_MANAGEMENT_TABLE:
+        Ref: SessionManagementTable
+
+  LibraryUpload:
+    handler: studio/library.upload
+    environment:
+      S3_LIBRARY_BUCKET:
+        Ref: LibraryBucket
+    events:
+      - http:
+          path: studio/library/upload
+          method: post
+          cors: true
+          authorizer: ${self:custom.cognitoUserPoolAuthorizer}
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  StudioV2RenderPreview:
+    handler: studio/notifications/v2-render-preview.handler
+    events:
+      - http:
+          path: /studio/notifications/preview
+          method: post
+          cors: true
+          authorizer: ${self:custom.cognitoUserPoolAuthorizer}
+          headers:
+            - Content-Type
+            - X-Amz-Date
+            - Authorization
+            - X-Api-Key
+            - X-Amz-Security-Token
+            - X-Amz-User-Agent
+            - X-RateLimit-Limit
+            - X-RateLimit-Remaining
+      - http:
+          path: /studio/test/notifications/preview
+          method: post
+          cors: true
+          authorizer: ${self:custom.cognitoUserPoolAuthorizer}
+          headers:
+            - Content-Type
+            - X-Amz-Date
+            - Authorization
+            - X-Api-Key
+            - X-Amz-Security-Token
+            - X-Amz-User-Agent
+            - X-RateLimit-Limit
+            - X-RateLimit-Remaining
+    environment:
+      MATERIALIZED_OBJECTS_JSON_STORE:
+        Ref: MaterializedObjectsJsonStore
+      TRACKING_DOMAINS_TABLE_NAME:
+        Ref: TrackingDomains
+      COURIER_DEV_AUTH_TOKEN: ${file(./.dev-config.yml):COURIER_DEV_AUTH_TOKEN}
+      API_URL: ${self:custom.apiUrls.${self:custom.stage}}
+      USER_ROLES_TABLE_NAME:
+        Ref: UserRolesTable
+      SESSION_MANAGEMENT_TABLE:
+        Ref: SessionManagementTable
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+    memorySize: 1024
+
+  StudioV1RenderPreview:
+    handler: studio/notifications/v1-render-preview.handler
+    events:
+      - http:
+          path: /studio/notifications/{id}/test
+          method: post
+          cors: true
+          authorizer: ${self:custom.cognitoUserPoolAuthorizer}
+          request:
+            parameters:
+              paths:
+                id: true
+          headers:
+            - Content-Type
+            - X-Amz-Date
+            - Authorization
+            - X-Api-Key
+            - X-Amz-Security-Token
+            - X-Amz-User-Agent
+            - X-RateLimit-Limit
+            - X-RateLimit-Remaining
+      - http:
+          path: /studio/test/notifications/{id}/test
+          method: post
+          cors: true
+          authorizer: ${self:custom.cognitoUserPoolAuthorizer}
+          request:
+            parameters:
+              paths:
+                id: true
+          headers:
+            - Content-Type
+            - X-Amz-Date
+            - Authorization
+            - X-Api-Key
+            - X-Amz-Security-Token
+            - X-Amz-User-Agent
+            - X-RateLimit-Limit
+            - X-RateLimit-Remaining
+    environment:
+      TRACKING_DOMAINS_TABLE_NAME:
+        Ref: TrackingDomains
+      COURIER_DEV_AUTH_TOKEN: ${file(./.dev-config.yml):COURIER_DEV_AUTH_TOKEN}
+      API_URL: ${self:custom.apiUrls.${self:custom.stage}}
+      USER_ROLES_TABLE_NAME:
+        Ref: UserRolesTable
+      SESSION_MANAGEMENT_TABLE:
+        Ref: SessionManagementTable
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+    memorySize: 1024
+
+  Studio:
+    handler: studio/index.handler
+    events:
+      - http:
+          path: /studio/{any+}
+          method: ANY
+          cors: true
+          authorizer: ${self:custom.cognitoUserPoolAuthorizer}
+          headers:
+            - Content-Type
+            - X-Amz-Date
+            - Authorization
+            - X-Api-Key
+            - X-Amz-Security-Token
+            - X-Amz-User-Agent
+            - X-RateLimit-Limit
+            - X-RateLimit-Remaining
+    environment:
+      TRACKING_DOMAINS_TABLE_NAME:
+        Ref: TrackingDomains
+      ACTION_STREAM:
+        Ref: ActionStream
+      ACTION_STREAM_BUCKET:
+        Ref: ActionStreamBucket
+      PREBUILT_TEMPLATE_TENANT_ID: ${file(./.dev-config.yml):PREBUILT_TEMPLATE_TENANT_ID}
+      WELCOME_TEMPLATE_ID: ${file(./.dev-config.yml):WELCOME_TEMPLATE_ID}
+      COURIER_DEV_AUTH_TOKEN: ${file(./.dev-config.yml):COURIER_DEV_AUTH_TOKEN}
+      API_URL: ${self:custom.apiUrls.${self:custom.stage}}
+      CRYPTO_PRIVATE_KEY_256: ${env:CRYPTO_PRIVATE_KEY_256, file(./.dev-config.yml):CRYPTO_PRIVATE_KEY_256}
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      EVENT_LOGS_TABLE:
+        Ref: EventLogsTable
+      DOMAINS_TABLE:
+        Ref: TenantDomainsTable
+      GOOGLE_SEND_PROVIDER_CLIENT_ID: ${env:GOOGLE_SEND_PROVIDER_CLIENT_ID, file(./.dev-config.yml):GOOGLE_SEND_PROVIDER_CLIENT_ID, ''}
+      GOOGLE_SEND_PROVIDER_CLIENT_SECRET: ${env:GOOGLE_SEND_PROVIDER_CLIENT_SECRET, file(./.dev-config.yml):GOOGLE_SEND_PROVIDER_CLIENT_SECRET, ''}
+      TAGS_TABLE_NAME:
+        Ref: TagsTable
+      USER_ROLES_TABLE_NAME:
+        Ref: UserRolesTable
+      INTERCOM_IDENTITY_VERIFICATION_SECRET: ${env:INTERCOM_IDENTITY_VERIFICATION_SECRET, file(./.dev-config.yml):INTERCOM_IDENTITY_VERIFICATION_SECRET}
+      SESSION_MANAGEMENT_TABLE:
+        Ref: SessionManagementTable
+      SSO_DOCUMENTATION_SECRET: ${env:SSO_DOCUMENTATION_SECRET, file(./.dev-config.yml):SSO_DOCUMENTATION_SECRET}
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+      PREFERENCE_TEMPLATES_TABLE:
+        Ref: PreferenceTemplatesTable
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      S3_NOTES_BUCKET:
+        Ref: NotesBucket
+      MATERIALIZED_OBJECTS_JSON_STORE:
+        Ref: MaterializedObjectsJsonStore
+      STRIPE_SECRET_KEY: ${env:STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${env:STRIPE_WEBHOOK_SECRET}
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+    memorySize: 1024
+
+  ApiSend:
+    architecture: arm64
+    handler: api/send/index.send
+    memorySize: 1024
+    events:
+      - http:
+          path: send
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+    environment:
+      EVENT_LOGS_TABLE:
+        Ref: EventLogsTable
+      COURIER_EVENT_BUS_NAME:
+        Ref: CourierEventBus
+      OVERFLOW_TENANT_ID: ${self:custom.overflow.tenantId}
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+      MESSAGES_OVERFLOW_TABLE:
+        Ref: MessagesOverflow # may polute global inline policy
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3 # may polute global inline policy
+      PARTITION_SHARD_RANGE: ${self:custom.partitionShardRange}
+      SQS_PREPARE_QUEUE_URL:
+        Ref: SqsPrepare
+      ACTION_STREAM:
+        Ref: ActionStream
+      ACTION_STREAM_BUCKET:
+        Ref: ActionStreamBucket
+      MATERIALIZED_OBJECTS_JSON_STORE:
+        Ref: MaterializedObjectsJsonStore
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.apiSend.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+    tags:
+      tags.courier.com/service: pipeline
+
+  ApiAuth:
+    handler: api/auth/index.handler
+    events:
+      - http:
+          path: auth/issue-token
+          method: POST
+          authorizer: ${self:custom.authorizers.jwt}
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  ApiUsers:
+    handler: api/users/index.handler
+    events:
+      - http:
+          path: users/{id}/tokens/{token}
+          method: PUT
+          authorizer: ${self:custom.authorizers.jwt}
+          request:
+            parameters:
+              paths:
+                id: true
+                token: true
+      - http:
+          path: users/{id}/tokens/{token}
+          method: GET
+          authorizer: ${self:custom.authorizers.jwt}
+          request:
+            parameters:
+              paths:
+                id: true
+                token: true
+      - http:
+          path: users/{id}/tokens/{token}
+          method: PATCH
+          authorizer: ${self:custom.authorizers.jwt}
+          request:
+            parameters:
+              paths:
+                id: true
+                token: true
+      - http:
+          path: users/{id}/tokens/{token}
+          method: DELETE
+          authorizer: ${self:custom.authorizers.jwt}
+          request:
+            parameters:
+              paths:
+                id: true
+                token: true
+      - http:
+          path: users/{id}/tokens
+          method: PUT
+          authorizer: ${self:custom.authorizers.jwt}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: users/{id}/tokens
+          method: GET
+          authorizer: ${self:custom.authorizers.jwt}
+          request:
+            parameters:
+              paths:
+                id: true
+    environment:
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+      TOKEN_STORAGE_TABLE:
+        Ref: TokenStorageTable
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  MessagesOverflowWorker:
+    handler: overflow/triggers/cloud-watch/worker.default
+    memorySize: 1024
+    environment:
+      MESSAGES_OVERFLOW_TABLE:
+        Ref: MessagesOverflow
+      SQS_PREPARE_QUEUE_URL:
+        Ref: SqsPrepare
+      PARTITION_SHARD_RANGE: ${self:custom.partitionShardRange}
+      OVERFLOW_TENANT_ID: ${self:custom.overflow.tenantId}
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - dynamodb:Query
+          - dynamodb:DeleteItem
+          - dynamodb:PutItem
+        Resource:
+          - Fn::GetAtt: [MessagesOverflow, Arn]
+      - Effect: "Allow"
+        Action:
+          - sqs:SendMessage
+          - sqs:GetQueueUrl
+        Resource:
+          - Fn::GetAtt: [SqsPrepare, Arn]
+      - Effect: "Allow"
+        Action:
+          - sqs:ListQueues
+        Resource:
+          Fn::Join:
+            - ""
+            - - "arn:aws:sqs:"
+              - Ref: AWS::Region
+              - ":"
+              - Ref: AWS::AccountId
+              - ":*"
+      - Effect: "Allow"
+        Action:
+          - "kms:Encrypt"
+          - "kms:Decrypt"
+          - "kms:DescribeKey"
+          - "kms:GenerateDataKey"
+          - "kms:GenerateDataKeyWithoutPlaintext"
+          - "kms:ReEncrypt*"
+        Resource: "*"
+
+  ApiSendList:
+    environment:
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      SQS_SEND_LIST_OR_PATTERN_QUEUE_NAME:
+        Fn::GetAtt:
+          - SqsSendListOrPattern
+          - QueueName
+    events:
+      - http:
+          path: /send/list
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+    handler: api/lists/send.handle
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  ApiStripeWebhook:
+    handler: api/stripe/webhook.handle
+    environment:
+      COURIER_DEV_AUTH_TOKEN: ${file(./.dev-config.yml):COURIER_DEV_AUTH_TOKEN}
+      API_URL: ${self:custom.apiUrls.${self:custom.stage}}
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      STRIPE_SECRET_KEY: ${env:STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${env:STRIPE_WEBHOOK_SECRET}
+      CUSTOMER_TENANT_LOOKUP_TABLE_NAME:
+        Ref: CustomerTenantLookupTable
+    events:
+      - http:
+          path: stripe/webhook
+          method: post
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  ApiGetMessage:
+    architecture: arm64
+    handler: api/messages/get.handler
+    environment:
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+    events:
+      - http:
+          path: messages/{id}
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  ApiGetMessageHistory:
+    handler: api/messages/history.handler
+    environment:
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+    events:
+      - http:
+          path: messages/{id}/history
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  ApiGetMessageList:
+    environment:
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+    handler: api/messages/list.handler
+    events:
+      - http:
+          path: messages
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  ApiGetMessageOutput:
+    handler: api/messages/output/index.handler
+    events:
+      - http:
+          path: messages/{id}/output/{outputId}/{content}
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: messages/{id}/output
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  ApiArchiveRequestMessages:
+    architecture: arm64
+    handler: api/messages/request/archive.handler
+    environment:
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+    events:
+      - http:
+          path: requests/{requestId}/archive
+          method: put
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                requestId: true
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  WorkerArchiveMessages:
+    environment:
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+    events:
+      - eventBridge:
+          pattern:
+            detail-type:
+              - courier.message.archive.event
+    handler: messages/triggers/event-bridge/archive-messages/handler.default
+    tags:
+      tags.courier.com/service: pipeline
+
+  # Bulk Processing
+  ApiBulk:
+    handler: bulk-processing/api/handler.default
+    environment:
+      BULK_JOB_CONFIGURATION_STORE:
+        Ref: BulkJobConfigurationStore
+      BULK_JOBS_TABLE_NAME:
+        Ref: BulkJobsTable
+      BULK_JOB_USERS_TABLE_NAME:
+        Ref: BulkJobUsersTable
+      SQS_BULK_JOB_QUEUE_URL:
+        Ref: SqsBulkJob
+      SQS_BULK_JOB_PAGE_QUEUE_URL:
+        Ref: SqsBulkJobPage
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+      MATERIALIZED_OBJECTS_JSON_STORE:
+        Ref: MaterializedObjectsJsonStore
+    events:
+      - http:
+          path: bulk
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: bulk/{jobId}
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: bulk/{jobId}
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                jobId: true
+      - http:
+          path: bulk/{jobId}/run
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: bulk/{jobId}/users
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                jobId: true
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  BulkJobWorker:
+    handler: bulk-processing/workers/job/index.default
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - SqsBulkJob
+              - Arn
+          batchSize: 1
+    environment:
+      BULK_JOBS_TABLE_NAME:
+        Ref: BulkJobsTable
+      BULK_JOB_WORKER_SEQUENCE_TABLE:
+        Ref: BulkJobWorkerSequenceTable
+      SQS_BULK_JOB_PAGE_QUEUE_URL:
+        Ref: SqsBulkJobPage
+
+  BulkJobPageWorker:
+    handler: bulk-processing/workers/job-page/index.default
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - SqsBulkJobPage
+              - Arn
+          batchSize: 1
+    environment:
+      BULK_JOBS_TABLE_NAME:
+        Ref: BulkJobsTable
+      BULK_JOB_USERS_TABLE_NAME:
+        Ref: BulkJobUsersTable
+      BULK_JOB_PAGE_WORKER_SEQUENCE_TABLE:
+        Ref: BulkJobPageWorkerSequenceTable
+      BULK_JOB_CONFIGURATION_STORE:
+        Ref: BulkJobConfigurationStore
+      SQS_BULK_JOB_PAGE_QUEUE_URL:
+        Ref: SqsBulkJobPage
+      ACTION_STREAM:
+        Ref: ActionStream
+      ACTION_STREAM_BUCKET:
+        Ref: ActionStreamBucket
+      S3_MESSAGES_BUCKET:
+        Ref: MessagesBucket
+      SQS_PREPARE_QUEUE_URL:
+        Ref: SqsPrepare
+      EVENT_LOGS_TABLE:
+        Ref: EventLogsTable
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      MATERIALIZED_OBJECTS_JSON_STORE:
+        Ref: MaterializedObjectsJsonStore
+
+  ApiBrands:
+    handler: api/brands/handler.default
+    environment:
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+    events:
+      - http:
+          path: brands/{id}
+          method: get
+          authorizer: ${self:custom.authorizers.jwt}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: brands/{id}
+          method: delete
+          authorizer: ${self:custom.authorizers.jwt}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: brands/{id}
+          method: put
+          authorizer: ${self:custom.authorizers.jwt}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: brands
+          method: post
+          authorizer: ${self:custom.authorizers.jwt}
+      - http:
+          path: brands
+          method: get
+          authorizer: ${self:custom.authorizers.jwt}
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  ApiNotifications:
+    handler: api/notifications/handler.default
+    environment:
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+    events:
+      - http:
+          path: notifications
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: notifications/{id}/content
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: notifications/{id}/draft/content
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: notifications/{id}/locales
+          method: put
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: notifications/{id}/draft/locales
+          method: put
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: notifications/{id}/locales/{localeId}
+          method: put
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+                localeId: true
+      - http:
+          path: notifications/{id}/draft/locales/{localeId}
+          method: put
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+                localeId: true
+      - http:
+          path: notifications/{id}/blocks/{blockId}/locales
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+                blockId: true
+      - http:
+          path: notifications/{id}/draft/blocks/{blockId}/locales
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+                blockId: true
+      - http:
+          path: notifications/{id}/channels/{channelId}/locales
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+                channelId: true
+      - http:
+          path: notifications/{id}/draft/channels/{channelId}/locales
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+                channelId: true
+      - http:
+          path: notifications/{id}/{submissionId}/checks
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+                submissionId: true
+      - http:
+          path: notifications/{id}/{submissionId}/checks
+          method: put
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+                submissionId: true
+      - http:
+          path: notifications/{id}/{submissionId}/checks
+          method: delete
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+                submissionId: true
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  ApiEvents:
+    handler: api/events/handler.default
+    events:
+      - http:
+          path: events/{id}
+          method: ANY
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: events
+          method: ANY
+          authorizer: ${self:custom.authorizers.api}
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  ApiLists:
+    handler: api/lists/handler.default
+    environment:
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+    events:
+      - http:
+          path: lists/{id}/subscriptions/{recipientId}
+          method: delete
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: lists/{id}/subscriptions/{recipientId}
+          method: put
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: lists/{id}/subscriptions/{recipientId}
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: lists/{id}/subscriptions
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: lists/{id}/subscriptions
+          method: put
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: lists/{id}/subscriptions
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: lists/{id}/restore
+          method: put
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: lists/{id}
+          method: delete
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: lists/{id}
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: lists/{id}
+          method: put
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: lists
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: lists
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  ApiPreferences:
+    handler: preferences/api/index.handler
+    environment:
+      PREFERENCE_TEMPLATES_TABLE:
+        Ref: PreferenceTemplatesTable
+    events:
+      - http:
+          path: preferences
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: preferences/templates
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: preferences/templates/{id}
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: preferences/{id}
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: preferences/{id}
+          method: put
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: preferences/{id}
+          method: patch
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  ApiSendPipeline:
+    environment:
+      TRACKING_DOMAINS_TABLE_NAME:
+        Ref: TrackingDomains
+    events:
+      - http:
+          path: send/{id}/routing
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+    handler: send-pipeline/api/handler.default
+
+  ApiProfiles:
+    handler: api/profiles/index.handler
+    environment:
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+    events:
+      - http:
+          path: profiles/{id}
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: profiles/{id}
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: profiles/{id}
+          method: put
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: profiles/{id}
+          method: patch
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: profiles/{id}
+          method: delete
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: profiles/{id}/lists
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: profiles/{id}/lists
+          method: delete
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: profiles/{id}/lists
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  ApiDebug:
+    handler: api/debug.default
+    events:
+      - http:
+          path: debug
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+
+  Public:
+    handler: public/index.handler
+    events:
+      - http:
+          path: /public/{any+}
+          method: ANY
+          cors: true
+          headers:
+            - Content-Type
+            - X-Amz-Date
+            - Authorization
+            - X-Api-Key
+            - X-Amz-Security-Token
+            - X-Amz-User-Agent
+            - X-RateLimit-Limit
+            - X-RateLimit-Remaining
+    environment:
+      API_URL: ${self:custom.apiUrls.${self:custom.stage}}
+      SESSION_MANAGEMENT_TABLE:
+        Ref: SessionManagementTable
+      SSO_COMMUNITY_SECRET: ${env:SSO_COMMUNITY_SECRET, file(./.dev-config.yml):SSO_COMMUNITY_SECRET}
+      USER_POOL_CLIENT_ID:
+        Ref: CognitoUserPoolClient
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+      DIRECTORY_SYNC_TABLE_NAME:
+        Ref: DirectorySyncTable
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  WorkOSDirectoryServicesListener:
+    handler: lib/workos/lambda.handler
+    events:
+      - http:
+          path: /workos/{any+}
+          method: ANY
+          cors: true
+    environment:
+      API_URL: ${self:custom.apiUrls.${self:custom.stage}}
+      SESSION_MANAGEMENT_TABLE:
+        Ref: SessionManagementTable
+      SSO_COMMUNITY_SECRET: ${env:SSO_COMMUNITY_SECRET, file(./.dev-config.yml):SSO_COMMUNITY_SECRET}
+      WORKOS_WEBHOOK_SECRET: ${env:WORKOS_WEBHOOK_SECRET, file(./.dev-config.yml):WORKOS_WEBHOOK_SECRET}
+      USER_POOL_CLIENT_ID:
+        Ref: CognitoUserPoolClient
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+      DIRECTORY_SYNC_TABLE_NAME:
+        Ref: DirectorySyncTable
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  WorkersPrepare:
+    handler: workers/prepare.default
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - SqsPrepare
+              - Arn
+          batchSize: 10
+    environment:
+      EVENT_LOGS_TABLE:
+        Ref: EventLogsTable
+      PREFERENCE_TEMPLATES_TABLE:
+        Ref: PreferenceTemplatesTable
+      PREPARE_SEQUENCE_TABLE:
+        Ref: PrepareSequenceTable
+      COURIER_EVENT_BUS_NAME:
+        Ref: CourierEventBus
+      MATERIALIZED_OBJECTS_JSON_STORE:
+        Ref: MaterializedObjectsJsonStore
+      REPROCESSOR_STORE:
+        Ref: ReprocessorStore
+      SQS_MESSAGES_PREPARE_QUEUE_NAME: ${self:custom.prefix}-messages-prepare
+      SQS_MESSAGES_ROUTE_QUEUE_NAME: ${self:custom.prefix}-messages-route
+      SQS_PREPARE_QUEUE_URL:
+        Ref: SqsPrepare
+      SQS_ROUTE_QUEUE_URL:
+        Ref: SqsRoute
+    # Adding 2 seconds delay to ensure we can capture the exception and send it to sentry
+    timeout: 32
+
+  WorkersRoute:
+    handler: workers/route/index.default
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - SqsRoute
+              - Arn
+          batchSize: 10
+    environment:
+      API_URL: ${self:custom.apiUrls.${self:custom.stage}}
+      CLICK_THROUGH_TRACKING_TABLE_NAME:
+        Ref: ClickThroughTrackingTable
+      EVENT_TRACKING_RECORDS_TABLE:
+        Ref: EventTrackingRecordsTable
+      EVENT_LOGS_TABLE:
+        Ref: EventLogsTable
+      ROUTE_SEQUENCE_TABLE:
+        Ref: RouteSequenceTable
+      GOOGLE_SEND_PROVIDER_CLIENT_ID: ${env:GOOGLE_SEND_PROVIDER_CLIENT_ID, file(./.dev-config.yml):GOOGLE_SEND_PROVIDER_CLIENT_ID, ''}
+      GOOGLE_SEND_PROVIDER_CLIENT_SECRET: ${env:GOOGLE_SEND_PROVIDER_CLIENT_SECRET, file(./.dev-config.yml):GOOGLE_SEND_PROVIDER_CLIENT_SECRET, ''}
+      GOOGLE_SEND_REDIRECT_URL: ${env:GOOGLE_SEND_REDIRECT_URL, file(./.dev-config.yml):GOOGLE_SEND_REDIRECT_URL, ''}
+      IN_APP_API_URL: ${env:IN_APP_API_URL, file(./.dev-config.yml):IN_APP_API_URL}
+      COURIER_EVENT_BUS_NAME:
+        Ref: CourierEventBus
+      SQS_ROUTE_QUEUE_URL:
+        Ref: SqsRoute
+      REPROCESSOR_STORE:
+        Ref: ReprocessorStore
+      TRACKING_DOMAINS_TABLE_NAME:
+        Ref: TrackingDomains
+      TOKEN_STORAGE_TABLE:
+        Ref: TokenStorageTable
+    memorySize: 1024
+    # Adding 2 seconds delay to ensure we can capture the exception and send it to sentry
+    timeout: 32
+
+  WorkersSegmentEvents:
+    handler: workers/segment-events/index.handle
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - SqsSegmentEvents
+              - Arn
+          batchSize: 1
+
+  BinDataFix:
+    # requires { filename: "data-fix-filename" } to be passed in
+    environment:
+      ACTION_STREAM_BUCKET:
+        Ref: ActionStreamBucket
+      SEND_DATA_BUCKET:
+        Ref: SendDataBucket
+      SEND_DATA_TABLE:
+        Ref: SendDataTable
+      DOMAINS_TABLE:
+        Ref: TenantDomainsTable
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+      DIRECTORY_SYNC_TABLE_NAME:
+        Ref: DirectorySyncTable
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      ELASTIC_SEARCH_RECIPIENTS_INDEX: recipients-2022-01-28
+      MATERIALIZED_OBJECTS_JSON_STORE:
+        Ref: MaterializedObjectsJsonStore
+      SQS_PREPARE_QUEUE_URL:
+        Ref: SqsPrepare
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      ACTION_STREAM:
+        Ref: ActionStream
+      KICKBOX_API_KEY: ${env:KICKBOX_API_KEY, file(./.dev-config.yml):KICKBOX_API_KEY}
+      PREFERENCE_TEMPLATES_TABLE:
+        Ref: PreferenceTemplatesTable
+    handler: bin/data-fixes/handler.default
+    memorySize: 2048
+    timeout: 300
+
+  BinAddMappingToElasticSearchIndex:
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+    handler: bin/invokable/elasticsearch/add-mapping-to-index.handle
+    timeout: 300
+  BinCreateCttTestSubDomain:
+    handler: bin/invokable/create-ctt-test-subdomain.handle
+    enabled: '"${self:custom.clickThroughTracking.domainName}" != ""'
+    environment:
+      CLICK_THROUGH_TRACKING_ALIAS_TARGET_DNS_NAME: ${self:custom.clickThroughTracking.aliasTargetDnsName}
+      CLICK_THROUGH_TRACKING_ALIAS_TARGET_HOSTED_ZONE_ID: ${self:custom.clickThroughTracking.aliasTargetHostedZoneId}
+      CLICK_THROUGH_TRACKING_DOMAIN_NAME: ${self:custom.clickThroughTracking.domainName}
+      CLICK_THROUGH_TRACKING_HOSTED_ZONE: ${self:custom.clickThroughTracking.hostedZone}
+    timeout: 300
+  BinInvokeForTenants:
+    handler: bin/invokable/invoke-for-tenants.handle
+    timeout: 300
+  BinUpdateTenantMetrics:
+    handler: bin/invokable/update-tenant-metrics/handler.default
+    timeout: 300
+  BinFeatureFlags:
+    handler: bin/invokable/feature-flag-from-send-handler.handle
+    environment:
+      FEATURE_TOGGLE_TABLE:
+        Ref: FeatureToggleTable
+
+  ApiAuthorizer:
+    architecture: arm64
+    handler: triggers/authorizers/api.api
+    environment:
+      FEATURE_TOGGLE_TABLE:
+        Ref: FeatureToggleTable
+    memorySize: 1024
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.apiAuthorizer.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  ClientAuthorizer:
+    handler: triggers/authorizers/client.api
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  JwtAuthorizer:
+    handler: triggers/authorizers/jwt.api
+    environment:
+      FEATURE_TOGGLE_TABLE:
+        Ref: FeatureToggleTable
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  DeliveryStatusDynamoDbStream:
+    handler: triggers/dynamodb/retry-message.handle
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - DeliveryStatusTable
+              - StreamArn
+          batchSize: 1
+          parallelizationFactor: 5
+
+  DeliveryStatusDynamoDbStreamV2:
+    handler: triggers/dynamodb/retry-message-v2.handle
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - DeliveryStatusTableV2
+              - StreamArn
+          batchSize: 1
+          parallelizationFactor: 5
+
+  DynamoTablePutIntoEventBridge:
+    environment:
+      COURIER_EVENT_BUS_NAME:
+        Ref: CourierEventBus
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - DynamoTableKinesisStream
+              - Arn
+          batchSize: 10
+          bisectBatchOnFunctionError: true
+          consumer: true
+          type: kinesis
+    handler: triggers/kinesis/dynamo-table-stream/put-into-event-bridge.handle
+
+  MessagesV3EmitWebhook:
+    architecture: arm64
+    environment:
+      COURIER_EVENT_BUS_NAME:
+        Ref: CourierEventBus
+      MESSAGE_SEQUENCE_TABLE:
+        Ref: MessageSequenceTable
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - MessagesV3KinesisStream
+              - Arn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          type: kinesis
+          parallelizationFactor: 5
+    handler: triggers/kinesis/dynamo-messages-v3-table-stream/emit-webhook.default
+
+  MessagesV3UpdateTenantUsageMetrics:
+    environment:
+      MESSAGE_SEQUENCE_TABLE:
+        Ref: MessageSequenceTable
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - MessagesV3KinesisStream
+              - Arn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          type: kinesis
+          parallelizationFactor: 5
+    handler: triggers/kinesis/dynamo-messages-v3-table-stream/update-tenant-usage-metrics.default
+
+  TenantGracePeriodProcessor:
+    environment:
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+      API_URL: ${self:custom.apiUrls.${self:custom.stage}}
+      TenantSequenceTable:
+        Ref: TenantSequenceTable
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - TenantsTableKinesisStream
+              - Arn
+          batchSize: 100
+          batchWindow: 2
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          type: kinesis
+    handler: triggers/kinesis/tenants/grace-period.default
+
+  WorkspaceDefaultPreferencesSetup:
+    environment:
+      PREFERENCE_TEMPLATES_TABLE:
+        Ref: PreferenceTemplatesTable
+      TenantSequenceTable:
+        Ref: TenantSequenceTable
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - TenantsTableKinesisStream
+              - Arn
+          batchSize: 10
+          batchWindow: 2
+          bisectBatchOnFunctionError: true
+          filterPatterns:
+            # Only trigger for new tenants
+            - data:
+                eventName: [INSERT]
+          functionResponseType: ReportBatchItemFailures
+          type: kinesis
+    handler: triggers/kinesis/tenants/default-preference-sections.default
+
+  EventLogsDailyMetrics:
+    architecture: arm64
+    environment:
+      EVENT_LOG_SEQUENCE_TABLE:
+        Ref: EventLogSequenceTable
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - EventLogsKinesisStream
+              - Arn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          filterPatterns:
+            # only trigger for supported events
+            - data:
+                type:
+                  - event:click
+                  - event:opened
+                  - provider:delivered
+                  - provider:error
+                  - provider:sent
+          functionResponseType: ReportBatchItemFailures
+          type: kinesis
+          parallelizationFactor: 5
+    handler: triggers/kinesis/event-logs/daily-metrics.default
+    memorySize: 2048
+    timeout: 300
+
+  EventLogsDynamoDbStream:
+    architecture: arm64
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      EVENT_LOG_SEQUENCE_TABLE:
+        Ref: EventLogSequenceTable
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - EventLogsTable
+              - StreamArn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          type: dynamodb
+          parallelizationFactor: 10
+    handler: triggers/dynamodb/event-logs.default
+    memorySize: 2048
+    timeout: 300
+
+  EventLogsUpdateMessageStatus:
+    architecture: arm64
+    handler: triggers/kinesis/event-logs/message-status/handler.default
+    environment:
+      EVENT_LOG_SEQUENCE_TABLE:
+        Ref: EventLogSequenceTable
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - EventLogsKinesisStream
+              - Arn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          parallelizationFactor: 5
+          type: kinesis
+    memorySize: 2048
+    timeout: 300
+
+  EventLogsStartCheckDeliveryStatus:
+    architecture: arm64
+    environment:
+      EVENT_LOG_SEQUENCE_TABLE:
+        Ref: EventLogSequenceTable
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - EventLogsKinesisStream
+              - Arn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          filterPatterns:
+            # only trigger for provider:sent events
+            - data:
+                type:
+                  - provider:sent
+          functionResponseType: ReportBatchItemFailures
+          type: kinesis
+          parallelizationFactor: 5
+    handler: triggers/kinesis/event-logs/start-delivery-status-check.default
+    memorySize: 2048
+    timeout: 300
+
+  EventLogsFirehosePump:
+    architecture: arm64
+    handler: triggers/kinesis/event-logs/data-retention/event-logs-firehose-pump.default
+    environment:
+      EVENT_LOGS_FIREHOSE_STREAM:
+        Ref: EventLogsFirehose
+      S3_EVENT_LOGS_BUCKET:
+        Ref: EventLogsBucket
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - EventLogsKinesisStream
+              - Arn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          type: kinesis
+          parallelizationFactor: 5
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - firehose:PutRecord
+          - firehose:PutRecordBatch
+        Resource:
+          - Fn::GetAtt: [EventLogsFirehose, Arn]
+      - Effect: "Allow"
+        Action:
+          - kms:Decrypt
+        Resource:
+          - Fn::GetAtt: [AutoRotatedKmsKey, Arn]
+      - Effect: "Allow"
+        Action:
+          - kinesis:GetRecords
+          - kinesis:DescribeStream
+        Resource:
+          - Fn::GetAtt: [EventLogsKinesisStream, Arn]
+      - Effect: "Allow"
+        Action:
+          - s3:GetObject
+          - s3:GetObjectVersion
+        Resource:
+          - !Join
+            - ""
+            - - "arn:aws:s3:::"
+              - !Ref EventLogsBucket
+              - /*
+    memorySize: 1024
+    timeout: 30
+
+  CognitoTriggers:
+    handler: triggers/cognito/index.handle
+    environment:
+      API_URL: ${self:custom.apiUrls.${self:custom.stage}}
+    events:
+      - cognitoUserPool:
+          pool: CognitoUserPool
+          trigger: PostConfirmation
+      - cognitoUserPool:
+          pool: CognitoUserPool
+          trigger: PreSignUp
+      - cognitoUserPool:
+          pool: CognitoUserPool
+          trigger: DefineAuthChallenge
+      - cognitoUserPool:
+          pool: CognitoUserPool
+          trigger: CreateAuthChallenge
+      - cognitoUserPool:
+          pool: CognitoUserPool
+          trigger: VerifyAuthChallengeResponse
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  MessagesDailyMetrics:
+    handler: triggers/dynamodb/messages-v2/daily-metrics.default
+    environment:
+      MESSAGE_SEQUENCE_TABLE:
+        Ref: MessageSequenceTable
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - MessagesTableV2
+              - StreamArn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          parallelizationFactor: 5
+    memorySize: 2048
+    timeout: 300
+
+  MessagesV3DailyMetrics:
+    handler: triggers/dynamodb/messages-v3/daily-metrics.default
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:ConditionCheckItem
+          - dynamodb:GetItem
+          - dynamodb:GetRecords
+          - dynamodb:PutItem
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:UpdateItem
+        Resource: "*"
+    environment:
+      MESSAGE_SEQUENCE_TABLE:
+        Ref: MessageSequenceTable
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - MessagesTableV3
+              - StreamArn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          parallelizationFactor: 5
+    memorySize: 2048
+    timeout: 300
+
+  MessagesToElasticSearchStream:
+    handler: workers/dynamo-elasticsearch-stream.default
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - MessagesTableV2
+              - StreamArn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          parallelizationFactor: 10
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      ELASTIC_SEARCH_INDEX: messages
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+    memorySize: 2048
+    timeout: 300
+
+  MessagesV3ToElasticSearchStream:
+    architecture: arm64
+    handler: triggers/dynamodb/messages-v3/elasticsearch.default
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem
+          - dynamodb:GetRecords
+          - dynamodb:Query
+          - dynamodb:Scan
+        Resource: "*"
+      - Effect: "Allow"
+        Action: "es:*"
+        Resource:
+          Fn::Join:
+            - ""
+            - - !GetAtt [ElasticSearch, DomainArn]
+              - "/*"
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - MessagesTableV3
+              - StreamArn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          parallelizationFactor: 10
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      ELASTIC_SEARCH_INDEX: messages
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+    memorySize: 2048
+    timeout: 300
+
+  SetElasticSearchAutomationRunsIndex:
+    handler: bin/fns/set-elasticsearch-automation-runs-index.handle
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      ELASTIC_SEARCH_AUTOMATION_RUNS_SHARDS: ${self:custom.automationRuns.elasticsearch.${self:custom.stage}.shards}
+
+  SetElasticSearchRecipientsIndex:
+    handler: bin/fns/set-elasticsearch-recipients-index.handle
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      ELASTIC_SEARCH_RECIPIENTS_SHARDS: ${self:custom.recipients.elasticsearch.${self:custom.stage}.shards}
+
+  StreamExistingUsersToElasticSearch:
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      ELASTIC_SEARCH_RECIPIENTS_INDEX: recipients-2022-01-28
+    handler: bin/fns/stream-existing-users-to-elasticsearch.handle
+    timeout: 300
+
+  SetElasticSearchMessagesIndex:
+    handler: bin/fns/set-elasticsearch-messages-index.handle
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      ELASTIC_SEARCH_MESSAGES_SHARDS: ${self:custom.elasticsearch.messages.${self:custom.stage}.shards}
+
+  StreamExistingMessagesToElasticSearch:
+    handler: bin/fns/stream-existing-messages-to-elasticsearch.handle
+    environment:
+      MESSAGES_STREAM_HANDLER: !Ref MessagesToElasticSearchStreamLambdaFunction
+
+  StreamExistingMessagesV3ToElasticSearch:
+    handler: bin/fns/stream-existing-messages-v3-to-elasticsearch.handle
+    environment:
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      MESSAGES_V3_ELASTIC_SEARCH_INDEX: messages
+
+  TenantsDynamoDbStream:
+    handler: triggers/dynamodb/tenants.default
+    enabled: '"${self:custom.clickThroughTracking.domainName}" != ""'
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - TenantsTable
+              - StreamArn
+          batchSize: 100
+          batchWindow: 2
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          type: dynamodb
+    environment:
+      TENANT_SEQUENCE_TABLE:
+        Ref: TenantSequenceTable
+      CLICK_THROUGH_TRACKING_ALIAS_TARGET_DNS_NAME: ${self:custom.clickThroughTracking.aliasTargetDnsName}
+      CLICK_THROUGH_TRACKING_ALIAS_TARGET_HOSTED_ZONE_ID: ${self:custom.clickThroughTracking.aliasTargetHostedZoneId}
+      CLICK_THROUGH_TRACKING_DOMAIN_NAME: ${self:custom.clickThroughTracking.domainName}
+      CLICK_THROUGH_TRACKING_HOSTED_ZONE: ${self:custom.clickThroughTracking.hostedZone}
+
+  SendListOrPattern:
+    handler: triggers/sqs/send-list-or-pattern/index.handle
+    environment:
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      SQS_SEND_LIST_OR_PATTERN_QUEUE_NAME:
+        Fn::GetAtt:
+          - SqsSendListOrPattern
+          - QueueName
+      SQS_PREPARE_QUEUE_URL:
+        Ref: SqsPrepare
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - SqsSendListOrPattern
+              - Arn
+          batchSize: 1
+    timeout: 60
+
+  CheckDeliveryStatus:
+    architecture: arm64
+    handler: triggers/sqs/check-delivery-status.handle
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - SqsCheckDeliveryStatus
+              - Arn
+          batchSize: 1
+    environment:
+      EVENT_LOGS_TABLE:
+        Ref: EventLogsTable
+
+  TestNotification:
+    handler: triggers/sqs/test-notification.handle
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - SqsTestNotification
+              - Arn
+          batchSize: 1
+    environment:
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+
+  InboundSegmentPost:
+    architecture: arm64
+    handler: segment/inbound.handle
+    events:
+      - http:
+          path: inbound/segment
+          method: post
+          authorizer: ${self:custom.authorizers.api}
+    environment:
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+      TRACKING_REQUEST_STORE:
+        Ref: TrackingRequestStore
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  SegmentHistoryTracking:
+    architecture: arm64
+    handler: segment/persist-records.handle
+    environment:
+      SEGMENT_EVENT_HISTORY_STORE:
+        Ref: SegmentEventHistoryStore
+      TRACKING_REQUEST_STORE:
+        Ref: TrackingRequestStore
+      SEGMENT_EVENTS_TABLE:
+        Ref: SegmentEventsTable
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - TrackingRequestKinesisStream
+              - Arn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          parallelizationFactor: 5
+          type: kinesis
+
+  WorkersSegmentInboundEvents:
+    architecture: arm64
+    handler: segment/handle-kinesis.handle
+    environment:
+      ACTION_STREAM:
+        Ref: ActionStream
+      ACTION_STREAM_BUCKET:
+        Ref: ActionStreamBucket
+      MATERIALIZED_OBJECTS_JSON_STORE:
+        Ref: MaterializedObjectsJsonStore
+      TRACKING_REQUEST_STORE:
+        Ref: TrackingRequestStore
+      EVENT_LOGS_TABLE:
+        Ref: EventLogsTable
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      SQS_SEND_LIST_OR_PATTERN_QUEUE_NAME:
+        Fn::GetAtt:
+          - SqsSendListOrPattern
+          - QueueName
+      SQS_PREPARE_QUEUE_URL:
+        Ref: SqsPrepare
+      TRACKING_REQUEST_SEQUENCE_TABLE:
+        Ref: TrackingRequestsSequenceTable
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - TrackingRequestKinesisStream
+              - Arn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          parallelizationFactor: 5
+          type: kinesis
+
+  InboundSymV2EventHandler:
+    handler: inbound/sym/v2/handler.handle
+
+  OpenedTracking:
+    handler: client-routes/opened.handle
+    events:
+      - http:
+          method: get
+          path: o/{openedParam}
+          integration: lambda
+          cors: true
+          response:
+            contentHandling: CONVERT_TO_BINARY
+            headers:
+              Content-Type: "'image/gif'"
+              Cache-Control: "'no-cache max-age=0'"
+    environment:
+      CLICK_THROUGH_TRACKING_TABLE_NAME:
+        Ref: ClickThroughTrackingTable
+      EVENT_TRACKING_RECORDS_TABLE:
+        Ref: EventTrackingRecordsTable
+      EVENT_LOGS_TABLE:
+        Ref: EventLogsTable
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      TRACKING_DOMAINS_TABLE_NAME:
+        Ref: TrackingDomains
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  CustomerMessageEvents:
+    handler: client-routes/events.handle
+    events:
+      - http:
+          method: post
+          path: t/{trackingId}
+          cors: true
+      - http:
+          method: post
+          path: e/{trackingId}
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - X-Courier-Client-Key
+              - X-Courier-User-Id
+              - X-Courier-User-Signature
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Headers
+            allowCredentials: true
+          authorizer:
+            name: ClientAuthorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.X-COURIER-CLIENT-KEY
+            type: REQUEST
+    environment:
+      CLICK_THROUGH_TRACKING_TABLE_NAME:
+        Ref: ClickThroughTrackingTable
+      EVENT_TRACKING_RECORDS_TABLE:
+        Ref: EventTrackingRecordsTable
+      EVENT_LOGS_TABLE:
+        Ref: EventLogsTable
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  ClickThroughTrackingRedirect:
+    handler: client-routes/redirect.handle
+    events:
+      - http:
+          method: get
+          path: r/{redirectParam}
+    environment:
+      CLICK_THROUGH_TRACKING_TABLE_NAME:
+        Ref: ClickThroughTrackingTable
+      EVENT_TRACKING_RECORDS_TABLE:
+        Ref: EventTrackingRecordsTable
+      EVENT_LOGS_TABLE:
+        Ref: EventLogsTable
+      TRACKING_DOMAINS_TABLE_NAME:
+        Ref: TrackingDomains
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  ClickThroughTrackingUnsubscribe:
+    handler: client-routes/unsubscribe.handle
+    events:
+      - http:
+          method: get
+          path: u/{unsubscribeParam}
+      - http:
+          method: get
+          path: unsubscribe/{classification}/{unsubscribeParam}/{recipientId}
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+    environment:
+      CLICK_THROUGH_TRACKING_TABLE_NAME:
+        Ref: ClickThroughTrackingTable
+      EVENT_TRACKING_RECORDS_TABLE:
+        Ref: EventTrackingRecordsTable
+      EVENT_LOGS_TABLE:
+        Ref: EventLogsTable
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      TRACKING_DOMAINS_TABLE_NAME:
+        Ref: TrackingDomains
+
+  HostedPreferences:
+    handler: client-routes/hosted-preferences.handle
+    events:
+      - http:
+          method: get
+          path: p/{encodedId}
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+    environment:
+      API_URL: ${self:custom.apiUrls.${self:custom.stage}}
+
+  ClickThroughTrackingSlackWebhook:
+    handler: client-routes/webhooks/slack.handle
+    events:
+      - http:
+          method: post
+          path: webhooks/slack/{configurationId}
+    environment:
+      CLICK_THROUGH_TRACKING_TABLE_NAME:
+        Ref: ClickThroughTrackingTable
+      EVENT_TRACKING_RECORDS_TABLE:
+        Ref: EventTrackingRecordsTable
+      EVENT_LOGS_TABLE:
+        Ref: EventLogsTable
+      TRACKING_DOMAINS_TABLE_NAME:
+        Ref: TrackingDomains
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+
+  CreateStripeUsageRecord:
+    handler: triggers/sqs/create-stripe-usage-record.handle
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - SqsCreateStripeUsageRecord
+              - Arn
+          batchSize: 1
+    environment:
+      STRIPE_SECRET_KEY: ${env:STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${env:STRIPE_WEBHOOK_SECRET}
+
+  ProfilesPutIntoEsRecipients:
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      ELASTIC_SEARCH_RECIPIENTS_INDEX: recipients-2022-01-28
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - ProfilesTable
+              - StreamArn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          parallelizationFactor: 10
+    handler: triggers/dynamodb/profiles/put-into-es-recipients-2022-01-28.default
+    timeout: 120
+
+  SegmentReporting:
+    handler: triggers/schedule/segment.handler
+    events:
+      - schedule:
+          rate: cron(0 9 * * ? *) # run at 2:00 AM PDT/1:00 AM PST
+    timeout: 300
+
+  StripeReportUsage:
+    handler: triggers/schedule/stripe-report-usage.handle
+    events:
+      - schedule:
+          enabled: ${self:custom.stripe.${self:custom.stage}}
+          rate: cron(50 * * * ? *)
+    environment:
+      SQS_UPDATE_REPORTED_USAGE_QUEUE_NAME:
+        Fn::GetAtt:
+          - SqsUpdateReportedUsage
+          - QueueName
+    timeout: 300
+
+  TenantMetricsDynamoDbStream:
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - ObjectsTable
+              - StreamArn
+          batchSize: 1
+    handler: triggers/dynamodb/tenant-metrics/objects-stream.handle
+    timeout: 30
+
+  TenantMetricsSegmentDynamoDbStream:
+    environment:
+      TENANT_SEQUENCE_TABLE:
+        Ref: TenantSequenceTable
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - TenantMetricsTable
+              - StreamArn
+          batchSize: 100
+          batchWindow: 2
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+    handler: triggers/dynamodb/tenant-metrics/tenant-metrics-stream.default
+    timeout: 30
+
+  TenantStripeDynamoDbStream:
+    handler: triggers/dynamodb/tenant-stripe.default
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - TenantsTable
+              - StreamArn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          filterPatterns:
+            # only trigger for supported events
+            - eventName: [INSERT]
+          functionResponseType: ReportBatchItemFailures
+          enabled: ${self:custom.stripe.${self:custom.stage}, self:custom.false}
+          type: dynamodb
+          parallelizationFactor: 10
+    environment:
+      STRIPE_SECRET_KEY: ${env:STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${env:STRIPE_WEBHOOK_SECRET}
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+      TenantSequenceTable:
+        Ref: TenantSequenceTable
+
+  UpdateMessageBilledUnits:
+    architecture: arm64
+    environment:
+      EVENT_LOG_SEQUENCE_TABLE:
+        Ref: EventLogSequenceTable
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - EventLogsKinesisStream
+              - Arn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          filterPatterns:
+            # only trigger for supported events
+            - data:
+                type:
+                  - provider:error
+                  - provider:sent
+                  - undeliverable
+          functionResponseType: ReportBatchItemFailures
+          parallelizationFactor: 5
+          type: kinesis
+    handler: triggers/kinesis/event-logs/update-message-billed-units.default
+    memorySize: 2048
+    timeout: 300
+
+  UpdateMessageChannels:
+    architecture: arm64
+    environment:
+      EVENT_LOG_SEQUENCE_TABLE:
+        Ref: EventLogSequenceTable
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - EventLogsKinesisStream
+              - Arn
+          batchSize: 100
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          filterPatterns:
+            # only trigger for supported events
+            - data:
+                type:
+                  - provider:delivered
+                  - provider:error
+                  - provider:sent
+                  - provider:simulated
+                  - undeliverable
+                  - unroutable
+          functionResponseType: ReportBatchItemFailures
+          parallelizationFactor: 5
+          type: kinesis
+    handler: triggers/kinesis/event-logs/update-message-channels.default
+    memorySize: 2048
+    timeout: 300
+
+  UpdateReportedUsage:
+    handler: triggers/sqs/update-reported-usage.handle
+    environment:
+      CALIXA_ACCOUNT_KEY: ${env:CALIXA_ACCOUNT_KEY}
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      SQS_CREATE_STRIPE_USAGE_RECORD_QUEUE_NAME:
+        Fn::GetAtt:
+          - SqsCreateStripeUsageRecord
+          - QueueName
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - SqsUpdateReportedUsage
+              - Arn
+          batchSize: 1
+
+  VerifyInvitation:
+    handler: studio/public.verifyInvitation
+    events:
+      - http:
+          path: verify/invitation
+          method: get
+          cors: true
+          request:
+            parameters:
+              querystrings:
+                code: true
+                email: true
+    environment:
+      API_URL: ${self:custom.apiUrls.${self:custom.stage}}
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+
+  SyncronizeCognitoUsers:
+    handler: data-pipeline/sync-userpool/handler.handle
+    environment:
+      COGNITO_USERS_TABLE_NAME:
+        Ref: CognitoUsersTable
+      USER_POOL_ID:
+        Ref: CognitoUserPoolCognitoUserPool
+    events:
+      - schedule: rate(4 hours)
+    timeout: 300
+
+  PIIRequest:
+    handler: bin/invokable/pii-request.handler
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      OUTPUT_S3_BUCKET:
+        Ref: PIIRequestsBucket
+
+  ActionWorker:
+    architecture: arm64
+    handler: send/worker/index.default
+    provisionedConcurrency: ${self:custom.sendPipelineV2.lambda.${self:custom.stage}.provisionedConcurrency}
+    environment:
+      SEND_DATA_BUCKET:
+        Ref: SendDataBucket
+      SEND_DATA_TABLE:
+        Ref: SendDataTable
+      MATERIALIZED_OBJECTS_JSON_STORE:
+        Ref: MaterializedObjectsJsonStore
+      ACTION_STREAM_SEQUENCE_TABLE:
+        Ref: ActionStreamSequenceTable
+      ACTION_STREAM_BUCKET:
+        Ref: ActionStreamBucket
+      ACTION_STREAM:
+        Ref: ActionStream
+      AUDIENCE_STREAM:
+        Ref: AudienceStream
+      RETRY_TABLE:
+        Ref: RetryMessageTable
+      RETRY_SEND_QUEUE_URL:
+        Ref: RetrySendQueue
+      PROVIDER_RENDER_STREAM:
+        Ref: ProviderRenderStream
+      SCHEDULE_STREAM:
+        Ref: ScheduleStream
+      SCHEDULE_TABLE:
+        Ref: ScheduleTable
+      SEQUENCE_PROCESSOR_STREAM:
+        Ref: SequenceProcessorStream
+      EVENT_LOGS_TABLE:
+        Ref: EventLogsTable
+      MESSAGES_V3_TABLE:
+        Ref: MessagesTableV3
+      SEND_ROUTING_STRATEGY_BUCKET:
+        Ref: SendRoutingStrategyBucket
+      PREFERENCE_TEMPLATES_TABLE:
+        Ref: PreferenceTemplatesTable
+      IDEMPOTENT_REQUESTS_V2_TABLE_NAME:
+        Ref: IdempotentRequestsTableV2
+      API_URL: ${self:custom.apiUrls.${self:custom.stage}}
+      TRACKING_DOMAINS_TABLE_NAME:
+        Ref: TrackingDomains
+      TOKEN_STORAGE_TABLE:
+        Ref: TokenStorageTable
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - ActionStream
+              - Arn
+          batchSize: 10
+          batchWindow: 0
+          bisectBatchOnFunctionError: true
+          consumer: true
+          functionResponseType: ReportBatchItemFailures
+          type: kinesis
+          parallelizationFactor: ${self:custom.sendPipelineV2.lambda.${self:custom.stage}.parallelizationFactor}
+    tags:
+      tags.courier.com/service: pipeline
+
+  SequenceProcessorListener:
+    handler: send/worker/sequence/index.default
+    provisionedConcurrency: ${self:custom.sendPipelineV2.lambda.${self:custom.stage}.provisionedConcurrency}
+    environment:
+      SEQUENCE_PROCESSOR_STREAM:
+        Ref: SequenceProcessorStream
+      SEND_DATA_BUCKET:
+        Ref: SendDataBucket
+      SEND_DATA_TABLE:
+        Ref: SendDataTable
+      ACTION_STREAM:
+        Ref: ActionStream
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - SequenceProcessorStream
+              - Arn
+          batchSize: 10
+          batchWindow: 0
+          bisectBatchOnFunctionError: true
+          consumer: true
+          functionResponseType: ReportBatchItemFailures
+          type: kinesis
+          parallelizationFactor: ${self:custom.sendPipelineV2.lambda.${self:custom.stage}.parallelizationFactor}
+    tags:
+      tags.courier.com/service: pipeline
+
+  ScheduleStreamWorker:
+    handler: send/worker/schedule/stream-worker.default
+    # provisionedConcurrency: TODO:
+    environment:
+      SCHEDULE_STREAM:
+        Ref: ScheduleStream
+      SCHEDULE_TABLE:
+        Ref: ScheduleTable
+    events:
+      - stream:
+          type: kinesis
+          arn:
+            Fn::GetAtt: [ScheduleStream, Arn]
+          batchSize: 1
+          # parallelizationFactor: TODO:
+    tags:
+      tags.courier.com/service: pipeline
+
+  ScheduleTableWorker:
+    handler: send/worker/schedule/table-worker.default
+    # provisionedConcurrency: TODO:
+    environment:
+      ACTION_STREAM:
+        Ref: ActionStream
+      SEQUENCE_PROCESSOR_STREAM:
+        Ref: SequenceProcessorStream
+      SEND_DATA_BUCKET:
+        Ref: SendDataBucket
+      SEND_DATA_TABLE:
+        Ref: SendDataTable
+      SCHEDULE_TABLE:
+        Ref: ScheduleTable
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt: [ScheduleTable, StreamArn]
+          batchSize: 1
+          # parallelizationFactor: TODO:
+    tags:
+      tags.courier.com/service: pipeline
+
+  ProviderSendStreamWorker:
+    handler: send/worker/provider-send/index.default
+    provisionedConcurrency: ${self:custom.sendPipelineV2.lambda.${self:custom.stage}.provisionedConcurrency}
+    memorySize: 2048
+    environment:
+      PROVIDER_SEND_STREAM_SEQUENCE_TABLE:
+        Ref: ProviderSendStreamSequenceTable
+      RETRY_TABLE:
+        Ref: RetryMessageTable
+      RETRY_SEND_QUEUE_URL:
+        Ref: RetrySendQueue
+      DESTINATION_STREAM_FOR_RETRY:
+        Ref: ProviderSendStream
+      ACTION_STREAM_BUCKET:
+        Ref: ActionStreamBucket
+      PROVIDER_SEND_STREAM:
+        Ref: ProviderSendStream
+      ACTION_STREAM:
+        Ref: ActionStream
+      GOOGLE_SEND_PROVIDER_CLIENT_ID: ${env:GOOGLE_SEND_PROVIDER_CLIENT_ID, file(./.dev-config.yml):GOOGLE_SEND_PROVIDER_CLIENT_ID, ''}
+      GOOGLE_SEND_PROVIDER_CLIENT_SECRET: ${env:GOOGLE_SEND_PROVIDER_CLIENT_SECRET, file(./.dev-config.yml):GOOGLE_SEND_PROVIDER_CLIENT_SECRET, ''}
+      IN_APP_API_URL: ${env:IN_APP_API_URL, file(./.dev-config.yml):IN_APP_API_URL}
+      TOKEN_STORAGE_TABLE:
+        Ref: TokenStorageTable
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - ProviderSendStream
+              - Arn
+          batchSize: 10
+          batchWindow: 0
+          bisectBatchOnFunctionError: true
+          consumer: true
+          functionResponseType: ReportBatchItemFailures
+          type: kinesis
+          parallelizationFactor: ${self:custom.sendPipelineV2.lambda.${self:custom.stage}.parallelizationFactor}
+    tags:
+      tags.courier.com/service: pipeline
+
+  ProviderRenderStreamWorker:
+    handler: send/worker/provider-render/index.default
+    provisionedConcurrency: ${self:custom.sendPipelineV2.lambda.${self:custom.stage}.provisionedConcurrency}
+    environment:
+      CLICK_THROUGH_TRACKING_TABLE_NAME:
+        Ref: ClickThroughTrackingTable
+      EVENT_TRACKING_RECORDS_TABLE:
+        Ref: EventTrackingRecordsTable
+      PROVIDER_RENDER_STREAM_SEQUENCE_TABLE:
+        Ref: ProviderRenderStreamSequenceTable
+      RETRY_TABLE:
+        Ref: RetryMessageTable
+      RETRY_SEND_QUEUE_URL:
+        Ref: RetrySendQueue
+      DESTINATION_STREAM_FOR_RETRY:
+        Ref: ProviderRenderStream
+      ACTION_STREAM:
+        Ref: ActionStream
+      ACTION_STREAM_BUCKET:
+        Ref: ActionStreamBucket
+      PROVIDER_RENDER_STREAM:
+        Ref: ProviderRenderStream
+      PROVIDER_SEND_STREAM:
+        Ref: ProviderSendStream
+      TRACKING_DOMAINS_TABLE_NAME:
+        Ref: TrackingDomains
+      API_URL: ${self:custom.apiUrls.${self:custom.stage}}
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - ProviderRenderStream
+              - Arn
+          batchSize: 10
+          batchWindow: 0
+          bisectBatchOnFunctionError: true
+          consumer: true
+          functionResponseType: ReportBatchItemFailures
+          type: kinesis
+          parallelizationFactor: ${self:custom.sendPipelineV2.lambda.${self:custom.stage}.parallelizationFactor}
+    memorySize: 2048
+    tags:
+      tags.courier.com/service: pipeline
+
+  RetrySendFromDynamoWorker:
+    environment:
+      RETRY_MESSAGE_SEQUENCE_TABLE:
+        Ref: RetryMessageSequenceTable
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - RetryMessageTable
+              - StreamArn
+          batchSize: 100
+          batchWindow: 2
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+    handler: send/worker/retry-send-from-dynamo.default
+    tags:
+      tags.courier.com/service: pipeline
+    timeout: 30
+
+  RetrySendFromSqsWorker:
+    environment:
+      RETRY_MESSAGE_SEQUENCE_TABLE:
+        Ref: RetryMessageSequenceTable
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - RetrySendQueue
+              - Arn
+          batchSize: 10
+    handler: send/worker/retry-send-from-sqs.default
+    tags:
+      tags.courier.com/service: pipeline
+    timeout: 30
+
+resources:
+  # Automations
+  - ${file(automations/aws-cloud-formation/dynamo/automation-delay.yml)}
+  - ${file(automations/aws-cloud-formation/dynamo/automation-runs.yml)}
+  - ${file(automations/aws-cloud-formation/dynamo/automation-scheduler.yml)}
+  - ${file(automations/aws-cloud-formation/dynamo/automation-templates.yml)}
+  - ${file(automations/aws-cloud-formation/kinesis/data-streams/automation-runs.yml)}
+  - ${file(automations/aws-cloud-formation/sqs/automation-step.yml)}
+  - ${file(automations/aws-cloud-formation/s3/automation-store.yml)}
+  - ${file(automations/aws-cloud-formation/s3/automation-run-context-store.yml)}
+  - ${file(automations/aws-cloud-formation/s3/automation-template-store.yml)}
+  # Bulk Processing
+  - ${file(bulk-processing/aws-cloud-formation/dynamo/bulk-jobs.yml)}
+  - ${file(bulk-processing/aws-cloud-formation/dynamo/bulk-job-users.yml)}
+  - ${file(bulk-processing/aws-cloud-formation/dynamo/bulk-job-worker-sequence.yml)}
+  - ${file(bulk-processing/aws-cloud-formation/dynamo/bulk-job-page-worker-sequence.yml)}
+  - ${file(bulk-processing/aws-cloud-formation/s3/bulk-job-configuration.yml)}
+  - ${file(bulk-processing/aws-cloud-formation/sqs/bulk-job.yml)}
+  - ${file(bulk-processing/aws-cloud-formation/sqs/bulk-job-page.yml)}
+  # Objects
+  - ${file(objects/aws-cloud-formation/s3/materialized-objects-json-store.yml)}
+  # Preferences
+  - ${file(preferences/aws-cloud-formation/dynamo/preference-templates.yml)}
+  - ${file(preferences/aws-cloud-formation/s3/preferences-page-store.yml)}
+  # Reprocessors
+  - ${file(reprocessors/aws-cloud-formation/s3/reprocessor-store.yml)}
+  # Segment
+  - ${file(segment/aws-cloud-formation/s3/segment-event-history.yml)}
+  # Send Service
+  - ${file(send/aws-cloud-formation/dynamo/tables.yml)}
+  - ${file(send/aws-cloud-formation/dynamo/send-data-table.yml)}
+  - ${file(send/aws-cloud-formation/dynamo/schedule-table.yml)}
+  - ${file(send/aws-cloud-formation/kinesis/streams.yml)}
+  - ${file(send/aws-cloud-formation/kinesis/schedule-stream.yml)}
+  - ${file(send/aws-cloud-formation/s3/buckets.yml)}
+  - ${file(send/aws-cloud-formation/s3/send-data-bucket.yml)}
+  - ${file(send/aws-cloud-formation/sqs/retry-send.yml)}
+  # Tracking Requests
+  - ${file(tracking-requests/aws-cloud-formation/dynamo/tracking-requests-sequence.yml)}
+  - ${file(tracking-requests/aws-cloud-formation/kinesis/tracking-requests.yml)}
+  - ${file(tracking-requests/aws-cloud-formation/s3/tracking-requests.yml)}
+
+  # API Gateway
+  # TODO: remove once all API Keys have been transferred
+  - ${file(aws-cloud-formation/api-gateway/api-custom-domain.yml)}
+  - ${file(aws-cloud-formation/api-gateway/click-through-tracking-domain.yml)}
+  - ${file(aws-cloud-formation/api-gateway/extensions.yml)}
+  - ${file(aws-cloud-formation/api-gateway/outputs.yml)}
+  - ${file(aws-cloud-formation/api-gateway/responses.yml)}
+  # Cert
+  - ${file(aws-cloud-formation/cert/click-through-tracking.yml)}
+  - ${file(aws-cloud-formation/cert/api-domain.yml)}
+  # Cloudfront
+  - ${file(aws-cloud-formation/cloudfront/segment-analytics.yml)}
+  - ${file(aws-cloud-formation/cloudfront/segment-tracking.yml)}
+  # Cognito
+  - ${file(aws-cloud-formation/cognito/users-userpool.yml)}
+  - ${file(aws-cloud-formation/cognito/users-identitypool.yml)}
+  # Conditions
+  - ${file(aws-cloud-formation/conditions/click-through-tracking-domain-configured.yml)}
+  - ${file(aws-cloud-formation/conditions/is-production.yml)}
+  - ${file(aws-cloud-formation/conditions/should-create-resource.yml)}
+  # Dynamo
+  - ${file(aws-cloud-formation/dynamo/click-through-tracking.yml)}
+  - ${file(aws-cloud-formation/dynamo/click-through-tracking-v2.yml)}
+  - ${file(aws-cloud-formation/dynamo/codes.yml)}
+  - ${file(aws-cloud-formation/dynamo/customer-tenant-lookup.yml)}
+  - ${file(aws-cloud-formation/dynamo/daily-metrics.yml)}
+  - ${file(aws-cloud-formation/dynamo/domains.yml)}
+  - ${file(aws-cloud-formation/dynamo/directory-sync.yml)}
+  - ${file(aws-cloud-formation/dynamo/event-logs.yml)}
+  - ${file(aws-cloud-formation/dynamo/event-maps.yml)}
+  - ${file(aws-cloud-formation/dynamo/event-log-sequence.yml)}
+  - ${file(aws-cloud-formation/dynamo/delivery-status.yml)}
+  - ${file(aws-cloud-formation/dynamo/delivery-status-v2.yml)}
+  - ${file(aws-cloud-formation/dynamo/idempotent-requests-v2.yml)}
+  - ${file(aws-cloud-formation/dynamo/locks.yml)}
+  - ${file(aws-cloud-formation/dynamo/messages.yml)}
+  - ${file(aws-cloud-formation/dynamo/messages-v3.yml)}
+  - ${file(aws-cloud-formation/dynamo/messages-overflow.yml)}
+  - ${file(aws-cloud-formation/dynamo/message-sequence.yml)}
+  - ${file(aws-cloud-formation/dynamo/objects.yml)}
+  - ${file(aws-cloud-formation/dynamo/prepare-sequence.yml)}
+  - ${file(aws-cloud-formation/dynamo/profiles.yml)}
+  - ${file(aws-cloud-formation/dynamo/route-sequence.yml)}
+  - ${file(aws-cloud-formation/dynamo/segment-events.yml)}
+  - ${file(aws-cloud-formation/dynamo/session-management.yml)}
+  - ${file(aws-cloud-formation/dynamo/tags.yml)}
+  - ${file(aws-cloud-formation/dynamo/tenants.yml)}
+  - ${file(aws-cloud-formation/dynamo/tenant-sequence.yml)}
+  - ${file(aws-cloud-formation/dynamo/tenant-access-rights.yml)}
+  - ${file(aws-cloud-formation/dynamo/tenant-auth-tokens.yml)}
+  - ${file(aws-cloud-formation/dynamo/tenant-vercel-access-tokens.yml)}
+  - ${file(aws-cloud-formation/dynamo/tenant-metrics.yml)}
+  - ${file(aws-cloud-formation/dynamo/token-storage.yml)}
+  - ${file(aws-cloud-formation/dynamo/tracking-domains.yml)}
+  - ${file(aws-cloud-formation/dynamo/user-roles.yml)}
+  - ${file(data-pipeline/aws-resources/dynamo/cognito-users.yml)}
+  - ${file(aws-cloud-formation/dynamo/feature-toggle.yml)}
+  # EVENT BRIDGE
+  - ${file(aws-cloud-formation/eventbridge/courier-event-bus.yml)}
+  # Kinesis
+  - ${file(aws-cloud-formation/kinesis/dynamo-table-stream.yml)}
+  - ${file(aws-cloud-formation/kinesis/profiles-stream.yml)}
+  - ${file(aws-cloud-formation/kinesis/event-logs.yml)}
+  - ${file(aws-cloud-formation/kinesis/tenants.yml)}
+  - ${file(aws-cloud-formation/kinesis/messages-v3-kinesis-stream.yml)}
+  # KMS
+  - ${file(aws-cloud-formation/kms/auto-rotated.yml)}
+  # Lambda
+  - ${file(aws-cloud-formation/lambda/authorizer.yml)}
+  # SNS topics
+  - ${file(aws-cloud-formation/sns/alert-engineering.yml)}
+  # SQS
+  - ${file(aws-cloud-formation/sqs/check-delivery-status.yml)}
+  - ${file(aws-cloud-formation/sqs/create-stripe-usage-record.yml)}
+  - ${file(aws-cloud-formation/sqs/prepare.yml)}
+  - ${file(aws-cloud-formation/sqs/route.yml)}
+  - ${file(aws-cloud-formation/sqs/segment-events.yml)}
+  - ${file(aws-cloud-formation/sqs/send-list-or-pattern.yml)}
+  - ${file(aws-cloud-formation/sqs/test-notification.yml)}
+  - ${file(aws-cloud-formation/sqs/update-reported-usage.yml)}
+  # S3
+  - ${file(aws-cloud-formation/s3/template-variations.yml)}
+  - ${file(aws-cloud-formation/s3/courier-event-store.yml)}
+  - ${file(aws-cloud-formation/s3/courier.${self:custom.stage}.event-logs.yml)}
+  - ${file(aws-cloud-formation/s3/inbound-segment-events.yml)}
+  - ${file(aws-cloud-formation/s3/messages.yml)}
+  - ${file(aws-cloud-formation/s3/test-events.yml)}
+  - ${file(aws-cloud-formation/s3/notes.yml)}
+  - ${file(aws-cloud-formation/s3/library.yml)}
+  - ${file(aws-cloud-formation/s3/pii-requests.yml)}
+  - ${file(aws-cloud-formation/s3/segment-events.yml)}
+  - ${file(aws-cloud-formation/s3/profiles.yml)}
+  - ${file(aws-cloud-formation/s3/send-routing-strategy.yml)}
+  - ${file(aws-cloud-formation/s3/courier-messages-v3-data-retention.yml)}
+
+  # Elastic Search
+  - ${file(aws-cloud-formation/elastic-search/courier.${self:custom.stage}.yml)}
+  # Route 53
+  - ${file(aws-cloud-formation/route53/api-record-set.yml)}
+  # Webhooks
+  - ${file(webhooks/aws-cloud-formation/dynamo/webhook-logs.yml)}
+  - ${file(webhooks/aws-cloud-formation/dynamo/webhook-logs-v2.yml)}
+  - ${file(webhooks/aws-cloud-formation/sqs/send-webhook-queue.yml)}
+  - ${file(webhooks/aws-cloud-formation/triggers/kinesis/trigger-webhook.yml)}
+
+  # mad kudu
+  - ${file(data-pipeline/aws-resources/mad-kudu/mad-kudu.yml)}
+
+  # event logs firehose data pump
+  - ${file(aws-cloud-formation/kinesis/event-logs-firehose.yml)}
+  # Segment firehose data pump
+  - ${file(aws-cloud-formation/kinesis/segment-firehose.yml)}
+  # Messages V3 firehose data pump
+  - ${file(aws-cloud-formation/kinesis/messages-v3-firehose.yml)}
+
+  # experiments firehose
+  - ${file(aws-cloud-formation/kinesis/experiments-firehose.yml)}

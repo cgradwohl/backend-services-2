@@ -1,0 +1,142 @@
+functions:
+  AudiencesPutIntoES:
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - TableStream
+              - Arn
+          batchSize: 10
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          filterPatterns:
+            # Only trigger if it is an Audience, and not AudienceMember
+            - data:
+                dynamodb:
+                  Keys:
+                    pk:
+                      S: [{ "prefix": "a/" }]
+          functionResponseType: ReportBatchItemFailures
+          type: kinesis
+          parallelizationFactor: 2
+    handler: audiences/triggers/kinesis/audiences-put-into-es.default
+    tags:
+      tags.courier.com/service: audiences
+
+  AudienceCalcStatus:
+    environment:
+      MEMBERSHIP_ITERATOR_STREAM_SEQUENCE_TABLE: !Ref MembershipIteratorStreamSequenceTable
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - TableStream
+              - Arn
+          batchSize: 10
+          batchWindow: 1
+          bisectBatchOnFunctionError: true
+          filterPatterns:
+            - data:
+                dynamodb:
+                  Keys:
+                    pk:
+                      S: [{ "prefix": "a_m/" }]
+          functionResponseType: ReportBatchItemFailures
+          type: kinesis
+          parallelizationFactor: 2
+    handler: audiences/triggers/kinesis/audience-calc-status.default
+    tags:
+      tags.courier.com/service: audiences
+
+  MembershipIterator:
+    environment:
+      MEMBERSHIP_ITERATOR_STREAM_SEQUENCE_TABLE: !Ref MembershipIteratorStreamSequenceTable
+      MEMBERSHIP_ITERATOR_STREAM: !Ref MembershipIteratorStream
+      # [TODO] Clean this shit. This is used only for getting the correct table name
+      PREFIX: ${self:custom.stage}_backend
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - MembershipIteratorStream
+              - Arn
+          batchSize: 10
+          batchWindow: 2
+          bisectBatchOnFunctionError: true
+          filterPatterns:
+            - data:
+                eventName: [ {"anything-but": "REMOVE"} ]
+          functionResponseType: ReportBatchItemFailures
+          type: kinesis
+          parallelizationFactor: 2
+    handler: audiences/triggers/kinesis/membership-iterator.default
+    tags:
+      tags.courier.com/service: audiences
+
+  # Bulk calculation of the audience's membership, when audience is created, updated or deleted
+  MembershipRenewalTrigger:
+    environment:
+      MEMBERSHIP_ITERATOR_STREAM: !Ref MembershipIteratorStream
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - TableStream
+              - Arn
+          batchSize: 10
+          batchWindow: 2
+          bisectBatchOnFunctionError: true
+          filterPatterns:
+            # Only trigger if audience pk is changed
+            - data:
+                dynamodb:
+                  Keys:
+                    pk:
+                      S: [{ "prefix": "a/" }]
+          functionResponseType: ReportBatchItemFailures
+          parallelizationFactor: 2
+          type: kinesis
+    handler: audiences/triggers/kinesis/membership-renewal-trigger.default
+    timeout: 60
+    tags:
+      tags.courier.com/service: audiences
+
+  SendAudiencesTrigger:
+    events:
+      - stream:
+          arn: ${self:custom.audiencesStreamArn}
+          batchSize: 10
+          batchWindow: 2
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          type: kinesis
+          parallelizationFactor: 2
+    handler: audiences/triggers/kinesis/send-audiences-member.default
+    tags:
+      tags.courier.com/service: audiences
+
+  WebhookTrigger:
+    environment:
+      COURIER_EVENT_BUS_NAME: ${self:custom.courierEventBusName}
+    events:
+      - stream:
+          arn:
+            Fn::GetAtt:
+              - TableStream
+              - Arn
+          batchSize: 10
+          batchWindow: 2
+          bisectBatchOnFunctionError: true
+          filterPatterns:
+            # Only trigger for document type "audience", "audience member" or "audience-cal-status"
+            - data:
+                dynamodb:
+                  Keys:
+                    pk:
+                      S: [{ "prefix": "a/" }, { "prefix": "a_m/" }, { "prefix": "a_cal_status/" }]
+          functionResponseType: ReportBatchItemFailures
+          type: Kinesis
+    handler: audiences/triggers/kinesis/webhook.default
+    timeout: 60
+    tags:
+      tags.courier.com/service: audiences

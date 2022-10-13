@@ -1,0 +1,46 @@
+Resources:
+  ObjectsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.prefix}-objects
+      AttributeDefinitions:
+        - AttributeName: tenantId
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: objtype
+          AttributeType: S
+      KeySchema:
+        - AttributeName: tenantId
+          KeyType: HASH
+        - AttributeName: id
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: by-objtype-index
+          KeySchema:
+            - AttributeName: tenantId
+              KeyType: HASH
+            - AttributeName: objtype
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL # Make All columns available in index
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Stores templates and configuration data created by customers."
+      - Key: VantaContainsUserData
+        Value: true
+Outputs:
+  ObjectsTableArn:
+    Export:
+      Name: backend-${self:custom.stage}-ObjectsTableArn
+    Value:
+      Fn::GetAtt: [ObjectsTable, Arn]

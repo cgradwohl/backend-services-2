@@ -1,0 +1,4 @@
+{{#courier-partial}}
+{{#prerender "prerenderedText"}}{{> @partial-block}}{{/prerender}}
+{{#elemental-action-block align=@align style=@style backgroundColor=@backgroundColor href=(get-href @href context="action" disableLinkTracking=@disableLinkTracking text=@prerenderedText)}}{{{@prerenderedText}}}{{/elemental-action-block}}
+{{/courier-partial}}

@@ -1,0 +1,33 @@
+Resources:
+  UserRolesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Stores information about custom user roles and capabilities in a Courier workspace."
+      - Key: VantaContainsUserData
+        Value: false
+
+Outputs:
+  UserRolesTable:
+    Export:
+      Name: backend-${self:custom.stage}-UserRolesTable
+    Value:
+      Ref: UserRolesTable

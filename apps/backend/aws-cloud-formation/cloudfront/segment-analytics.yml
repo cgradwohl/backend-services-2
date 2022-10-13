@@ -1,0 +1,35 @@
+Resources:
+  SegmentAnalyticsDistribution:
+    Type: AWS::CloudFront::Distribution
+    Condition: IsProduction
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - segment-analytics.${self:custom.apiDomainName.${self:custom.stage}}
+          - data.${self:custom.apiDomainName.${self:custom.stage}}
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+            - PUT
+            - PATCH
+            - POST
+            - DELETE
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          TargetOriginId: segment-cdn
+          ViewerProtocolPolicy: redirect-to-https
+        Enabled: true
+        Origins:
+          - CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+            DomainName: cdn.segment.com
+            Id: segment-cdn
+        PriceClass: PriceClass_All
+        ViewerCertificate:
+          AcmCertificateArn: !Ref ApiDomainCertificate
+          SslSupportMethod: sni-only
+
+      Tags:
+        - Key: tags.courier.com/service
+          Value: segment

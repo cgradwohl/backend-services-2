@@ -1,0 +1,4 @@
+extensions:
+  ApiGatewayLogGroup:
+    Properties:
+      RetentionInDays: 365

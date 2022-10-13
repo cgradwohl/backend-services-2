@@ -1,0 +1,1 @@
+export const DEFAULT_PROVIDER_TIMEOUT_MS = 10000;

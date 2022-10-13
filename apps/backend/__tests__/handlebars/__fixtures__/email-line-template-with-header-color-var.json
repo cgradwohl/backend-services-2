@@ -1,0 +1,10 @@
+{
+  "email": {
+    "emailTemplateConfig": {
+      "templateName": "line",
+      "topBarColor": "{color}",
+      "headerLogoSrc": "https://s3.amazonaws.com/backend-production-librarybucket-1izigk5lryla9/3f40a128-de0c-4c1d-aeae-77457f4fef07/1591575643026_logo.png",
+      "headerLogoHref": "https://courier.com"
+    }
+  }
+}

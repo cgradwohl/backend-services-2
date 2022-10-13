@@ -1,0 +1,35 @@
+Resources:
+  TrackingDomains:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: tenantDomain
+          AttributeType: S
+        - AttributeName: tenantId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: tenantDomain
+          KeyType: HASH
+        - AttributeName: tenantId
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: ByTenant
+          KeySchema:
+            - AttributeName: tenantId
+              KeyType: HASH
+            - AttributeName: tenantDomain
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Custom domain mappings for tenants"
+      - Key: VantaContainsUserData
+        Value: false

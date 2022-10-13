@@ -1,0 +1,25 @@
+functions:
+  OriginRequestRouter:
+    events:
+      - cloudFront:
+          behavior:
+            ViewerProtocolPolicy: https-only
+            AllowedMethods:
+              - "GET"
+              - "HEAD"
+              - "OPTIONS"
+              - "PUT"
+              - "PATCH"
+              - "POST"
+              - "DELETE"
+            CachedMethods:
+              - "GET"
+              - "HEAD"
+              - "OPTIONS"
+          cachePolicy:
+            name: customCachePolicy
+          eventType: origin-request
+          origin: ${self:custom.origin}
+    handler: global-request-router/index.handler
+    tags:
+      tags.courier.com/service: global-request-router

@@ -1,0 +1,16 @@
+functions:
+  # Just in time Lambda function to calculate the audience's membership
+  JITMembershipCalcTrigger:
+    events:
+      - stream:
+          arn: ${self:custom.profilesTableStreamArn}
+          batchSize: 100
+          batchWindow: 5
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          parallelizationFactor: 2
+          type: dynamodb
+    handler: audiences/triggers/dynamodb/jit-membership-calc.default
+    timeout: 60
+    tags:
+      tags.courier.com/service: audiences

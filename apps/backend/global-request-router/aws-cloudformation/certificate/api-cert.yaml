@@ -1,0 +1,9 @@
+Resources:
+  ApiCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: "api.${self:custom.apiDomainName.${self:custom.stage}}"
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: "${self:custom.apiDomainName.${self:custom.stage}}"
+          HostedZoneId: ${self:custom.hostedZoneId}

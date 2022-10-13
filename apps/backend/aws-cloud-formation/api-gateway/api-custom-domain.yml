@@ -1,0 +1,22 @@
+Resources:
+  ApiGWCustomDomain:
+    Type: AWS::ApiGateway::DomainName
+    Condition: ShouldCreateGlobalRoutingResources
+    Properties:
+      DomainName: ${self:provider.region}-api.${self:custom.apiDomainName.${self:custom.stage}}
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      RegionalCertificateArn: !Ref ApiDomainCertificate
+      SecurityPolicy: TLS_1_2
+    DependsOn:
+      - ApiDomainCertificate
+  APIMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Condition: ShouldCreateGlobalRoutingResources
+    Properties:
+      DomainName: ${self:provider.region}-api.${self:custom.apiDomainName.${self:custom.stage}}
+      RestApiId: !Ref ApiGatewayRestApi
+      Stage: ${self:custom.stage}
+    DependsOn:
+      - ApiGWCustomDomain

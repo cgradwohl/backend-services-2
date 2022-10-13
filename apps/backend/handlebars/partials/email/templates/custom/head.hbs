@@ -1,0 +1,20 @@
+{{#courier-partial}}
+{{#prerender "prerenderedPreview"}}{{#link-context "rich-text"}}{{> @partial-block }}{{/link-context}}{{/prerender}}
+<mj-head>
+  <mj-attributes>
+    <mj-all font-family="Helvetica, Arial, sans-serif" />
+    <mj-text padding="0px" font-size="14px" color="#4c4c4c" />
+    <mj-image padding="0px" />
+    <mj-wrapper padding="0px" />
+    <mj-section padding="8px 30px" {{#if (path "$.templateOverrides.blocksBackgroundColor")}}
+      background-color="{{path "$.templateOverrides.blocksBackgroundColor"}}" {{/if}} />
+    <mj-column padding="0px" width="100%" />
+  </mj-attributes>
+  {{!-- <mj-preview>
+    <mj-raw>
+      {{{@prerenderedPreview}}}
+    </mj-raw>
+  </mj-preview> --}}
+  <mj-raw>{{> courier-brand-head @root}}</mj-raw>
+</mj-head>
+{{/courier-partial}}

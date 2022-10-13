@@ -1,0 +1,24 @@
+Resources:
+  AutomationTemplateStore:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: VantaOwner
+          Value: ${self:custom.vanta.owner}
+        - Key: VantaNonProd
+          Value: ${self:custom.vanta.nonProd}
+        - Key: VantaDescription
+          Value: "File storage for the automation templates created by our customers"
+        - Key: VantaContainsUserData
+          Value: false
+      VersioningConfiguration:
+        Status: Enabled

@@ -1,0 +1,92 @@
+Resources:
+  SqsCreateStripeUsageRecord:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId:
+        Ref: AutoRotatedKmsKey
+      MessageRetentionPeriod: 1209600
+      VisibilityTimeout: 60
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+            - SqsCreateStripeUsageRecordDLQ
+            - Arn
+        maxReceiveCount: 10
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Queue for creating stripe usage records"
+      - Key: VantaContainsUserData
+        Value: false
+
+  SqsCreateStripeUsageRecordDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId:
+        Ref: AutoRotatedKmsKey
+      MessageRetentionPeriod: 1209600
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Dead Letter Queue: these queues are used to handle messages that have failed too many times in a primary queue."
+      - Key: VantaContainsUserData
+        Value: false
+
+  ### Cloudwatch Monitors (only created in production)
+  SqsCreateStripeUsageRecordAgeOfOldestMessage:
+    Type: AWS::CloudWatch::Alarm
+    Condition: IsProduction
+    Properties:
+      AlarmActions:
+        - Ref: AlertEngineeringTopic
+      AlarmDescription: "Alarm if queue contains messages older than 5000 seconds"
+      ComparisonOperator: GreaterThanThreshold
+      DatapointsToAlarm: 1
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::GetAtt:
+              - SqsCreateStripeUsageRecord
+              - QueueName
+      EvaluationPeriods: 1
+      MetricName: ApproximateAgeOfOldestMessage
+      Namespace: "AWS/SQS"
+      Period: 900 # 15 minutes (60 * 15)
+      Statistic: Average
+      Threshold: 5000
+      TreatMissingData: missing
+
+  SqsCreateStripeUsageRecordDLQAgeOfOldestMessage:
+    Type: AWS::CloudWatch::Alarm
+    Condition: IsProduction
+    Properties:
+      AlarmActions:
+        - Ref: AlertEngineeringTopic
+      AlarmDescription: "Alarm if queue contains messages older than 5000 seconds"
+      ComparisonOperator: GreaterThanThreshold
+      DatapointsToAlarm: 1
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::GetAtt:
+              - SqsCreateStripeUsageRecordDLQ
+              - QueueName
+      EvaluationPeriods: 1
+      MetricName: ApproximateAgeOfOldestMessage
+      Namespace: "AWS/SQS"
+      Period: 900 # 15 minutes (60 * 15)
+      Statistic: Average
+      Threshold: 5000
+      TreatMissingData: missing
+Outputs:
+  SqsCreateStripeUsageRecordDLQArn:
+    Export:
+      Name: backend-${self:custom.stage}-SqsCreateStripeUsageRecordDLQArn
+    Value:
+      Fn::GetAtt: [SqsCreateStripeUsageRecordDLQ, Arn]

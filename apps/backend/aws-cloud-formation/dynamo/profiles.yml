@@ -1,0 +1,40 @@
+Resources:
+  ProfilesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.prefix}-profiles
+      AttributeDefinitions:
+        - AttributeName: tenantId
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: tenantId
+          KeyType: HASH
+        - AttributeName: id
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Contains data about customers end-users that allows Courier to contact those users by various means."
+      - Key: VantaContainsUserData
+        Value: true
+Outputs:
+  ProfilesTable:
+    Export:
+      Name: backend-${self:custom.stage}-ProfilesTable
+    Value:
+      Ref: ProfilesTable
+  ProfilesTableStreamArn:
+    Export:
+      Name: backend-${self:custom.stage}-ProfilesTableStreamArn
+    Value:
+      Fn::GetAtt: [ProfilesTable, StreamArn]

@@ -1,0 +1,11 @@
+{
+  "email": {
+    "emailTemplateConfig": {
+      "templateName": "line",
+      "topBarColor": "#9D3789",
+      "headerLogoSrc": "",
+      "headerLogoHref": "",
+      "footerText": "{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"footer text here\",\"marks\":[]}]}]}}"
+    }
+  }
+}

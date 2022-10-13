@@ -1,0 +1,6 @@
+{{#courier-partial}}
+{{#prerender "prerenderedText"}}{{> @partial-block}}{{/prerender~}}
+{{#unless (condition @primarySerializer "==" "slack")}}
+{{{@prerenderedText}}}: {{get-href @href disableLinkTracking=@disableLinkTracking context="action" text=@prerenderedText~}}
+{{/unless}}
+{{/courier-partial}}

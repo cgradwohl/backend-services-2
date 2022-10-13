@@ -1,0 +1,159 @@
+Resources:
+  SegmentFirehoseBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - ${self:custom.lifecyclePolicyRules.deleteAfter30Days}        
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      ReplicationConfiguration:
+        Role: !GetAtt
+          - SegmentFirehoseRole
+          - Arn
+        Rules:
+          - Destination:
+              Bucket: !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref SegmentFirehoseReplicationBucket
+              StorageClass: STANDARD
+            Id: Backup
+            Prefix: ''
+            Status: Enabled
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Data store destination for segment firehose"
+      - Key: VantaContainsUserData
+        Value: true
+      VersioningConfiguration:
+        Status: Enabled
+
+  SegmentFirehoseReplicationBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - ${self:custom.lifecyclePolicyRules.deleteAfter7Days}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: VantaOwner
+          Value: ${self:custom.vanta.owner}
+        - Key: VantaNonProd
+          Value: ${self:custom.vanta.nonProd}
+        - Key: VantaDescription
+          Value: "Replication bucket for segment firehose used by snowflake/fivetran."
+        - Key: VantaContainsUserData
+          Value: true
+      VersioningConfiguration:
+        Status: Enabled
+
+  SegmentFirehoseRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - firehose.amazonaws.com
+                - s3.amazonaws.com
+
+  SegmentFirehoseStoragePolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:AbortMultipartUpload
+              - s3:GetBucketLocation
+              - s3:GetObject
+              - s3:ListBucket
+              - s3:ListBucketMultipartUploads
+              - s3:PutObject
+            Effect: Allow
+            Resource:
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref SegmentFirehoseBucket
+                  - /*
+          - Action:
+              - 's3:GetReplicationConfiguration'
+              - 's3:ListBucket'
+            Effect: Allow
+            Resource:
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref SegmentFirehoseBucket
+          - Action:
+              - 's3:GetObjectVersion'
+              - 's3:GetObjectVersionAcl'
+            Effect: Allow
+            Resource:
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref SegmentFirehoseBucket
+                  - /*
+          - Action:
+              - 's3:ReplicateObject'
+            Effect: Allow
+            Resource:
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref SegmentFirehoseReplicationBucket
+                  - /*
+          - Action:
+              - kms:Decrypt
+            Effect: "Allow"
+            Resource:
+              - Fn::GetAtt: [AutoRotatedKmsKey, Arn]
+          - Action:
+            - kinesis:Get*
+            - kinesis:DescribeStream
+            Effect: "Allow"
+            Resource:
+              - Fn::GetAtt: [TrackingRequestKinesisStream, Arn]        
+      PolicyName: SegmentFirehoseStoragePolicy
+      Roles:
+        - !Ref SegmentFirehoseRole
+
+  SegmentFirehose:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    DependsOn: SegmentFirehoseStoragePolicy
+    Properties:
+      DeliveryStreamType: KinesisStreamAsSource
+      KinesisStreamSourceConfiguration:
+        KinesisStreamARN: !GetAtt TrackingRequestKinesisStream.Arn
+        RoleARN: !GetAtt SegmentFirehoseRole.Arn
+      S3DestinationConfiguration:
+        BucketARN: !GetAtt SegmentFirehoseBucket.Arn
+        BufferingHints:
+          IntervalInSeconds: 300
+          SizeInMBs: 10
+        CompressionFormat: UNCOMPRESSED
+        RoleARN: !GetAtt SegmentFirehoseRole.Arn

@@ -1,0 +1,14 @@
+Resources:
+  ApiRecordSet:
+    Type: AWS::Route53::RecordSet
+    Condition: ShouldCreateGlobalRoutingResources
+    Properties:
+      HostedZoneId: ${self:custom.hostedZoneId}
+      Name: ${self:provider.region}-api.${self:custom.apiDomainName.${self:custom.stage}}
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt ApiGWCustomDomain.RegionalDomainName
+        HostedZoneId: !GetAtt ApiGWCustomDomain.RegionalHostedZoneId
+    DependsOn:
+      - ApiGWCustomDomain
+      - APIMapping

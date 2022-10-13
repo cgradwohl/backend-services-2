@@ -1,0 +1,7 @@
+[
+  {
+    "config": "{\"template\":\"{{! block title}}\\n<a href=\\\"https://example.com/0\\\">link 0</a>\\n<a href=\\\"https://example.com/1\\\">link 1</a>\\n<a href=\\\"https://example.com/2\\\">link 2</a>\"}",
+    "id": "eb16644e-309d-4b6b-90b6-eefc54a466c4",
+    "type": "template"
+  }
+]

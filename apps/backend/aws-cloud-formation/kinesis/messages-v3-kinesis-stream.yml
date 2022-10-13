@@ -1,0 +1,13 @@
+Resources:
+  MessagesV3KinesisStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      RetentionPeriodHours: 24
+      ShardCount: ${self:custom.messagesV3.kinesis.${self:custom.stage}.shardCount, 1}
+      StreamEncryption:
+        EncryptionType: KMS
+        KeyId:
+          Ref: AutoRotatedKmsKey
+      Tags:
+        - Key: tags.courier.com/elasticity
+          Value: fixed

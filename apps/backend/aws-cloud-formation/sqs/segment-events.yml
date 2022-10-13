@@ -1,0 +1,90 @@
+Resources:
+  SqsSegmentEvents:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId:
+        Ref: AutoRotatedKmsKey
+      VisibilityTimeout: 60
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+            - SqsSegmentEventsDLQ
+            - Arn
+        maxReceiveCount: 10
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Queue for delivering internal analytics events."
+      - Key: VantaContainsUserData
+        Value: false
+
+  SqsSegmentEventsDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId:
+        Ref: AutoRotatedKmsKey
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Dead Letter Queue: these queues are used to handle messages that have failed too many times in a primary queue."
+      - Key: VantaContainsUserData
+        Value: false
+
+  ### Cloudwatch Monitors (only created in production)
+  SqsSegmentEventsAgeOfOldestMessage:
+    Type: AWS::CloudWatch::Alarm
+    Condition: IsProduction
+    Properties:
+      AlarmActions:
+        - Ref: AlertEngineeringTopic
+      AlarmDescription: "Alarm if queue contains messages older than 5000 seconds"
+      ComparisonOperator: GreaterThanThreshold
+      DatapointsToAlarm: 1
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::GetAtt:
+              - SqsSegmentEvents
+              - QueueName
+      EvaluationPeriods: 1
+      MetricName: ApproximateAgeOfOldestMessage
+      Namespace: "AWS/SQS"
+      Period: 900 # 15 minutes (60 * 15)
+      Statistic: Average
+      Threshold: 5000
+      TreatMissingData: missing
+
+  SqsSegmentEventsDLQAgeOfOldestMessage:
+    Type: AWS::CloudWatch::Alarm
+    Condition: IsProduction
+    Properties:
+      AlarmActions:
+        - Ref: AlertEngineeringTopic
+      AlarmDescription: "Alarm if queue contains messages older than 5000 seconds"
+      ComparisonOperator: GreaterThanThreshold
+      DatapointsToAlarm: 1
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::GetAtt:
+              - SqsSegmentEventsDLQ
+              - QueueName
+      EvaluationPeriods: 1
+      MetricName: ApproximateAgeOfOldestMessage
+      Namespace: "AWS/SQS"
+      Period: 900 # 15 minutes (60 * 15)
+      Statistic: Average
+      Threshold: 5000
+      TreatMissingData: missing
+Outputs:
+  SqsSegmentEventsDLQArn:
+    Export:
+      Name: backend-${self:custom.stage}-SqsSegmentEventsDLQArn
+    Value:
+      Fn::GetAtt: [SqsSegmentEventsDLQ, Arn]

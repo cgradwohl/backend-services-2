@@ -1,0 +1,17 @@
+functions:
+  ApiKeyChangeNotifier:
+    environment:
+      COURIER_AUTH_TOKEN: ${env:COURIER_AUTH_TOKEN, file(./.dev-config.yml):COURIER_AUTH_TOKEN}
+    events:
+      - eventBridge:
+          pattern:
+            detail:
+              type:
+                - api-key:created
+                - api-key:deleted
+                - api-key:rotated
+            detail-type:
+              - courier.audit.event
+    handler: auditing/triggers/event-bridge/api-key-change-notifier/handler.default
+    tags:
+      tags.courier.com/service: auditing

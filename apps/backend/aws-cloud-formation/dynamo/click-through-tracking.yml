@@ -1,0 +1,39 @@
+Resources:
+  ClickThroughTrackingTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: tenantId
+          AttributeType: S
+        - AttributeName: trackingId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: tenantId
+          KeyType: HASH
+        - AttributeName: trackingId
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Stores links that allow for tracking when a recipient clicked on a link that was delivered to them."
+      - Key: VantaContainsUserData
+        Value: false
+Outputs:
+  ClickThroughTrackingTableArn:
+    Export:
+      Name: backend-${self:custom.stage}-ClickThroughTrackingTableArn
+    Value:
+      Fn::GetAtt: [ClickThroughTrackingTable, Arn]
+  ClickThroughTrackingTableName:
+    Export:
+      Name: backend-${self:custom.stage}-ClickThroughTrackingTableName
+    Value:
+      Ref: ClickThroughTrackingTable

@@ -1,0 +1,7 @@
+[
+  {
+    "config": "{\"backgroundColor\":\"transparent\",\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"\",\"marks\":[]},{\"object\":\"inline\",\"type\":\"link\",\"data\":{\"href\":\"https://example.com/1\",\"text\":\"Link 1\"},\"nodes\":[{\"object\":\"text\",\"text\":\"Link 1\",\"marks\":[]}]},{\"object\":\"text\",\"text\":\"\\n\",\"marks\":[]},{\"object\":\"inline\",\"type\":\"link\",\"data\":{\"href\":\"https://example.com/2\",\"text\":\"Link 2\"},\"nodes\":[{\"object\":\"text\",\"text\":\"Link 2\",\"marks\":[]}]},{\"object\":\"text\",\"text\":\"\\n\",\"marks\":[]},{\"object\":\"inline\",\"type\":\"link\",\"data\":{\"href\":\"https://example.com/3\",\"text\":\"Link 3\"},\"nodes\":[{\"object\":\"text\",\"text\":\"Link 3\",\"marks\":[]}]},{\"object\":\"text\",\"text\":\"\",\"marks\":[]}]}]}}}",
+    "id": "4478b6ae-8e6e-4da3-b4af-b091bb748e74",
+    "type": "text"
+  }
+]

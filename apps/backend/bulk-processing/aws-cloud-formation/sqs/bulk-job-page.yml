@@ -1,0 +1,94 @@
+Resources:
+  SqsBulkJobPage:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId:
+        Ref: AutoRotatedKmsKey
+      QueueName: ${self:custom.prefix}-sqs-bulk-job-page
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+            - SqsBulkJobPageDLQ
+            - Arn
+        maxReceiveCount: 10
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Queuing bulk job page items"
+      - Key: VantaContainsUserData
+        Value: true
+      VisibilityTimeout: 32
+
+  SqsBulkJobPageDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId:
+        Ref: AutoRotatedKmsKey
+      QueueName: ${self:custom.prefix}-sqs-bulk-job-page-dlq
+      MessageRetentionPeriod: 1209600
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Dead Letter Queue to handle messages that have failed too many times in bulk job page queue."
+      - Key: VantaContainsUserData
+        Value: true
+
+  ### Cloudwatch Monitors (only created in production)
+  SqsBulkJobPageAgeOfOldestMessage:
+    Type: AWS::CloudWatch::Alarm
+    Condition: IsProduction
+    Properties:
+      AlarmActions:
+        - Ref: AlertEngineeringTopic
+      AlarmDescription: "Alarm if queue contains messages older than 5000 seconds"
+      ComparisonOperator: GreaterThanThreshold
+      DatapointsToAlarm: 1
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::GetAtt:
+              - SqsBulkJobPage
+              - QueueName
+      EvaluationPeriods: 1
+      MetricName: ApproximateAgeOfOldestMessage
+      Namespace: "AWS/SQS"
+      Period: 900 # 15 minutes (60 * 15)
+      Statistic: Average
+      Threshold: 5000
+      TreatMissingData: missing
+
+  SqsBulkJobPageDLQAgeOfOldestMessage:
+    Type: AWS::CloudWatch::Alarm
+    Condition: IsProduction
+    Properties:
+      AlarmActions:
+        - Ref: AlertEngineeringTopic
+      AlarmDescription: "Alarm if queue contains messages older than 5000 seconds"
+      ComparisonOperator: GreaterThanThreshold
+      DatapointsToAlarm: 1
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::GetAtt:
+              - SqsBulkJobPageDLQ
+              - QueueName
+      EvaluationPeriods: 1
+      MetricName: ApproximateAgeOfOldestMessage
+      Namespace: "AWS/SQS"
+      Period: 900 # 15 minutes (60 * 15)
+      Statistic: Average
+      Threshold: 5000
+      TreatMissingData: missing
+Outputs:
+  SqsBulkJobPageDLQArn:
+    Export:
+      Name: backend-${self:custom.stage}-SqsBulkJobPageDLQArn
+    Value:
+      Fn::GetAtt: [SqsBulkJobPageDLQ, Arn]

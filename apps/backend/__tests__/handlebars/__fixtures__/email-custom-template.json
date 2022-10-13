@@ -1,0 +1,26 @@
+{
+  "brand": {
+    "enabled": true,
+    "email": {
+      "templateOverride": {
+        "enabled": true,
+        "width": "580px",
+        "backgroundColor": "#f5f5f5",
+        "head": "<style>\n  .body {\n    background: white;\n  }\n\n  h1 {\n    margin: 0;\n    font-size: 24px;\n    font-weight: bold;\n  }\n\n  .header, .footer {\n      padding: 10px 30px;\n  }\n\n  .padding-top {\n      background: #f5f5f5;\n      padding: 12px;\n  }\n</style>",
+        "header": "<div class=\"padding-top\"></div>\n<div class=\"header\">\n    <h1>I'm a Header</h1>\n</div>",
+        "footer": "<div class=\"footer\" style='color:#8F8F8F;font-size:11px;'>\n    I'm a Footer\n</div>"
+      }
+    }
+  },
+  "email": {
+    "emailSubject": "Brand test",
+    "emailTemplateConfig": {
+      "templateName": "line",
+      "topBarColor": "#9D3789",
+      "footerText": "{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"©2020 Courier\",\"marks\":[]}]}]}}",
+      "footerLinks": {},
+      "headerLogoSrc": "https://backend-dev-librarybucket-a6n6jb55kc98.s3.amazonaws.com/118c6491-a35d-4b81-b10b-d22f7d20da0c/1594418277471_logo.png",
+      "headerLogoHref": "https://courier.com"
+    }
+  }
+}

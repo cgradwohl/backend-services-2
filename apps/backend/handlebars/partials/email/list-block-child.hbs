@@ -1,0 +1,46 @@
+{{#courier-partial}}
+{{#link-context "child-item" @index }}
+{{#if (condition @variant "==" "bullets")}}
+{{#if @first }}
+<ul style="margin:0;padding:0 0 0 20px">
+{{/if}}
+  <li style="margin:0;padding:10px 0 0;text-align:left">
+    {{#link-context "rich-text"}}
+{{#partial-block-indent-fix}}
+    {{else}}{{> @partial-block }}{{/partial-block-indent-fix}}
+    {{/link-context}}
+  </li>
+{{#if @last }}
+</ul>
+{{/if}}
+{{else}}
+{{#if (condition @variant "==" "images")}}
+{{#courier-list-child-styles}}
+<tr{{#if @rowStyle}} style="{{@rowStyle}}"{{/if}}>
+  {{! TODO: register imageHref }}
+  <td style="padding:{{@imageColPadding}}" width="{{@imageWidth}}px">
+    {{#if @imageHref}}<a href="{{@imageHref}}">{{/if}}<img src="{{@imagePath}}" width="{{@imageWidth}}px" height="{{@imageWidth}}px" />{{#if @imageHref}}</a>{{/if}}
+  </td>
+  <td{{#if (condition @textColSpan ">" 1)}} colspan="{{@textColSpan}}"{{/if}} style="padding:{{@textColPadding}};text-align:left" width="{{@textColWidth}}px">
+    {{#link-context "rich-text"}}
+{{#partial-block-indent-fix}}
+    {{else}}{{> @partial-block }}{{/partial-block-indent-fix}}
+    {{/link-context}}
+  </td>
+</tr>
+{{/courier-list-child-styles}}
+{{else}}
+{{#courier-list-child-styles}}
+<tr{{#if @rowStyle}} style="{{@rowStyle}}"{{/if}}>
+  <td style="padding:{{@textColPadding}};text-align:left" width="{{@textColWidth}}px"{{#if (condition @textColSpan ">" 1)}} colspan="{{@textColSpan}}"{{/if}}>
+    {{#link-context "rich-text"}}
+{{#partial-block-indent-fix}}
+    {{else}}{{> @partial-block }}{{/partial-block-indent-fix}}
+    {{/link-context}}
+  </td>
+</tr>
+{{/courier-list-child-styles}}
+{{/if}}
+{{/if}}
+{{/link-context}}
+{{/courier-partial}}

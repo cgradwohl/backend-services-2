@@ -1,0 +1,13 @@
+functions:
+  PersistAuditEvents:
+    environment:
+      AUDIT_EVENTS_TABLE:
+        Ref: AuditEventsTable
+    events:
+      - eventBridge:
+          pattern:
+            detail-type:
+              - courier.audit.event
+    handler: auditing/triggers/event-bridge/persist-audit-events/handler.default
+    tags:
+      tags.courier.com/service: auditing

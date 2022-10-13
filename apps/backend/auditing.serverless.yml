@@ -1,0 +1,120 @@
+configValidationMode: warn
+custom:
+  authorizers:
+    api:
+      name: AuditingApiAuthorizer
+      arn:
+        "Fn::ImportValue": backend-${self:custom.stage}-ApiAuthorizerArn
+      resultTtlInSeconds: 15
+  cognitoUserPoolArn: !ImportValue backend-${self:custom.stage}-CognitoUserPoolArn
+  cognitoUserPoolAuthorizer:
+    type: COGNITO_USER_POOLS
+    name: AuditingCognitoPoolAuthorizer
+    arn: ${self:custom.cognitoUserPoolArn}
+  elasticsearch:
+    auditEvents:
+      dev:
+        shards: 2
+      staging:
+        shards: 2
+      production:
+        shards: 10
+  lambda:
+    provisionedConcurrency:
+      production: 1
+      staging: 0
+      dev: 0
+  sessionManagementTable: !ImportValue backend-${self:custom.stage}-SessionManagementTable
+  stage: ${opt:stage, self:provider.stage}
+  userRolesTable: !ImportValue backend-${self:custom.stage}-UserRolesTable
+  vanta:
+    disabled:
+      default: true
+      production: false
+    nonProd: ${self:custom.vanta.disabled.${self:custom.stage}, self:custom.vanta.disabled.default}
+    owner: "seth@courier.com"
+  webpack:
+    webpackConfig: ./webpack.config.js
+    packager: "yarn"
+    includeModules:
+      forceExclude:
+        - aws-sdk
+      forceInclude:
+        - source-map-support
+    keepOutputDirectory: true
+
+functions:
+  - ${file(auditing/aws-cloud-formation/lambda/api-key-change-notifier.yml):functions}
+  - ${file(auditing/aws-cloud-formation/lambda/persist-audit-events.yml):functions}
+  - ${file(auditing/aws-cloud-formation/lambda/set-elasticsearch-audit-events-index.yml):functions}
+  - ${file(auditing/aws-cloud-formation/lambda/audit-events-to-elasticsearch-stream.yml):functions}
+  - ${file(auditing/aws-cloud-formation/lambda/studio.yml):functions}
+  - ${file(auditing/aws-cloud-formation/lambda/add-mapping-to-index.yml):functions}
+  - ${file(auditing/aws-cloud-formation/lambda/api-audit-events.yml):functions}
+
+package:
+  individually: true
+
+plugins:
+  - serverless-cloudformation-sub-variables
+  - serverless-plugin-conditional-functions
+  - serverless-stack-termination-protection
+  - serverless-webpack
+
+provider:
+  apiGateway:
+    restApiId:
+      "Fn::ImportValue": backend-${self:custom.stage}-ApiGatewayRestApiId
+    restApiRootResourceId:
+      "Fn::ImportValue": backend-${self:custom.stage}-ApiGatewayRestApiRootResourceId
+  architecture: arm64
+  deploymentBucket:
+    blockPublicAccess: true
+    tags:
+      VantaOwner: ${self:custom.vanta.owner}
+      VantaNonProd: ${self:custom.vanta.nonProd}
+      VantaDescription: Contains the Cloudfront for auditing services
+      VantaContainsUserData: false
+  eventBridge:
+    useCloudFormation: true
+  environment:
+    LAUNCHDARKLY_SDK_KEY: ${env:LAUNCHDARKLY_SDK_KEY, file(./.dev-config.yml):LAUNCHDARKLY_SDK_KEY}
+    PREFIX: ${self:custom.stage}_backend
+    STAGE: ${self:custom.stage}
+    USER_ROLES_TABLE_NAME: ${self:custom.userRolesTable}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:Query
+          Resource: "*"
+        - Effect: "Allow"
+          Action: "es:*"
+          Resource:
+            Fn::Join:
+              - ""
+              - - !GetAtt [ElasticSearch, DomainArn]
+                - "/*"
+  memorySize: 256
+  name: aws
+  region: us-east-1
+  runtime: nodejs14.x
+  stage: dev
+  tags:
+    tags.courier.com/elasticity: variable
+    tags.courier.com/monitoring-level: high
+  timeout: 30
+  tracing:
+    lambda: PassThrough
+  versionFunctions: false
+
+resources:
+  # DynamoDB
+  - ${file(auditing/aws-cloud-formation/dynamo/audit-events.yml)}
+  # Elasticsearch
+  - ${file(auditing/aws-cloud-formation/elastic-search/auditing.${self:custom.stage}.yml)}
+
+service: auditing

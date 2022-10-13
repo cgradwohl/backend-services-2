@@ -1,0 +1,1839 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`email slate should render slateBoldItalicUnderline 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        Some <strong>bold</strong>, <em>italic</em>, and <u>underlined</u> text.
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email slate should render slateItalicAroundBoldSlate 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        This <em>is </em><strong><em>a</em></strong> test
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email slate should render slateLink 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        Click <a class=\\"c--link\\" href=\\"https://example.com/link\\">this link</a> to learn more.
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email slate should render slateLinkWithVars 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        Link to <a class=\\"c--link\\" href=\\"https://{domain}/{user}/\\">{firstname}&#x27;s {project}</a>
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email slate should render slateNewLines 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        Line 1<br>Line 2<br><br>Line 4
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email slate should render slateScaryChars 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        Scary characters are &quot;, &#x27;, &lt;, &gt;, &amp;, &#x60;, &#x3D;, {, and }
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email slate should render slateVariable 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        This is a {variable}.
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email template blocks should render actionBlock 1`] = `
+"
+<mj-section css-class=\\"c--block c--block-action\\">
+  <mj-column>
+    <mj-button align=\\"center\\" href=\\"https://www.courier.com\\"
+      background-color=\\"#9D3789\\" border-radius=\\"4px\\" font-size=\\"14px\\" inner-padding=\\"10px 20px\\"
+      padding=\\"8px 0px\\">
+      Click Here
+    </mj-button>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render actionBlockLink 1`] = `
+"
+<mj-section css-class=\\"c--block c--block-action\\">
+  <mj-column>
+    <mj-text align=\\"center\\" css-class=\\"\\">
+      <a href=\\"https://www.example.com\\" target=\\"_blank\\">link text</a>
+    </mj-text>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render colorVarBlocks 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"#E0218A\\"
+    padding=\\"4px 20px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        Lorem ipsum dolor, sit amet.
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-divider\\">
+  <mj-column padding=\\"10px 0px\\">
+    <mj-divider container-background-color=\\"#ffffff\\" border-width=\\"1px\\" border-color=\\"#E0218A\\" padding=\\"0px\\" />
+  </mj-column>
+</mj-section>
+
+
+<mj-section css-class=\\"c--block c--block-action\\">
+  <mj-column>
+    <mj-button align=\\"center\\" href=\\"https://www.courier.com\\"
+      background-color=\\"#E0218A\\" border-radius=\\"4px\\" font-size=\\"14px\\" inner-padding=\\"10px 20px\\"
+      padding=\\"8px 0px\\">
+      Click Here
+    </mj-button>
+  </mj-column>
+</mj-section>
+
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:undefined;border:1px solid undefined\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Luke Skywalker
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column padding=\\"0px\\">
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:undefined;border:1px solid undefined\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Boba Fett
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column padding=\\"0px\\">
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:undefined;border:1px solid undefined\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Han Solo
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:undefined;border:1px solid undefined\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Luke Skywalker
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid undefined;border-top:none\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          lightsaber
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:undefined;border:1px solid undefined\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Boba Fett
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid undefined;border-top:none;border-bottom:none\\">
+        <td style=\\"padding:10px 20px 0px 20px;text-align:left\\" width=\\"478px\\">
+          blaster
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid undefined;border-top:none;border-bottom:none\\">
+        <td style=\\"padding:10px 20px 0px 20px;text-align:left\\" width=\\"478px\\">
+          Z-6 Jetpack
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid undefined;border-top:none\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          flame thrower
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:undefined;border:1px solid undefined\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Han Solo
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid undefined;border-top:none\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          blaster pistol
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+
+<mj-section css-class=\\"c--block c--block-quote\\">
+  <mj-column padding=\\"4px 20px\\"
+    border-left=\\"2px solid #E0218A\\">
+    <mj-text color=\\"#696969\\" font-size=\\"14px\\" line-height=\\"18px\\" font-style=\\"italic\\" align=\\"left\\" css-class=\\"c--text-quote\\">
+        Cras lacinia elit fringilla consequat placerat...
+    </mj-text>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render columnBlock2Center 1`] = `
+"
+<mj-section css-class=\\"c--block c--block-column\\">
+    <mj-column padding=\\"0 6px\\"  >
+            <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" container-background-color=\\"transparent\\" padding=\\"4px 0px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+                This is a text block
+            </mj-text>
+        
+    </mj-column>
+    <mj-column padding=\\"0 6px\\"  >
+        
+            <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" container-background-color=\\"transparent\\" padding=\\"4px 0px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+                This is a text block
+            </mj-text>
+        
+    </mj-column>
+</mj-section>
+
+<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        This is a text block
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        This is a text block
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email template blocks should render columnBlock2Left 1`] = `
+"
+<mj-section css-class=\\"c--block c--block-column\\">
+    <mj-column padding=\\"0 6px\\" width=\\"30%\\" >
+            <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" container-background-color=\\"transparent\\" padding=\\"4px 0px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+                This is a text block
+            </mj-text>
+        
+    </mj-column>
+    <mj-column padding=\\"0 6px\\" width=\\"70%\\" >
+        
+            <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" container-background-color=\\"transparent\\" padding=\\"4px 0px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+                This is a text block
+            </mj-text>
+        
+    </mj-column>
+</mj-section>
+
+<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        This is a text block
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        This is a text block
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email template blocks should render conditionalTextBlock 1`] = `""`;
+
+exports[`email template blocks should render conditionalTextBlockShown 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        Conditional text.
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email template blocks should render dividerBlock 1`] = `
+"<mj-section css-class=\\"c--block c--block-divider\\">
+  <mj-column padding=\\"10px 0px\\">
+    <mj-divider container-background-color=\\"#ffffff\\" border-width=\\"1px\\" border-color=\\"#CBD5E0\\" padding=\\"0px\\" />
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render dividerBlockWithColor 1`] = `
+"<mj-section css-class=\\"c--block c--block-divider\\">
+  <mj-column padding=\\"10px 0px\\">
+    <mj-divider container-background-color=\\"#ffffff\\" border-width=\\"1px\\" border-color=\\"#FF9900\\" padding=\\"0px\\" />
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render imageBlock 1`] = `
+"<mj-section css-class=\\"c--block c--block-image\\">
+  <mj-column padding=\\"10px 0px\\">
+    <mj-image width=\\"300px\\" src=\\"https://s3.amazonaws.com/backend-dev-librarybucket-a6n6jb55kc98/118c6491-a35d-4b81-b10b-d22f7d20da0c/1590005909939_green-mountains.jpg\\" alt=\\"mountains\\"
+      href=\\"https://example.com/mountains\\"  />
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render imageBlockWithFullAlign 1`] = `
+"<mj-section css-class=\\"c--block c--block-image\\">
+  <mj-column padding=\\"10px 0px\\">
+    <mj-image width=\\"300px\\" src=\\"https://example.com/img.png\\" alt=\\"\\"
+       />
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render imageBlockWithVars 1`] = `
+"<mj-section css-class=\\"c--block c--block-image\\">
+  <mj-column padding=\\"10px 0px\\">
+    <mj-image width=\\"300px\\" src=\\"http://example.com/{imagePath}\\" alt=\\"Description: {imageDescription}\\"
+      href=\\"https://example.com/{imageLink}\\"  />
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render jsonnetBlock 1`] = `""`;
+
+exports[`email template blocks should render listBlock 1`] = `
+"<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:#F8F8F8;border:1px solid #D5D5D5\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Luke Skywalker
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column padding=\\"0px\\">
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:#F8F8F8;border:1px solid #D5D5D5\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Boba Fett
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column padding=\\"0px\\">
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:#F8F8F8;border:1px solid #D5D5D5\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Han Solo
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render listBlockBullets 1`] = `
+"<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column padding-top=\\"0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+        <ul style=\\"margin:0;padding-left:20px;\\">
+          <li style=\\"margin:0;padding:0;text-align:left\\">
+            Luke Skywalker
+          </li>
+          <li style=\\"margin:0;padding:10px 0 0;text-align:left\\">
+            Boba Fett
+          </li>
+          <li style=\\"margin:0;padding:10px 0 0;text-align:left\\">
+            Han Solo
+          </li>
+          
+        </ul>
+    </mj-text>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render listBlockBulletsEmpty 1`] = `""`;
+
+exports[`email template blocks should render listBlockBulletsWithChildren 1`] = `
+"<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column padding-top=\\"0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+        <div style=\\"text-align:left\\">
+          Luke Skywalker
+        </div>
+        <ul style=\\"margin:0;padding:0 0 0 20px\\">
+          <li style=\\"margin:0;padding:10px 0 0;text-align:left\\">
+            lightsaber
+          </li>
+        </ul>
+        <div style=\\"padding-top:20px;text-align:left\\">
+          Boba Fett
+        </div>
+        <ul style=\\"margin:0;padding:0 0 0 20px\\">
+          <li style=\\"margin:0;padding:10px 0 0;text-align:left\\">
+            blaster
+          </li>
+          <li style=\\"margin:0;padding:10px 0 0;text-align:left\\">
+            Z-6 Jetpack
+          </li>
+          <li style=\\"margin:0;padding:10px 0 0;text-align:left\\">
+            flame thrower
+          </li>
+        </ul>
+        <div style=\\"padding-top:20px;text-align:left\\">
+          Han Solo
+        </div>
+        <ul style=\\"margin:0;padding:0 0 0 20px\\">
+          <li style=\\"margin:0;padding:10px 0 0;text-align:left\\">
+            blaster pistol
+          </li>
+        </ul>
+        
+    </mj-text>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render listBlockTransparent 1`] = `
+"<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr>
+        <td style=\\"padding:0px 0px 0px 0px;text-align:left\\" width=\\"520px\\">
+          Luke Skywalker
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column padding=\\"0px\\">
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr>
+        <td style=\\"padding:0px 0px 0px 0px;text-align:left\\" width=\\"520px\\">
+          Boba Fett
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column padding=\\"0px\\">
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr>
+        <td style=\\"padding:0px 0px 0px 0px;text-align:left\\" width=\\"520px\\">
+          Han Solo
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render listBlockTransparentWithChildImage 1`] = `
+"<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr>
+        <td colspan=\\"2\\" style=\\"padding:0px 0px 0px 0px;text-align:left\\" width=\\"520px\\">
+          Luke Skywalker
+        </td>
+      </tr>
+      <tr>
+        <td style=\\"padding:0px 10px 0px 0px\\" width=\\"26px\\">
+          <img src=\\"https://example.com/img/lightsaber.png\\" width=\\"26px\\" height=\\"26px\\" />
+        </td>
+        <td style=\\"padding:0px 0px 0px 10px;text-align:left\\" width=\\"474px\\">
+          lightsaber
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr>
+        <td colspan=\\"2\\" style=\\"padding:0px 0px 0px 0px;text-align:left\\" width=\\"520px\\">
+          Boba Fett
+        </td>
+      </tr>
+      <tr>
+        <td style=\\"padding:0px 10px 10px 0px\\" width=\\"26px\\">
+          <img src=\\"https://example.com/img/blaster.png\\" width=\\"26px\\" height=\\"26px\\" />
+        </td>
+        <td style=\\"padding:0px 0px 10px 10px;text-align:left\\" width=\\"474px\\">
+          blaster
+        </td>
+      </tr>
+      <tr>
+        <td style=\\"padding:0px 10px 10px 0px\\" width=\\"26px\\">
+          <img src=\\"https://example.com/img/z-6-jetpack.png\\" width=\\"26px\\" height=\\"26px\\" />
+        </td>
+        <td style=\\"padding:0px 0px 10px 10px;text-align:left\\" width=\\"474px\\">
+          Z-6 Jetpack
+        </td>
+      </tr>
+      <tr>
+        <td style=\\"padding:0px 10px 0px 0px\\" width=\\"26px\\">
+          <img src=\\"https://example.com/img/flame-thrower.png\\" width=\\"26px\\" height=\\"26px\\" />
+        </td>
+        <td style=\\"padding:0px 0px 0px 10px;text-align:left\\" width=\\"474px\\">
+          flame thrower
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr>
+        <td colspan=\\"2\\" style=\\"padding:0px 0px 0px 0px;text-align:left\\" width=\\"520px\\">
+          Han Solo
+        </td>
+      </tr>
+      <tr>
+        <td style=\\"padding:0px 10px 0px 0px\\" width=\\"26px\\">
+          <img src=\\"https://example.com/img/blaster-pistol.png\\" width=\\"26px\\" height=\\"26px\\" />
+        </td>
+        <td style=\\"padding:0px 0px 0px 10px;text-align:left\\" width=\\"474px\\">
+          blaster pistol
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render listBlockTransparentWithChildNotFound 1`] = `
+"<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr>
+        <td style=\\"padding:0px 0px 0px 0px;text-align:left\\" width=\\"520px\\">
+          Luke Skywalker
+        </td>
+      </tr>
+          
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr>
+        <td style=\\"padding:0px 0px 0px 0px;text-align:left\\" width=\\"520px\\">
+          Boba Fett
+        </td>
+      </tr>
+          
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr>
+        <td style=\\"padding:0px 0px 0px 0px;text-align:left\\" width=\\"520px\\">
+          Han Solo
+        </td>
+      </tr>
+          
+    </mj-table>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render listBlockTransparentWithChildren 1`] = `
+"<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:#F8F8F8;border:1px solid #D5D5D5\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Luke Skywalker
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid #D5D5D5;border-top:none\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          lightsaber
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:#F8F8F8;border:1px solid #D5D5D5\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Boba Fett
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid #D5D5D5;border-top:none;border-bottom:none\\">
+        <td style=\\"padding:10px 20px 0px 20px;text-align:left\\" width=\\"478px\\">
+          blaster
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid #D5D5D5;border-top:none;border-bottom:none\\">
+        <td style=\\"padding:10px 20px 0px 20px;text-align:left\\" width=\\"478px\\">
+          Z-6 Jetpack
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid #D5D5D5;border-top:none\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          flame thrower
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:#F8F8F8;border:1px solid #D5D5D5\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Han Solo
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid #D5D5D5;border-top:none\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          blaster pistol
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render listBlockTransparentWithTopImage 1`] = `
+"<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr>
+        <td style=\\"padding:0px 10px 0px 0px\\" width=\\"26px\\">
+          <img src=\\"https://example.com/img/luke.png\\" width=\\"26px\\" height=\\"26px\\" />
+        </td>
+        <td style=\\"padding:0px 0px 0px 10px;text-align:left\\" width=\\"474px\\">
+          Luke Skywalker
+        </td>
+      </tr>
+          
+      <tr>
+        <td colspan=\\"2\\" style=\\"padding:0px 0px 0px 0px\\">
+          <ul style=\\"margin:0;padding:0 0 0 20px\\">
+  <li style=\\"margin:0;padding:10px 0 0;text-align:left\\">
+    lightsaber
+  </li>
+</ul>
+
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr>
+        <td style=\\"padding:0px 10px 0px 0px\\" width=\\"26px\\">
+          <img src=\\"https://example.com/img/boba-fett.png\\" width=\\"26px\\" height=\\"26px\\" />
+        </td>
+        <td style=\\"padding:0px 0px 0px 10px;text-align:left\\" width=\\"474px\\">
+          Boba Fett
+        </td>
+      </tr>
+          
+      <tr>
+        <td colspan=\\"2\\" style=\\"padding:0px 0px 0px 0px\\">
+          <ul style=\\"margin:0;padding:0 0 0 20px\\">
+  <li style=\\"margin:0;padding:10px 0 0;text-align:left\\">
+    blaster
+  </li>
+  <li style=\\"margin:0;padding:10px 0 0;text-align:left\\">
+    Z-6 Jetpack
+  </li>
+  <li style=\\"margin:0;padding:10px 0 0;text-align:left\\">
+    flame thrower
+  </li>
+</ul>
+
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr>
+        <td style=\\"padding:0px 10px 0px 0px\\" width=\\"26px\\">
+          <img src=\\"https://example.com/img/han.png\\" width=\\"26px\\" height=\\"26px\\" />
+        </td>
+        <td style=\\"padding:0px 0px 0px 10px;text-align:left\\" width=\\"474px\\">
+          Han Solo
+        </td>
+      </tr>
+          
+      <tr>
+        <td colspan=\\"2\\" style=\\"padding:0px 0px 0px 0px\\">
+          <ul style=\\"margin:0;padding:0 0 0 20px\\">
+  <li style=\\"margin:0;padding:10px 0 0;text-align:left\\">
+    blaster pistol
+  </li>
+</ul>
+
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render listBlockUsingObjects 1`] = `
+"<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:#CFE9F7;border:1px solid #6CBCE6\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Parent object
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid #6CBCE6;border-top:none\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Child object
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render listBlockWithChildren 1`] = `
+"<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:#F8F8F8;border:1px solid #D5D5D5\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Luke Skywalker
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid #D5D5D5;border-top:none\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          lightsaber
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:#F8F8F8;border:1px solid #D5D5D5\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Boba Fett
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid #D5D5D5;border-top:none;border-bottom:none\\">
+        <td style=\\"padding:10px 20px 0px 20px;text-align:left\\" width=\\"478px\\">
+          blaster
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid #D5D5D5;border-top:none;border-bottom:none\\">
+        <td style=\\"padding:10px 20px 0px 20px;text-align:left\\" width=\\"478px\\">
+          Z-6 Jetpack
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid #D5D5D5;border-top:none\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          flame thrower
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-list\\">
+  <mj-column>
+    <mj-table padding=\\"0px\\" color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+      <tr style=\\"background:#F8F8F8;border:1px solid #D5D5D5\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          Han Solo
+        </td>
+      </tr>
+      <tr style=\\"border:1px solid #D5D5D5;border-top:none\\">
+        <td style=\\"padding:10px 20px 10px 20px;text-align:left\\" width=\\"478px\\">
+          blaster pistol
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render markdownBlock 1`] = `
+"<mj-section css-class=\\"c--block c--block-markdown\\">
+  <mj-column padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+    
+    <p>Hello Luke. Get started with <a href=\\"http://daringfireball.net/projects/markdown/\\">markdown</a>.</p>
+
+  </mj-text>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render markdownBlockMultiLine 1`] = `
+"<mj-section css-class=\\"c--block c--block-markdown\\">
+  <mj-column padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+    
+    <p><strong>This is a test</strong></p>
+<p>The following is a list:</p>
+<ul>
+<li>A</li>
+<li>B</li>
+<li>C</li>
+<li>D</li>
+</ul>
+<p>End of message</p>
+
+  </mj-text>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render markdownBlockWithBoldVariable 1`] = `
+"<mj-section css-class=\\"c--block c--block-markdown\\">
+  <mj-column padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+    
+    <p>Hello Luke!</p>
+
+  </mj-text>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render markdownBlockWithTextWithTags 1`] = `
+"<mj-section css-class=\\"c--block c--block-markdown\\">
+  <mj-column padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+    
+    <p>Markdown text with <strong>tags</strong><br>Should work.</p>
+
+  </mj-text>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render markdownBlockWithVariableWithTags 1`] = `
+"<mj-section css-class=\\"c--block c--block-markdown\\">
+  <mj-column padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+    
+    <p><strong>markdown</strong> needs to support html <em>tags</em>.</p>
+<p>As well as new lines<br><br>and new lines created by using &lt;br&gt;.</p>
+
+  </mj-text>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render quoteBlockWithLink 1`] = `
+"<mj-section css-class=\\"c--block c--block-quote\\">
+  <mj-column padding=\\"4px 20px\\"
+    border-left=\\"2px solid #CBD5E0\\">
+    <mj-text color=\\"#696969\\" font-size=\\"14px\\" line-height=\\"18px\\" font-style=\\"italic\\" align=\\"left\\" css-class=\\"c--text-quote\\">
+        Quote block with a <a class=\\"c--link\\" href=\\"https://example.com\\">link</a>.
+    </mj-text>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render templateBlock 1`] = `
+"<mj-section css-class=\\"c--block c--block-template\\">
+  <mj-column>
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+        <!-- block title -->
+
+<div class=\\"template\\" style=\\"color: blue;\\">Hello World</div>
+
+    </mj-text>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render templateBlockWithSetHelper 1`] = `
+"<mj-section css-class=\\"c--block c--block-template\\">
+  <mj-column>
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" css-class=\\"c--text-text\\">
+        
+  
+  Handlebars: good
+  Var: good
+
+    Nested Handlebars: good
+    Nested var: good
+
+
+    </mj-text>
+  </mj-column>
+</mj-section>
+"
+`;
+
+exports[`email template blocks should render textBlock 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        This is a text block
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email template blocks should render textBlockBorder 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\" border=\\"2px solid red\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        <strong>You cannot hide forever, </strong><strong>Luke</strong><strong>.<br></strong><br><em>Give yourself to the Dark Side.</em>
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email template blocks should render textBlockBorderDisabled 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        <strong>You cannot hide forever, </strong><strong>Luke</strong><strong>.<br></strong><br><em>Give yourself to the Dark Side.</em>
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email template blocks should render textBlockWhitespace 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        <br>  To trim or not to trim?  <br>
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email template blocks should render textBlockWithLink 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        <a class=\\"c--link\\" href=\\"https://example.com\\">Luke</a>
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email template blocks should render textBlockWithLinkWithWhitespace 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        Link<a class=\\"c--link\\" href=\\"https://example.com\\">with whitespace</a>is fun
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email template blocks should render textBlockWithMarks 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        <strong>You cannot hide forever, </strong><strong>Luke</strong><strong>.<br></strong><br><em>Give yourself to the Dark Side.</em>
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email template blocks should render textBlockWithVariable 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        Hello Luke
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email template blocks should render textBlockWithVariableEscaping 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        Escape variable values: Should escape &amp;, &lt;, &gt;, &quot;, &#x27;, &#x60;, and &#x3D; characters.<br>Escape link values: <a class=\\"c--link\\" href=\\"https://example.com/?a&#x3D;1&amp;b&#x3D;2&amp;c&#x3D;3\\">Should escape &amp;, &lt;, &gt;, &quot;, &#x27;, &#x60;, and &#x3D; characters</a>.
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email template blocks should render textBlockWithVariableWithLineReturns 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        Var with line returns: Line 1<br>Line 2<br><br>Line 4.
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email template blocks should render textBlockWithVariableWithWindowsLineReturns 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        line 1<br>line 2<br><br>line 4
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email template blocks should render welcomeBlocks 1`] = `
+"<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"24px\\" font-weight=\\"600\\" line-height=\\"28px\\" align=\\"left\\" css-class=\\"c--text-h1\\">
+        <strong>Welcome to Courier!</strong>
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        <strong>These are content blocks.</strong>
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        • Feel free to drag and drop me around. <br>• If you remove us don’t worry, We’ll simple move into the library under Channels for later use. <br>• A block can be shared across channels! <br>• When you are done, press Preview to send yourself a notification.<br>• Use curly brackets <strong>{</strong> and <strong>}</strong> to create {variables}.
+    </mj-text>
+  </mj-column>
+</mj-section>
+
+<mj-section css-class=\\"c--block c--block-action\\">
+  <mj-column>
+    <mj-button align=\\"center\\" href=\\"https://www.courier.com\\"
+      background-color=\\"#58C87A\\" border-radius=\\"4px\\" font-size=\\"14px\\" inner-padding=\\"10px 20px\\"
+      padding=\\"8px 0px\\">
+      Click to edit my properties!
+    </mj-button>
+  </mj-column>
+</mj-section>
+
+<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-section css-class=\\"c--block c--block-text\\">
+  <mj-column background-color=\\"transparent\\"
+    padding=\\"4px 0px\\">
+    <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+        Cheers, <br><strong>The Courier Team</strong>
+    </mj-text>
+  </mj-column>
+</mj-section>"
+`;
+
+exports[`email templates should render emailCustomTemplate 1`] = `
+"<mjml>
+  
+  <mj-head>
+    <mj-attributes>
+      <mj-all font-family=\\"Helvetica, Arial, sans-serif\\" />
+      <mj-text padding=\\"0px\\" font-size=\\"14px\\" color=\\"#4c4c4c\\" />
+      <mj-image padding=\\"0px\\" />
+      <mj-wrapper padding=\\"0px\\" />
+      <mj-section padding=\\"8px 30px\\"  />
+      <mj-column padding=\\"0px\\" width=\\"100%\\" />
+    </mj-attributes>
+    <mj-raw><style>
+    .body {
+      background: white;
+    }
+  
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  
+    .header, .footer {
+        padding: 10px 30px;
+    }
+  
+    .padding-top {
+        background: #f5f5f5;
+        padding: 12px;
+    }
+  </style></mj-raw>
+  </mj-head>
+  <mj-body css-class=\\"c--email-body\\" width=\\"580px\\" background-color=\\"#f5f5f5\\">
+    <mj-wrapper>
+      <mj-section padding=\\"0px\\">
+        <mj-column>
+          <mj-text>
+              <div class=\\"padding-top\\"></div>
+              <div class=\\"header\\">
+                  <h1>I'm a Header</h1>
+              </div>            
+          </mj-text>
+        </mj-column>
+      </mj-section>
+  
+  <mj-section css-class=\\"c--block c--block-text\\">
+    <mj-column background-color=\\"transparent\\"
+      padding=\\"4px 0px\\">
+      <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+          This is a text block
+      </mj-text>
+    </mj-column>
+  </mj-section>
+    </mj-wrapper>
+    <mj-wrapper css-class=\\"c--email-footer\\">
+      <mj-section padding=\\"0px\\">
+        <mj-column>
+          <mj-text>
+              <div class=\\"footer\\" style='color:#8F8F8F;font-size:11px;'>
+                  I'm a Footer
+              </div>            
+          </mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+    <mj-raw><img src=\\"https://abc.ct0.app/o/open-tracking\\" /></mj-raw>
+  </mj-body>
+</mjml>
+"
+`;
+
+exports[`email templates should render emailLineTemplateWithCustomHead 1`] = `
+"<mjml>
+  
+  <mj-head>
+    <mj-attributes>
+      <mj-all font-family=\\"Helvetica, Arial, sans-serif\\" />
+      <mj-text padding=\\"0px\\" />
+      <mj-image padding=\\"0px\\" />
+      <mj-wrapper padding=\\"20px 0 0 0\\" />
+      <mj-section padding=\\"8px 30px\\" background-color=\\"#ffffff\\" border-left=\\"1px solid #f5f5f5\\" border-right=\\"1px solid #f5f5f5\\"/>
+      <mj-column padding=\\"0px\\" background-color=\\"#ffffff\\" />
+    </mj-attributes>
+    <mj-style inline=\\"inline\\">
+      .c--email-header, .c--email-footer {
+        background: #FFFFFF;
+      }
+  
+      .c--email-header {
+        border-bottom: 1px solid #f5f5f5;
+        border-top: 6px solid #9D3789;
+        border-radius: 7px 7px 0 0;
+      }
+  
+        .c--email-footer {
+          border-radius: 0 0 7px 7px;
+          border-bottom: 1px solid #f5f5f5;
+        }
+  
+      .c--email-body {
+        padding-bottom: 20px;
+      }
+  
+      p {
+        margin: 0;
+      }
+  
+      a {
+        color: #2a9edb;
+        font-weight: 500;
+        text-decoration: none;
+      }
+  
+      .text-rtl {
+        direction: rtl;
+      }
+    </mj-style>
+      <mj-raw><style>.c--block { background: green; }</style></mj-raw>
+  </mj-head>
+  <mj-body css-class=\\"c--email-body\\" background-color=\\"#f5f5f5\\" width=\\"582px\\">
+    <mj-wrapper>
+      <mj-section padding=\\"0px\\" css-class=\\"c--email-header\\">
+        <mj-column padding-top=\\"20px\\" padding-left=\\"20px\\" padding-bottom=\\"20px\\">
+          <mj-image width=\\"140px\\" src=\\"https://s3.amazonaws.com/backend-production-librarybucket-1izigk5lryla9/3f40a128-de0c-4c1d-aeae-77457f4fef07/1591575643026_logo.png\\" 
+            href=\\"https://courier.com\\"  align=\\"left\\" />
+        </mj-column>
+      </mj-section>
+      <mj-section>
+        <mj-column></mj-column>
+      </mj-section>
+  
+  <mj-section css-class=\\"c--block c--block-text\\">
+    <mj-column background-color=\\"transparent\\"
+      padding=\\"4px 0px\\">
+      <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+          This is a text block
+      </mj-text>
+    </mj-column>
+  </mj-section>
+  
+      <mj-section css-class=\\"c--email-footer\\" padding=\\"0px\\">
+        <mj-column padding=\\"0px\\">
+          <mj-spacer height=\\"20px\\" />
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+    <mj-raw>
+      <img src=\\"https://abc.ct0.app/o/open-tracking\\" />
+    </mj-raw>
+  </mj-body>
+</mjml>
+"
+`;
+
+exports[`email templates should render emailLineTemplateWithFooterLinks 1`] = `
+"<mjml>
+  
+  <mj-head>
+    <mj-attributes>
+      <mj-all font-family=\\"Helvetica, Arial, sans-serif\\" />
+      <mj-text padding=\\"0px\\" />
+      <mj-image padding=\\"0px\\" />
+      <mj-wrapper padding=\\"20px 0 0 0\\" />
+      <mj-section padding=\\"8px 30px\\" background-color=\\"#ffffff\\" border-left=\\"1px solid #f5f5f5\\" border-right=\\"1px solid #f5f5f5\\"/>
+      <mj-column padding=\\"0px\\" background-color=\\"#ffffff\\" />
+    </mj-attributes>
+    <mj-style inline=\\"inline\\">
+      .c--email-header, .c--email-footer {
+        background: #FFFFFF;
+      }
+  
+      .c--email-header {
+        border-bottom: 1px solid #f5f5f5;
+        border-top: 6px solid #9D3789;
+        border-radius: 7px 7px 0 0;
+      }
+  
+        .c--email-footer {
+          border-radius: 0 0 7px 7px;
+          border-bottom: 1px solid #f5f5f5;
+        }
+  
+      .c--email-body {
+        padding-bottom: 20px;
+      }
+  
+      p {
+        margin: 0;
+      }
+  
+      a {
+        color: #2a9edb;
+        font-weight: 500;
+        text-decoration: none;
+      }
+  
+      .text-rtl {
+        direction: rtl;
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body css-class=\\"c--email-body\\" background-color=\\"#f5f5f5\\" width=\\"582px\\">
+    <mj-wrapper>
+      <mj-section padding=\\"0px\\" css-class=\\"c--email-header\\">
+        <mj-column padding-top=\\"20px\\" padding-left=\\"20px\\" padding-bottom=\\"20px\\">
+        </mj-column>
+      </mj-section>
+      <mj-section>
+        <mj-column></mj-column>
+      </mj-section>
+  
+  <mj-section css-class=\\"c--block c--block-text\\">
+    <mj-column background-color=\\"transparent\\"
+      padding=\\"4px 0px\\">
+      <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+          This is a text block
+      </mj-text>
+    </mj-column>
+  </mj-section>
+  
+      <mj-section padding=\\"0px\\">
+        <mj-column padding=\\"0px\\">
+          <mj-divider container-background-color=\\"#ffffff\\" border-width=\\"1px\\" border-color=\\"#f5f5f5\\" padding=\\"20px 0 0 0\\" />
+        </mj-column>
+      </mj-section>
+      <mj-section css-class=\\"c--email-footer\\" padding=\\"10px\\">
+        <mj-column width=\\"410px\\" padding=\\"10px 20px\\">
+          <mj-text color=\\"#8F8F8F\\" font-size=\\"11px\\" line-height=\\"15px\\" align=\\"left\\" css-class=\\"c--text-subtext\\">
+              Footer text with a <a class=\\"c--link\\" href=\\"https://example.com/\\">link</a>.
+          </mj-text>
+        </mj-column>
+        <mj-column width=\\"150px\\"
+          padding=\\"10px 20px 10px 0px\\">
+          <mj-social css-class=\\"c--social\\" font-size=\\"15px\\" icon-size=\\"18px\\" mode=\\"horizontal\\" padding=\\"0px\\" align=\\"center\\"
+            border-radius=\\"0px\\">
+            <mj-social-element href=\\"https://fb.me/trycourier\\" background-color=\\"#FFFFFF\\" icon-size=\\"18px\\" src=\\"https://backend-production-librarybucket-1izigk5lryla9.s3.amazonaws.com/static/facebook.png?v=2\\"></mj-social-element>
+            <mj-social-element href=\\"https://www.instagram.com/trycourier/\\" background-color=\\"#FFFFFF\\" icon-size=\\"18px\\" src=\\"https://backend-production-librarybucket-1izigk5lryla9.s3.amazonaws.com/static/instagram.png?v=2\\"></mj-social-element>
+            <mj-social-element href=\\"https://www.linkedin.com/company/trycourier/\\" background-color=\\"#FFFFFF\\" icon-size=\\"18px\\" src=\\"https://backend-production-librarybucket-1izigk5lryla9.s3.amazonaws.com/static/linkedin.png?v=2\\"></mj-social-element>
+            <mj-social-element href=\\"https://medium.com\\" background-color=\\"#FFFFFF\\" icon-size=\\"18px\\" src=\\"https://backend-production-librarybucket-1izigk5lryla9.s3.amazonaws.com/static/medium.png?v=2\\"></mj-social-element>
+            <mj-social-element href=\\"https://twitter.com/trycourier\\" background-color=\\"#FFFFFF\\" icon-size=\\"18px\\" src=\\"https://backend-production-librarybucket-1izigk5lryla9.s3.amazonaws.com/static/twitter.png?v=2\\"></mj-social-element>
+          </mj-social>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+    <mj-raw>
+      <img src=\\"https://abc.ct0.app/o/open-tracking\\" />
+    </mj-raw>
+  </mj-body>
+</mjml>
+"
+`;
+
+exports[`email templates should render emailLineTemplateWithFooterText 1`] = `
+"<mjml>
+  
+  <mj-head>
+    <mj-attributes>
+      <mj-all font-family=\\"Helvetica, Arial, sans-serif\\" />
+      <mj-text padding=\\"0px\\" />
+      <mj-image padding=\\"0px\\" />
+      <mj-wrapper padding=\\"20px 0 0 0\\" />
+      <mj-section padding=\\"8px 30px\\" background-color=\\"#ffffff\\" border-left=\\"1px solid #f5f5f5\\" border-right=\\"1px solid #f5f5f5\\"/>
+      <mj-column padding=\\"0px\\" background-color=\\"#ffffff\\" />
+    </mj-attributes>
+    <mj-style inline=\\"inline\\">
+      .c--email-header, .c--email-footer {
+        background: #FFFFFF;
+      }
+  
+      .c--email-header {
+        border-bottom: 1px solid #f5f5f5;
+        border-top: 6px solid #9D3789;
+        border-radius: 7px 7px 0 0;
+      }
+  
+        .c--email-footer {
+          border-radius: 0 0 7px 7px;
+          border-bottom: 1px solid #f5f5f5;
+        }
+  
+      .c--email-body {
+        padding-bottom: 20px;
+      }
+  
+      p {
+        margin: 0;
+      }
+  
+      a {
+        color: #2a9edb;
+        font-weight: 500;
+        text-decoration: none;
+      }
+  
+      .text-rtl {
+        direction: rtl;
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body css-class=\\"c--email-body\\" background-color=\\"#f5f5f5\\" width=\\"582px\\">
+    <mj-wrapper>
+      <mj-section padding=\\"0px\\" css-class=\\"c--email-header\\">
+        <mj-column padding-top=\\"20px\\" padding-left=\\"20px\\" padding-bottom=\\"20px\\">
+        </mj-column>
+      </mj-section>
+      <mj-section>
+        <mj-column></mj-column>
+      </mj-section>
+  
+  <mj-section css-class=\\"c--block c--block-text\\">
+    <mj-column background-color=\\"transparent\\"
+      padding=\\"4px 0px\\">
+      <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+          This is a text block
+      </mj-text>
+    </mj-column>
+  </mj-section>
+  
+      <mj-section padding=\\"0px\\">
+        <mj-column padding=\\"0px\\">
+          <mj-divider container-background-color=\\"#ffffff\\" border-width=\\"1px\\" border-color=\\"#f5f5f5\\" padding=\\"20px 0 0 0\\" />
+        </mj-column>
+      </mj-section>
+      <mj-section css-class=\\"c--email-footer\\" padding=\\"10px\\">
+        <mj-column padding=\\"10px 20px\\">
+          <mj-text color=\\"#8F8F8F\\" font-size=\\"11px\\" line-height=\\"15px\\" align=\\"left\\" css-class=\\"c--text-subtext\\">
+              footer text here
+          </mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+    <mj-raw>
+      <img src=\\"https://abc.ct0.app/o/open-tracking\\" />
+    </mj-raw>
+  </mj-body>
+</mjml>
+"
+`;
+
+exports[`email templates should render emailLineTemplateWithFooterTextSocialLinks 1`] = `
+"<mjml>
+  
+  <mj-head>
+    <mj-attributes>
+      <mj-all font-family=\\"Helvetica, Arial, sans-serif\\" />
+      <mj-text padding=\\"0px\\" />
+      <mj-image padding=\\"0px\\" />
+      <mj-wrapper padding=\\"20px 0 0 0\\" />
+      <mj-section padding=\\"8px 30px\\" background-color=\\"#ffffff\\" border-left=\\"1px solid #f5f5f5\\" border-right=\\"1px solid #f5f5f5\\"/>
+      <mj-column padding=\\"0px\\" background-color=\\"#ffffff\\" />
+    </mj-attributes>
+    <mj-style inline=\\"inline\\">
+      .c--email-header, .c--email-footer {
+        background: #FFFFFF;
+      }
+  
+      .c--email-header {
+        border-bottom: 1px solid #f5f5f5;
+        border-top: 6px solid #9D3789;
+        border-radius: 7px 7px 0 0;
+      }
+  
+        .c--email-footer {
+          border-radius: 0 0 7px 7px;
+          border-bottom: 1px solid #f5f5f5;
+        }
+  
+      .c--email-body {
+        padding-bottom: 20px;
+      }
+  
+      p {
+        margin: 0;
+      }
+  
+      a {
+        color: #2a9edb;
+        font-weight: 500;
+        text-decoration: none;
+      }
+  
+      .text-rtl {
+        direction: rtl;
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body css-class=\\"c--email-body\\" background-color=\\"#f5f5f5\\" width=\\"582px\\">
+    <mj-wrapper>
+      <mj-section padding=\\"0px\\" css-class=\\"c--email-header\\">
+        <mj-column padding-top=\\"20px\\" padding-left=\\"20px\\" padding-bottom=\\"20px\\">
+        </mj-column>
+      </mj-section>
+      <mj-section>
+        <mj-column></mj-column>
+      </mj-section>
+  
+  <mj-section css-class=\\"c--block c--block-text\\">
+    <mj-column background-color=\\"transparent\\"
+      padding=\\"4px 0px\\">
+      <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+          This is a text block
+      </mj-text>
+    </mj-column>
+  </mj-section>
+  
+      <mj-section padding=\\"0px\\">
+        <mj-column padding=\\"0px\\">
+          <mj-divider container-background-color=\\"#ffffff\\" border-width=\\"1px\\" border-color=\\"#f5f5f5\\" padding=\\"20px 0 0 0\\" />
+        </mj-column>
+      </mj-section>
+      <mj-section css-class=\\"c--email-footer\\" padding=\\"10px\\">
+        <mj-column width=\\"410px\\" padding=\\"10px 20px\\">
+          <mj-text color=\\"#8F8F8F\\" font-size=\\"11px\\" line-height=\\"15px\\" align=\\"left\\" css-class=\\"c--text-subtext\\">
+              footer text here
+          </mj-text>
+        </mj-column>
+        <mj-column width=\\"150px\\"
+          padding=\\"10px 20px 10px 0px\\">
+          <mj-social css-class=\\"c--social\\" font-size=\\"15px\\" icon-size=\\"18px\\" mode=\\"horizontal\\" padding=\\"0px\\" align=\\"center\\"
+            border-radius=\\"0px\\">
+            <mj-social-element href=\\"https://fb.me/trycourier\\" background-color=\\"#FFFFFF\\" icon-size=\\"18px\\" src=\\"https://backend-production-librarybucket-1izigk5lryla9.s3.amazonaws.com/static/facebook.png?v=2\\"></mj-social-element>
+            <mj-social-element href=\\"https://www.instagram.com/trycourier/\\" background-color=\\"#FFFFFF\\" icon-size=\\"18px\\" src=\\"https://backend-production-librarybucket-1izigk5lryla9.s3.amazonaws.com/static/instagram.png?v=2\\"></mj-social-element>
+            <mj-social-element href=\\"https://www.linkedin.com/company/trycourier/\\" background-color=\\"#FFFFFF\\" icon-size=\\"18px\\" src=\\"https://backend-production-librarybucket-1izigk5lryla9.s3.amazonaws.com/static/linkedin.png?v=2\\"></mj-social-element>
+            <mj-social-element href=\\"https://medium.com\\" background-color=\\"#FFFFFF\\" icon-size=\\"18px\\" src=\\"https://backend-production-librarybucket-1izigk5lryla9.s3.amazonaws.com/static/medium.png?v=2\\"></mj-social-element>
+            <mj-social-element href=\\"https://twitter.com/trycourier\\" background-color=\\"#FFFFFF\\" icon-size=\\"18px\\" src=\\"https://backend-production-librarybucket-1izigk5lryla9.s3.amazonaws.com/static/twitter.png?v=2\\"></mj-social-element>
+          </mj-social>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+    <mj-raw>
+      <img src=\\"https://abc.ct0.app/o/open-tracking\\" />
+    </mj-raw>
+  </mj-body>
+</mjml>
+"
+`;
+
+exports[`email templates should render emailLineTemplateWithHeaderColorVar 1`] = `
+"<mjml>
+  
+  <mj-head>
+    <mj-attributes>
+      <mj-all font-family=\\"Helvetica, Arial, sans-serif\\" />
+      <mj-text padding=\\"0px\\" />
+      <mj-image padding=\\"0px\\" />
+      <mj-wrapper padding=\\"20px 0 0 0\\" />
+      <mj-section padding=\\"8px 30px\\" background-color=\\"#ffffff\\" border-left=\\"1px solid #f5f5f5\\" border-right=\\"1px solid #f5f5f5\\"/>
+      <mj-column padding=\\"0px\\" background-color=\\"#ffffff\\" />
+    </mj-attributes>
+    <mj-style inline=\\"inline\\">
+      .c--email-header, .c--email-footer {
+        background: #FFFFFF;
+      }
+  
+      .c--email-header {
+        border-bottom: 1px solid #f5f5f5;
+        border-top: 6px solid #E0218A;
+        border-radius: 7px 7px 0 0;
+      }
+  
+        .c--email-footer {
+          border-radius: 0 0 7px 7px;
+          border-bottom: 1px solid #f5f5f5;
+        }
+  
+      .c--email-body {
+        padding-bottom: 20px;
+      }
+  
+      p {
+        margin: 0;
+      }
+  
+      a {
+        color: #2a9edb;
+        font-weight: 500;
+        text-decoration: none;
+      }
+  
+      .text-rtl {
+        direction: rtl;
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body css-class=\\"c--email-body\\" background-color=\\"#f5f5f5\\" width=\\"582px\\">
+    <mj-wrapper>
+      <mj-section padding=\\"0px\\" css-class=\\"c--email-header\\">
+        <mj-column padding-top=\\"20px\\" padding-left=\\"20px\\" padding-bottom=\\"20px\\">
+          <mj-image width=\\"140px\\" src=\\"https://s3.amazonaws.com/backend-production-librarybucket-1izigk5lryla9/3f40a128-de0c-4c1d-aeae-77457f4fef07/1591575643026_logo.png\\" 
+            href=\\"https://courier.com\\"  align=\\"left\\" />
+        </mj-column>
+      </mj-section>
+      <mj-section>
+        <mj-column></mj-column>
+      </mj-section>
+  
+  <mj-section css-class=\\"c--block c--block-text\\">
+    <mj-column background-color=\\"transparent\\"
+      padding=\\"4px 0px\\">
+      <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+          This is a text block
+      </mj-text>
+    </mj-column>
+  </mj-section>
+  
+      <mj-section css-class=\\"c--email-footer\\" padding=\\"0px\\">
+        <mj-column padding=\\"0px\\">
+          <mj-spacer height=\\"20px\\" />
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+    <mj-raw>
+      <img src=\\"https://abc.ct0.app/o/open-tracking\\" />
+    </mj-raw>
+  </mj-body>
+</mjml>
+"
+`;
+
+exports[`email templates should render emailLineTemplateWithHeaderLogo 1`] = `
+"<mjml>
+  
+  <mj-head>
+    <mj-attributes>
+      <mj-all font-family=\\"Helvetica, Arial, sans-serif\\" />
+      <mj-text padding=\\"0px\\" />
+      <mj-image padding=\\"0px\\" />
+      <mj-wrapper padding=\\"20px 0 0 0\\" />
+      <mj-section padding=\\"8px 30px\\" background-color=\\"#ffffff\\" border-left=\\"1px solid #f5f5f5\\" border-right=\\"1px solid #f5f5f5\\"/>
+      <mj-column padding=\\"0px\\" background-color=\\"#ffffff\\" />
+    </mj-attributes>
+    <mj-style inline=\\"inline\\">
+      .c--email-header, .c--email-footer {
+        background: #FFFFFF;
+      }
+  
+      .c--email-header {
+        border-bottom: 1px solid #f5f5f5;
+        border-top: 6px solid #9D3789;
+        border-radius: 7px 7px 0 0;
+      }
+  
+        .c--email-footer {
+          border-radius: 0 0 7px 7px;
+          border-bottom: 1px solid #f5f5f5;
+        }
+  
+      .c--email-body {
+        padding-bottom: 20px;
+      }
+  
+      p {
+        margin: 0;
+      }
+  
+      a {
+        color: #2a9edb;
+        font-weight: 500;
+        text-decoration: none;
+      }
+  
+      .text-rtl {
+        direction: rtl;
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body css-class=\\"c--email-body\\" background-color=\\"#f5f5f5\\" width=\\"582px\\">
+    <mj-wrapper>
+      <mj-section padding=\\"0px\\" css-class=\\"c--email-header\\">
+        <mj-column padding-top=\\"20px\\" padding-left=\\"20px\\" padding-bottom=\\"20px\\">
+          <mj-image width=\\"140px\\" src=\\"https://s3.amazonaws.com/backend-production-librarybucket-1izigk5lryla9/3f40a128-de0c-4c1d-aeae-77457f4fef07/1591575643026_logo.png\\" 
+            href=\\"https://courier.com\\"  align=\\"left\\" />
+        </mj-column>
+      </mj-section>
+      <mj-section>
+        <mj-column></mj-column>
+      </mj-section>
+  
+  <mj-section css-class=\\"c--block c--block-text\\">
+    <mj-column background-color=\\"transparent\\"
+      padding=\\"4px 0px\\">
+      <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+          This is a text block
+      </mj-text>
+    </mj-column>
+  </mj-section>
+  
+      <mj-section css-class=\\"c--email-footer\\" padding=\\"0px\\">
+        <mj-column padding=\\"0px\\">
+          <mj-spacer height=\\"20px\\" />
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+    <mj-raw>
+      <img src=\\"https://abc.ct0.app/o/open-tracking\\" />
+    </mj-raw>
+  </mj-body>
+</mjml>
+"
+`;
+
+exports[`email templates should render emailMjmlTemplate 1`] = `
+"<mjml>
+  <mj-head>
+    <mj-style inline=\\"inline\\">
+      .text-rtl {
+        direction: rtl;
+      }
+    </mj-style>
+    <mj-attributes>
+        <mj-all font-family=\\"Helvetica, Arial, sans-serif\\" />
+        <mj-text padding=\\"0px\\" font-size=\\"14px\\" color=\\"#4c4c4c\\"/>
+        <mj-image padding=\\"0px\\" />
+        <mj-wrapper padding=\\"0px\\"/>
+        <mj-section padding=\\"10px 30px\\" background-color=\\"white\\"/>
+        <mj-column padding=\\"0px\\" width=\\"100%\\" />
+    </mj-attributes>
+    <mj-style inline=\\"inline\\">
+        /* styles go here */
+    </mj-style>
+  </mj-head>
+  <mj-body css-class=\\"c--email-body\\" width=\\"580px\\" background-color=\\"#f5f5f5\\">
+    <mj-wrapper css-class=\\"header\\" background-color=\\"#F6FAFF\\">
+        <mj-section padding-top=\\"35px\\">
+            <mj-column>
+                <mj-image src=\\"https://s3.amazonaws.com/backend-production-librarybucket-1izigk5lryla9/c8fa99b7-d0d8-4225-8825-5ef259542665/1586288772006_Courier%20Logo%20Color@3x.png\\"></mj-image>
+            </mj-column>
+            <mj-column>
+                <mj-text align=\\"center\\">My Header</mj-text>
+            </mj-column>
+        </mj-section>
+        <mj-section padding-top=\\"35px\\">
+            <mj-column>
+                <mj-divider padding=\\"0px\\" border-color=\\"#ff7473\\" border-width=\\"2px\\"></mj-divider>
+            </mj-column>
+        </mj-section>
+    </mj-wrapper>  <mj-section css-class=\\"c--block c--block-text\\">
+    <mj-column background-color=\\"transparent\\"
+      padding=\\"4px 0px\\">
+      <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+          This is a text block
+      </mj-text>
+    </mj-column>
+  </mj-section>
+    <mj-wrapper css-class=\\"blue-footer\\" background-color=\\"#1E3652\\" full-width=\\"full-width\\">
+        <mj-section background-color=\\"#1E3652\\" padding=\\"20px\\">
+            <mj-column>
+                    <mj-text align=\\"center\\" color=\\"white\\">My Footer</mj-text>
+            </mj-column>
+        </mj-section>
+    </mj-wrapper>
+    <mj-raw><img src=\\"https://abc.ct0.app/o/open-tracking\\" /></mj-raw>
+  </mj-body>
+</mjml>
+"
+`;
+
+exports[`email templates should render emailNoneTemplate 1`] = `
+"<mjml>
+  <mj-head>
+    <mj-style inline=\\"inline\\">
+      .text-rtl {
+        direction: rtl;
+      }
+    </mj-style>
+    <mj-attributes>
+      <mj-all font-family=\\"Helvetica, Arial, sans-serif\\" />
+      <mj-text padding=\\"0px\\"/>
+      <mj-image padding=\\"0px\\" />
+      <mj-section padding=\\"0px\\" />
+      <mj-column padding=\\"0px\\" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body css-class=\\"c--email-body\\" width=\\"9999px\\" background-color=\\"transparent\\">
+  <mj-section css-class=\\"c--block c--block-text\\">
+    <mj-column background-color=\\"transparent\\"
+      padding=\\"4px 0px\\">
+      <mj-text color=\\"#4C4C4C\\" font-size=\\"14px\\" line-height=\\"18px\\" align=\\"left\\" css-class=\\"c--text-text\\">
+          This is a text block
+      </mj-text>
+    </mj-column>
+  </mj-section>
+    <mj-raw>
+      <img src=\\"https://abc.ct0.app/o/open-tracking\\" />
+    </mj-raw>
+  </mj-body>
+</mjml>
+"
+`;

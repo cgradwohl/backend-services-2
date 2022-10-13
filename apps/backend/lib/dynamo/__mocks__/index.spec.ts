@@ -1,0 +1,9 @@
+export const scan = jest.fn();
+export const put = jest.fn();
+export const update = jest.fn();
+export const getItem = jest.fn();
+export const query = jest.fn();
+export const batchGet = jest.fn();
+export const batchWrite = jest.fn();
+export const deleteItem = jest.fn();
+export const transactWrite = jest.fn();

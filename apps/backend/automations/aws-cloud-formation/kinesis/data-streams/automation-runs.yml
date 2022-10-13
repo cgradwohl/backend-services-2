@@ -1,0 +1,13 @@
+Resources:
+  AutomationRunsStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      RetentionPeriodHours: 24
+      ShardCount: ${self:custom.automationRuns.kinesis.${self:custom.stage}.shardCount, 1}
+      StreamEncryption:
+        EncryptionType: KMS
+        KeyId:
+          Ref: AutoRotatedKmsKey
+      Tags:
+        - Key: tags.courier.com/elasticity
+          Value: fixed

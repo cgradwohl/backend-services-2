@@ -1,0 +1,143 @@
+Resources:
+  EventLogsFirehoseBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      ReplicationConfiguration:
+        Role: !GetAtt
+          - EventLogsFirehoseRole
+          - Arn
+        Rules:
+          - Destination:
+              Bucket: !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref EventLogsFirehoseReplicationBucket
+              StorageClass: STANDARD
+            Id: Backup
+            Prefix: ''
+            Status: Enabled
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Data store destination for event logs firehose"
+      - Key: VantaContainsUserData
+        Value: true
+      VersioningConfiguration:
+        Status: Enabled
+
+  EventLogsFirehoseReplicationBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - ${self:custom.lifecyclePolicyRules.deleteAfter7Days}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: VantaOwner
+          Value: ${self:custom.vanta.owner}
+        - Key: VantaNonProd
+          Value: ${self:custom.vanta.nonProd}
+        - Key: VantaDescription
+          Value: "Replication bucket for event logs used by snowflake/fivetran."
+        - Key: VantaContainsUserData
+          Value: true
+      VersioningConfiguration:
+        Status: Enabled
+
+  EventLogsFirehoseRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - firehose.amazonaws.com
+                - s3.amazonaws.com
+
+  EventLogsFirehoseStoragePolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:AbortMultipartUpload
+              - s3:GetBucketLocation
+              - s3:GetObject
+              - s3:ListBucket
+              - s3:ListBucketMultipartUploads
+              - s3:PutObject
+            Effect: Allow
+            Resource:
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref EventLogsFirehoseBucket
+                  - /*
+          - Action:
+              - 's3:GetReplicationConfiguration'
+              - 's3:ListBucket'
+            Effect: Allow
+            Resource:
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref EventLogsFirehoseBucket
+          - Action:
+              - 's3:GetObjectVersion'
+              - 's3:GetObjectVersionAcl'
+            Effect: Allow
+            Resource:
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref EventLogsFirehoseBucket
+                  - /*
+          - Action:
+              - 's3:ReplicateObject'
+            Effect: Allow
+            Resource:
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref EventLogsFirehoseReplicationBucket
+                  - /*
+      PolicyName: EventLogsFirehoseStoragePolicy
+      Roles:
+        - !Ref EventLogsFirehoseRole
+
+  EventLogsFirehose:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      DeliveryStreamEncryptionConfigurationInput:
+        KeyType: AWS_OWNED_CMK
+      DeliveryStreamType: DirectPut
+      S3DestinationConfiguration:
+        BucketARN: !GetAtt EventLogsFirehoseBucket.Arn
+        BufferingHints:
+          IntervalInSeconds: 300
+          SizeInMBs: 10
+        CompressionFormat: UNCOMPRESSED
+        RoleARN: !GetAtt EventLogsFirehoseRole.Arn

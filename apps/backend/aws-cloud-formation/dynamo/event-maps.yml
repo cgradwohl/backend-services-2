@@ -1,0 +1,40 @@
+Resources:
+  EventMapsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.prefix}-event-maps
+      AttributeDefinitions:
+        - AttributeName: tenantId
+          AttributeType: S
+        - AttributeName: eventId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: tenantId
+          KeyType: HASH
+        - AttributeName: eventId
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Stores a mapping of inbound API events to notification templates."
+      - Key: VantaContainsUserData
+        Value: false
+Outputs:
+  EventMapsTableName:
+    Export:
+      Name: backend-${self:custom.stage}-EventMapsTableName
+    Value:
+      Ref: EventMapsTable
+  EventMapsTableArn:
+    Export:
+      Name: backend-${self:custom.stage}-EventMapsTableArn
+    Value:
+      Fn::GetAtt: [EventMapsTable, Arn]

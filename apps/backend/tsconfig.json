@@ -1,13 +1,22 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
+  "forceConsistentCasingInFileNames": true,
+  "noImplicitReturns": true,
+  "strict": true,
+  "noUnusedLocals": true,
+  "compilerOptions": {
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "inlineSources": true,
+    "lib": ["es5", "es6", "dom", "es2021", "esnext.asynciterable"],
+    "sourceMap": true,
+    "sourceRoot": "/",
+    "target": "ES2015",
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./*"]
     },
-    {
-      "path": "./tsconfig.spec.json"
-    }
-  ]
+    "resolveJsonModule": true
+  },
+  "exclude": ["__smoke_tests__"]
 }

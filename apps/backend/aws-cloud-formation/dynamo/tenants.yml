@@ -1,0 +1,27 @@
+Resources:
+  TenantsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.prefix}-tenants
+      AttributeDefinitions:
+        - AttributeName: tenantId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: tenantId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      KinesisStreamSpecification:
+        StreamArn: !GetAtt TenantsTableKinesisStream.Arn
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Stores data about each Courier customer account at the company level."
+      - Key: VantaContainsUserData
+        Value: false

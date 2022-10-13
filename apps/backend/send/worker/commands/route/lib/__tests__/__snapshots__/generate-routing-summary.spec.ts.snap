@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generate route summary applyNotificationToRoutingSummary should add relevant information if notification 1`] = `
+Array [
+  Object {
+    "channel": "email",
+    "configurationId": "b46abb6b-e99e-473b-927a-7d9843ec0442",
+    "id": "6721af5a-7d56-4906-a021-6f30fe84253a",
+    "provider": "mailjet",
+    "selected": true,
+    "taxonomy": "email:mailjet",
+  },
+]
+`;

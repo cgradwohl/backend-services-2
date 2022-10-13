@@ -1,0 +1,11 @@
+Conditions:
+  ClickThroughTrackingDomainConfigured: 
+    Fn::And:
+      - Fn::Not:
+          - Fn::Equals:
+              - "${self:custom.clickThroughTracking.domainName}"
+              - ""
+      - Fn::Not:
+          - Fn::Equals:
+              - "${self:custom.clickThroughTracking.hostedZone}"
+              - ""

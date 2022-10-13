@@ -1,0 +1,111 @@
+Resources:
+  # This stream handles all incoming data from send-api handler
+  ActionStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      RetentionPeriodHours: 24
+      ShardCount: ${self:custom.sendPipelineV2.kinesis.actionStream.${self:custom.stage}.shardCount, 1}
+      StreamEncryption:
+        EncryptionType: KMS
+        KeyId:
+          Ref: AutoRotatedKmsKey
+      Tags:
+        - Key: tags.courier.com/elasticity
+          Value: fixed
+        - Key: tags.courier.com/monitoring-level
+          Value: low
+        - Key: tags.courier.com/service
+          Value: pipeline
+
+  AudienceStream:
+    Type: AWS::Kinesis::Stream
+    Description: Stream to handle audiences from send-api handler
+    Properties:
+      RetentionPeriodHours: 24
+      ShardCount: 1
+      StreamEncryption:
+        EncryptionType: KMS
+        KeyId:
+          Ref: AutoRotatedKmsKey
+      Tags:
+        - Key: tags.courier.com/elasticity
+          Value: fixed
+        - Key: tags.courier.com/monitoring-level
+          Value: low
+        - Key: tags.courier.com/service
+          Value: pipeline
+  
+  SequenceProcessorStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      RetentionPeriodHours: 24
+      ShardCount: ${self:custom.sendPipelineV2.kinesis.sequenceProcessorStream.${self:custom.stage}.shardCount, 1}
+      StreamEncryption:
+        EncryptionType: KMS
+        KeyId:
+          Ref: AutoRotatedKmsKey
+      Tags:
+        - Key: tags.courier.com/elasticity
+          Value: fixed
+        - Key: tags.courier.com/monitoring-level
+          Value: low
+        - Key: tags.courier.com/service
+          Value: pipeline
+
+  # This stream holds all the records that were produced by router. The record in this stream is used to perform provider specific render
+  ProviderRenderStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      RetentionPeriodHours: 24
+      ShardCount: ${self:custom.sendPipelineV2.kinesis.providerRenderStream.${self:custom.stage}.shardCount, 1}
+      StreamEncryption:
+        EncryptionType: KMS
+        KeyId:
+          Ref: AutoRotatedKmsKey
+      Tags:
+        - Key: tags.courier.com/elasticity
+          Value: fixed
+        - Key: tags.courier.com/monitoring-level
+          Value: low
+        - Key: tags.courier.com/service
+          Value: pipeline
+
+  # This is the final stream that has record that will be eventually sent to the provider
+  ProviderSendStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      RetentionPeriodHours: 24
+      ShardCount: ${self:custom.sendPipelineV2.kinesis.providerSendStream.${self:custom.stage}.shardCount, 1}
+      StreamEncryption:
+        EncryptionType: KMS
+        KeyId:
+          Ref: AutoRotatedKmsKey
+      Tags:
+        - Key: tags.courier.com/elasticity
+          Value: fixed
+        - Key: tags.courier.com/monitoring-level
+          Value: low
+        - Key: tags.courier.com/service
+          Value: pipeline
+
+Outputs:
+  ActionStream:
+    Export:
+      Name: backend-${self:custom.stage}-ActionStream
+    Value:
+      Ref: ActionStream
+  ActionStreamStreamArn:
+    Export:
+      Name: backend-${self:custom.stage}-ActionStreamArn
+    Value:
+      Fn::GetAtt: [ActionStream, Arn]
+  AudienceStream:
+    Value:
+      Ref: AudienceStream
+    Export:
+      Name: backend-${self:custom.stage}-AudienceStream
+  AudienceStreamArn:
+    Export:
+      Name: backend-${self:custom.stage}-AudienceStreamArn
+    Value:
+      Fn::GetAtt: [AudienceStream, Arn]

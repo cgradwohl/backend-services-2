@@ -1,0 +1,97 @@
+Resources:
+  SqsSendListOrPattern:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId:
+        Ref: AutoRotatedKmsKey
+      VisibilityTimeout: 60
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+            - SqsSendListOrPatternDLQ
+            - Arn
+        maxReceiveCount: 10
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "A queue of inbound API send list requests from our customers"
+      - Key: VantaContainsUserData
+        Value: false # true if contains user data
+
+  SqsSendListOrPatternDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId:
+        Ref: AutoRotatedKmsKey
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Dead Letter Queue: these queues are used to handle messages that have failed too many times in a primary queue."
+      - Key: VantaContainsUserData
+        Value: false # true if contains user data
+
+  ### Cloudwatch Monitors (only created in production)
+  SqsSendListOrPatternAgeOfOldestMessage:
+    Type: AWS::CloudWatch::Alarm
+    Condition: IsProduction
+    Properties:
+      AlarmActions:
+        - Ref: AlertEngineeringTopic
+      AlarmDescription: "Alarm if queue contains messages older than 5000 seconds"
+      ComparisonOperator: GreaterThanThreshold
+      DatapointsToAlarm: 1
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::GetAtt:
+              - SqsSendListOrPattern
+              - QueueName
+      EvaluationPeriods: 1
+      MetricName: ApproximateAgeOfOldestMessage
+      Namespace: "AWS/SQS"
+      Period: 900 # 15 minutes (60 * 15)
+      Statistic: Average
+      Threshold: 5000
+      TreatMissingData: missing
+
+  SqsSendListOrPatternDLQAgeOfOldestMessage:
+    Type: AWS::CloudWatch::Alarm
+    Condition: IsProduction
+    Properties:
+      AlarmActions:
+        - Ref: AlertEngineeringTopic
+      AlarmDescription: "Alarm if queue contains messages older than 5000 seconds"
+      ComparisonOperator: GreaterThanThreshold
+      DatapointsToAlarm: 1
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::GetAtt:
+              - SqsSendListOrPatternDLQ
+              - QueueName
+      EvaluationPeriods: 1
+      MetricName: ApproximateAgeOfOldestMessage
+      Namespace: "AWS/SQS"
+      Period: 900 # 15 minutes (60 * 15)
+      Statistic: Average
+      Threshold: 5000
+      TreatMissingData: missing
+Outputs:
+  SqsSendListOrPatternQueuName:
+    Export:
+      Name: backend-${self:custom.stage}-SqsSendListOrPatternQueuName
+    Value:
+      Fn::GetAtt:
+          - SqsSendListOrPattern
+          - QueueName
+  SqsSendListOrPatternDLQArn:
+    Export:
+      Name: backend-${self:custom.stage}-SqsSendListOrPatternDLQArn
+    Value:
+      Fn::GetAtt: [SqsSendListOrPatternDLQ, Arn]

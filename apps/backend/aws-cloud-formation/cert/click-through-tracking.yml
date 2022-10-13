@@ -1,0 +1,7 @@
+Resources:
+  ClickThroughTrackingCert:
+    Type: AWS::CertificateManager::Certificate
+    Condition: ClickThroughTrackingDomainConfigured
+    Properties:
+      DomainName: "*.${self:custom.clickThroughTracking.domainName}"
+      ValidationMethod: DNS

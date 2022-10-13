@@ -1,0 +1,68 @@
+Resources:
+  MessagesTableV3:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: gsi1pk
+          AttributeType: S
+        - AttributeName: gsi2pk
+          AttributeType: S
+        - AttributeName: gsi3pk
+          AttributeType: S
+        - AttributeName: gsi3sk
+          AttributeType: S
+      GlobalSecondaryIndexes:
+        - IndexName: gsi1
+          KeySchema:
+          - AttributeName: gsi1pk
+            KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: gsi2
+          KeySchema:
+          - AttributeName: gsi2pk
+            KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: gsi3
+          KeySchema:
+          - AttributeName: gsi3pk
+            KeyType: HASH
+          - AttributeName: gsi3sk
+            KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      KinesisStreamSpecification:
+        StreamArn: !GetAtt MessagesV3KinesisStream.Arn
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Stores requests and messages sent to Courier."
+      - Key: VantaContainsUserData
+        Value: true
+      - Key: tags.courier.com/service
+        Value: pipeline
+Outputs:
+  MessagesTableV3:
+    Export:
+      Name: backend-${self:custom.stage}-MessagesTableV3
+    Value:
+      Ref: MessagesTableV3
+  MessagesTableV3Arn:
+    Export:
+      Name: backend-${self:custom.stage}-MessagesTableV3Arn
+    Value:
+      Fn::GetAtt: [MessagesTableV3, Arn]

@@ -1,0 +1,76 @@
+{
+  "Records": [
+    {
+      "cf": {
+        "config": {
+          "distributionDomainName": "d2q14lggkyxdi1.cloudfront.net",
+          "distributionId": "EDIRXUOV3TFWJ",
+          "eventType": "origin-request",
+          "requestId": "bzzUTq7F1VSgfwgSueSmdzWawlWsa3kPjnVcB3KwR7wPpZ9gTNSFFQ=="
+        },
+        "request": {
+          "clientIp": "2601:643:8002:20c0:34d0:649d:8c4d:5053",
+          "headers": {
+            "host": [
+              {
+                "key": "Host",
+                "value": "1ho71rhsfd.execute-api.us-east-1.amazonaws.com"
+              }
+            ],
+            "authorization": [
+              {
+                "key": "Authorization",
+                "value": "Bearer pk_prod_NZAMJVQN2E4Q8NM1WQDN0HAHXY4W"
+              }
+            ],
+            "x-forwarded-for": [
+              {
+                "key": "X-Forwarded-For",
+                "value": "2601:643:8002:20c0:34d0:649d:8c4d:5053"
+              }
+            ],
+            "user-agent": [
+              {
+                "key": "User-Agent",
+                "value": "Amazon CloudFront"
+              }
+            ],
+            "via": [
+              {
+                "key": "Via",
+                "value": "1.1 dd6ca629d7f9b82f72baa9970b67574e.cloudfront.net (CloudFront)"
+              }
+            ],
+            "content-length": [
+              {
+                "key": "Content-Length",
+                "value": "70"
+              }
+            ],
+            "content-type": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "method": "POST",
+          "origin": {
+            "custom": {
+              "customHeaders": {},
+              "domainName": "1ho71rhsfd.execute-api.us-east-1.amazonaws.com",
+              "keepaliveTimeout": 5,
+              "path": "/dev",
+              "port": 443,
+              "protocol": "https",
+              "readTimeout": 30,
+              "sslProtocols": ["TLSv1", "SSLv3"]
+            }
+          },
+          "querystring": "",
+          "uri": "/send"
+        }
+      }
+    }
+  ]
+}

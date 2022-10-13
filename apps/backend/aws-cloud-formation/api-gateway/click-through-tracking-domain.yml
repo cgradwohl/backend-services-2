@@ -1,0 +1,19 @@
+Resources:
+  ClickThroughTrackingDomain:
+    Type: AWS::ApiGateway::DomainName
+    Condition: ClickThroughTrackingDomainConfigured
+    Properties:
+      CertificateArn:
+        Ref: ClickThroughTrackingCert
+      DomainName: "*.${self:custom.clickThroughTracking.domainName}"
+
+  ClickThroughTrackingMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Condition: ClickThroughTrackingDomainConfigured
+    Properties:
+      BasePath: ""
+      DomainName:
+        Ref: ClickThroughTrackingDomain
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      Stage: ${self:custom.stage}

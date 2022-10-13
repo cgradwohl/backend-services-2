@@ -1,0 +1,7 @@
+[
+  {
+    "config": "{\"template\":\"{{! change context to verify local works }}\\n{{#with (path \\\"characters[0]\\\")}}\\n  {{set \\\"myVar\\\" \\\"good\\\"}}\\n  Handlebars: {{myVar}}\\n  Var: {{var \\\"myVar\\\"}}\\n\\n  {{! change context to verify root works }}\\n  {{#with (path \\\"weapons[0]\\\")}}\\n    Nested Handlebars: {{@root.myVar}}\\n    Nested var: {{var \\\"$.myVar\\\"}}\\n  {{/with}}\\n{{/with}}\"}",
+    "id": "3647fc11-29dd-494b-84a4-77b8dcaca2d7",
+    "type": "template"
+  }
+]

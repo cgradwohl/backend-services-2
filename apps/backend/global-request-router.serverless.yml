@@ -1,0 +1,89 @@
+configValidationMode: error
+custom:
+  apiDomainName:
+    dev: ${file(./.dev-config.yml):DEV_DOMAIN_NAME, ''} # Only if you have a domain bought from your aws account
+    production: courier.com
+    staging: staging-trycourier.com
+  hostedZoneId: ${env:HOSTED_ZONE_ID, file(./.dev-config.yml):HOSTED_ZONE_ID, ''}
+  origin: "https://${self:provider.region}-api.${self:custom.apiDomainName.${self:custom.stage}}"
+  prefix: ${self:custom.stage}
+  stage: ${opt:stage, self:provider.stage}
+  vanta:
+    disabled:
+      default: true
+      production: false
+    nonProd: ${self:custom.vanta.disabled.${self:custom.stage}, self:custom.vanta.disabled.default}
+    owner: "seth@courier.com"
+  webpack:
+    webpackConfig: ./webpack.config.js
+    packager: "yarn"
+    includeModules:
+      forceExclude:
+        - aws-sdk
+      forceInclude:
+        - source-map-support
+    keepOutputDirectory: true
+
+functions:
+  - ${file(global-request-router/aws-cloudformation/lambda/origin-request-router.yml):functions}
+
+package:
+  individually: true
+
+plugins:
+  - serverless-cloudformation-sub-variables
+  - serverless-plugin-conditional-functions
+  - serverless-stack-termination-protection
+  - serverless-webpack
+
+provider:
+  cloudFront:
+    cachePolicies:
+      customCachePolicy:
+        DefaultTTL: 0
+        MinTTL: 0
+        MaxTTL: 1
+        ParametersInCacheKeyAndForwardedToOrigin:
+          CookiesConfig:
+            CookieBehavior: none
+          EnableAcceptEncodingBrotli: true
+          EnableAcceptEncodingGzip: true
+          HeadersConfig:
+            HeaderBehavior: whitelist
+            Headers:
+              - Authorization
+              - Idempotency-Key
+              - Origin
+              - Stripe-Signature
+              - Workos-Signature
+              - X-Courier-Client-Key
+              - X-Courier-User-Id
+              - X-Courier-User-Signature
+              - X-Idempotency-Expiration
+          QueryStringsConfig:
+            QueryStringBehavior: all
+  deploymentBucket:
+    blockPublicAccess: true
+    tags:
+      VantaOwner: ${self:custom.vanta.owner}
+      VantaNonProd: ${self:custom.vanta.nonProd}
+      VantaDescription: Contains the Cloudfront distribution and the lambda@edge function to route requests to the regional API gateway
+      VantaContainsUserData: false
+  memorySize: 128
+  name: aws
+  region: us-east-1
+  runtime: nodejs14.x
+  stage: dev
+  tags:
+    tags.courier.com/elasticity: variable
+    tags.courier.com/monitoring-level: high
+  timeout: 30
+  tracing:
+    lambda: PassThrough
+  versionFunctions: false
+
+resources:
+  - ${file(global-request-router/aws-cloudformation/certificate/api-cert.yaml)}
+  - ${file(global-request-router/aws-cloudformation/cloudfront/api-distribution.yaml)}
+
+service: global-request-router

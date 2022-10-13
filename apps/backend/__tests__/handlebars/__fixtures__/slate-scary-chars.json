@@ -1,0 +1,21 @@
+{
+  "object": "value",
+  "document": {
+    "object": "document",
+    "data": {},
+    "nodes": [
+      {
+        "object": "block",
+        "type": "line",
+        "data": {},
+        "nodes": [
+          {
+            "object": "text",
+            "text": "Scary characters are \", ', <, >, &, `, =, {, and }",
+            "marks": []
+          }
+        ]
+      }
+    ]
+  }
+}

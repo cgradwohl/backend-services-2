@@ -1,0 +1,35 @@
+Resources:
+  DailyMetricsTable:
+    Type: AWS::DynamoDB::GlobalTable
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: day
+          AttributeType: S
+        - AttributeName: tenantId
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      GlobalSecondaryIndexes:
+        - IndexName: ByDay
+          KeySchema:
+            - AttributeName: day
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      KeySchema:
+        - AttributeName: tenantId
+          KeyType: HASH
+        - AttributeName: day
+          KeyType: RANGE
+      Replicas:
+        - Region: !Ref AWS::Region
+        - Region: eu-west-1
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+
+Outputs:
+  DailyMetricsTableArn:
+    Value:
+      Fn::GetAtt: [DailyMetricsTable, Arn]
+  DailyMetricsTableName:
+    Value:
+      Ref: DailyMetricsTable

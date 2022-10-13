@@ -1,0 +1,918 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generate routing should allow providers to be channels 1`] = `
+Object {
+  "address": Array [],
+  "nodes": Array [
+    Object {
+      "address": Array [
+        0,
+      ],
+      "failover": undefined,
+      "nodes": Array [
+        Object {
+          "address": Array [
+            0,
+            0,
+          ],
+          "channel": "mailjet",
+          "provider": "mailjet",
+          "providerConfigurationId": "7593c6b6-f241-47f0-85b4-b5386cd600er6",
+          "providerFailoverIndex": 1,
+          "taxonomy": "email:mailjet",
+          "type": "leaf",
+        },
+      ],
+      "type": "branch",
+    },
+  ],
+  "type": "branch",
+}
+`;
+
+exports[`generate routing should call provider handles function and use the result 1`] = `
+Object {
+  "address": Array [],
+  "nodes": Array [
+    Object {
+      "address": Array [
+        0,
+      ],
+      "nodes": Array [
+        Object {
+          "address": Array [
+            0,
+            0,
+          ],
+          "channel": "vonage",
+          "failureReason": "Information required by the provider was not included.",
+          "failureType": "MISSING_PROVIDER_SUPPORT",
+          "provider": "vonage",
+          "type": "dead-leaf",
+        },
+      ],
+      "type": "branch",
+    },
+  ],
+  "type": "branch",
+}
+`;
+
+exports[`generate routing should call provider handles function and use the result 2`] = `
+Object {
+  "address": Array [],
+  "nodes": Array [
+    Object {
+      "address": Array [
+        0,
+      ],
+      "nodes": Array [
+        Object {
+          "address": Array [
+            0,
+            0,
+          ],
+          "channel": "vonage",
+          "failureReason": "Provider returned an error when checking its ability to handle the notification",
+          "failureType": "PROVIDER_ERROR",
+          "provider": "vonage",
+          "type": "dead-leaf",
+        },
+      ],
+      "type": "branch",
+    },
+  ],
+  "type": "branch",
+}
+`;
+
+exports[`generate routing should call provider handles function and use the result 3`] = `
+Object {
+  "address": Array [],
+  "nodes": Array [
+    Object {
+      "address": Array [
+        0,
+      ],
+      "failover": undefined,
+      "nodes": Array [
+        Object {
+          "address": Array [
+            0,
+            0,
+          ],
+          "channel": "vonage",
+          "provider": "vonage",
+          "providerConfigurationId": "7593c6b6-f241-47f0-85b4-vonage",
+          "providerFailoverIndex": 1,
+          "taxonomy": "direct_message:sms:vonage",
+          "type": "leaf",
+        },
+      ],
+      "type": "branch",
+    },
+  ],
+  "type": "branch",
+}
+`;
+
+exports[`generate routing should evaluate configured channel conditionals and exclude the email channel as a result 1`] = `
+Object {
+  "address": Array [],
+  "nodes": Array [
+    Object {
+      "address": Array [
+        0,
+      ],
+      "failover": Object {
+        "address": Array [
+          0,
+          "failover",
+        ],
+        "failover": undefined,
+        "nodes": Array [
+          Object {
+            "address": Array [
+              0,
+              "failover",
+              0,
+            ],
+            "channel": "sms",
+            "provider": "vonage",
+            "providerConfigurationId": "7593c6b6-f241-47f0-85b4-vonage",
+            "providerFailoverIndex": 2,
+            "taxonomy": "direct_message:sms:vonage",
+            "type": "leaf",
+          },
+        ],
+        "type": "branch",
+      },
+      "nodes": Array [
+        Object {
+          "address": Array [
+            0,
+            0,
+          ],
+          "channel": "sms",
+          "provider": "twilio",
+          "providerConfigurationId": "7593c6b6-f241-47f0-85b4-b5386cd60086",
+          "providerFailoverIndex": 1,
+          "taxonomy": "direct_message:sms:twilio",
+          "type": "leaf",
+        },
+      ],
+      "type": "branch",
+    },
+    Object {
+      "address": Array [
+        1,
+      ],
+      "channel": "email",
+      "failureReason": "Channel conditional failed",
+      "failureType": "FILTERED",
+      "type": "dead-branch",
+    },
+  ],
+  "type": "branch",
+}
+`;
+
+exports[`generate routing should evaluate provider conditionals and exclude mailjet as a result 1`] = `
+Object {
+  "address": Array [],
+  "nodes": Array [
+    Object {
+      "address": Array [
+        0,
+      ],
+      "failover": undefined,
+      "nodes": Array [
+        Object {
+          "address": Array [
+            0,
+            0,
+          ],
+          "channel": "sms",
+          "provider": "twilio",
+          "providerConfigurationId": "7593c6b6-f241-47f0-85b4-b5386cd60086",
+          "providerFailoverIndex": 1,
+          "taxonomy": "direct_message:sms:twilio",
+          "type": "leaf",
+        },
+      ],
+      "type": "branch",
+    },
+    Object {
+      "address": Array [
+        1,
+      ],
+      "nodes": Array [
+        Object {
+          "address": Array [
+            1,
+            0,
+          ],
+          "channel": "email",
+          "failureReason": "Provider conditional failed (message.providers.mailjet.if)",
+          "failureType": "FILTERED",
+          "provider": "mailjet",
+          "type": "dead-leaf",
+        },
+      ],
+      "type": "branch",
+    },
+  ],
+  "type": "branch",
+}
+`;
+
+exports[`generate routing should generate a tree with recursive routing strategies 1`] = `
+Object {
+  "address": Array [],
+  "nodes": Array [
+    Object {
+      "address": Array [
+        0,
+      ],
+      "failover": Object {
+        "address": Array [
+          0,
+          "failover",
+        ],
+        "failover": undefined,
+        "nodes": Array [
+          Object {
+            "address": Array [
+              0,
+              "failover",
+              0,
+            ],
+            "failover": Object {
+              "address": Array [
+                0,
+                "failover",
+                0,
+                "failover",
+              ],
+              "nodes": Array [
+                Object {
+                  "address": Array [
+                    0,
+                    "failover",
+                    0,
+                    "failover",
+                    0,
+                  ],
+                  "channel": "push",
+                  "failureReason": "Information required by the provider was not included.",
+                  "failureType": "MISSING_PROVIDER_SUPPORT",
+                  "provider": "firebase-fcm",
+                  "type": "dead-leaf",
+                },
+                Object {
+                  "address": Array [
+                    0,
+                    "failover",
+                    0,
+                    "failover",
+                    1,
+                  ],
+                  "channel": "push",
+                  "failureReason": "Information required by the provider was not included.",
+                  "failureType": "MISSING_PROVIDER_SUPPORT",
+                  "provider": "airship",
+                  "type": "dead-leaf",
+                },
+              ],
+              "type": "branch",
+            },
+            "nodes": Array [
+              Object {
+                "address": Array [
+                  0,
+                  "failover",
+                  0,
+                  0,
+                ],
+                "channel": "push",
+                "provider": "apn",
+                "providerConfigurationId": "f2661ebd-dd91-417c-8b37-a9870fd0cbf4",
+                "providerFailoverIndex": 1,
+                "taxonomy": "push:apn",
+                "type": "leaf",
+              },
+            ],
+            "type": "branch",
+          },
+        ],
+        "type": "branch",
+      },
+      "nodes": Array [
+        Object {
+          "address": Array [
+            0,
+            0,
+          ],
+          "failover": Object {
+            "address": Array [
+              0,
+              0,
+              "failover",
+            ],
+            "failover": undefined,
+            "nodes": Array [
+              Object {
+                "address": Array [
+                  0,
+                  0,
+                  "failover",
+                  0,
+                ],
+                "channel": "sms",
+                "provider": "vonage",
+                "providerConfigurationId": "7593c6b6-f241-47f0-85b4-vonage",
+                "providerFailoverIndex": 2,
+                "taxonomy": "direct_message:sms:vonage",
+                "type": "leaf",
+              },
+            ],
+            "type": "branch",
+          },
+          "nodes": Array [
+            Object {
+              "address": Array [
+                0,
+                0,
+                0,
+              ],
+              "channel": "sms",
+              "provider": "twilio",
+              "providerConfigurationId": "7593c6b6-f241-47f0-85b4-b5386cd60086",
+              "providerFailoverIndex": 1,
+              "taxonomy": "direct_message:sms:twilio",
+              "type": "leaf",
+            },
+          ],
+          "type": "branch",
+        },
+      ],
+      "type": "branch",
+    },
+    Object {
+      "address": Array [
+        1,
+      ],
+      "failover": Object {
+        "address": Array [
+          1,
+          "failover",
+        ],
+        "nodes": Array [
+          Object {
+            "address": Array [
+              1,
+              "failover",
+              0,
+            ],
+            "nodes": Array [
+              Object {
+                "address": Array [
+                  1,
+                  "failover",
+                  0,
+                  0,
+                ],
+                "channel": "slack",
+                "failureReason": "Information required by the provider was not included.",
+                "failureType": "MISSING_PROVIDER_SUPPORT",
+                "provider": "slack",
+                "type": "dead-leaf",
+              },
+            ],
+            "type": "branch",
+          },
+        ],
+        "type": "branch",
+      },
+      "nodes": Array [
+        Object {
+          "address": Array [
+            1,
+            0,
+          ],
+          "failover": Object {
+            "address": Array [
+              1,
+              0,
+              "failover",
+            ],
+            "failover": undefined,
+            "nodes": Array [
+              Object {
+                "address": Array [
+                  1,
+                  0,
+                  "failover",
+                  0,
+                ],
+                "channel": "email",
+                "provider": "sendgrid",
+                "providerConfigurationId": "2321",
+                "providerFailoverIndex": 2,
+                "taxonomy": "email:sendgrid",
+                "type": "leaf",
+              },
+            ],
+            "type": "branch",
+          },
+          "nodes": Array [
+            Object {
+              "address": Array [
+                1,
+                0,
+                0,
+              ],
+              "channel": "email",
+              "provider": "mailjet",
+              "providerConfigurationId": "7593c6b6-f241-47f0-85b4-b5386cd600er6",
+              "providerFailoverIndex": 1,
+              "taxonomy": "email:mailjet",
+              "type": "leaf",
+            },
+          ],
+          "type": "branch",
+        },
+      ],
+      "type": "branch",
+    },
+  ],
+  "type": "branch",
+}
+`;
+
+exports[`generate routing should generate a valid tree from an all method routing config 1`] = `
+Object {
+  "address": Array [],
+  "nodes": Array [
+    Object {
+      "address": Array [
+        0,
+      ],
+      "failover": Object {
+        "address": Array [
+          0,
+          "failover",
+        ],
+        "failover": undefined,
+        "nodes": Array [
+          Object {
+            "address": Array [
+              0,
+              "failover",
+              0,
+            ],
+            "channel": "sms",
+            "provider": "vonage",
+            "providerConfigurationId": "7593c6b6-f241-47f0-85b4-vonage",
+            "providerFailoverIndex": 2,
+            "taxonomy": "direct_message:sms:vonage",
+            "type": "leaf",
+          },
+        ],
+        "type": "branch",
+      },
+      "nodes": Array [
+        Object {
+          "address": Array [
+            0,
+            0,
+          ],
+          "channel": "sms",
+          "provider": "twilio",
+          "providerConfigurationId": "7593c6b6-f241-47f0-85b4-b5386cd60086",
+          "providerFailoverIndex": 1,
+          "taxonomy": "direct_message:sms:twilio",
+          "type": "leaf",
+        },
+      ],
+      "type": "branch",
+    },
+    Object {
+      "address": Array [
+        1,
+      ],
+      "failover": Object {
+        "address": Array [
+          1,
+          "failover",
+        ],
+        "failover": undefined,
+        "nodes": Array [
+          Object {
+            "address": Array [
+              1,
+              "failover",
+              0,
+            ],
+            "channel": "email",
+            "provider": "sendgrid",
+            "providerConfigurationId": "2321",
+            "providerFailoverIndex": 2,
+            "taxonomy": "email:sendgrid",
+            "type": "leaf",
+          },
+        ],
+        "type": "branch",
+      },
+      "nodes": Array [
+        Object {
+          "address": Array [
+            1,
+            0,
+          ],
+          "channel": "email",
+          "provider": "mailjet",
+          "providerConfigurationId": "7593c6b6-f241-47f0-85b4-b5386cd600er6",
+          "providerFailoverIndex": 1,
+          "taxonomy": "email:mailjet",
+          "type": "leaf",
+        },
+      ],
+      "type": "branch",
+    },
+  ],
+  "type": "branch",
+}
+`;
+
+exports[`generate routing should generate a valid tree from an single method routing config 1`] = `
+Object {
+  "address": Array [],
+  "failover": Object {
+    "address": Array [
+      "failover",
+    ],
+    "failover": undefined,
+    "nodes": Array [
+      Object {
+        "address": Array [
+          "failover",
+          0,
+        ],
+        "failover": Object {
+          "address": Array [
+            "failover",
+            0,
+            "failover",
+          ],
+          "failover": undefined,
+          "nodes": Array [
+            Object {
+              "address": Array [
+                "failover",
+                0,
+                "failover",
+                0,
+              ],
+              "channel": "email",
+              "provider": "sendgrid",
+              "providerConfigurationId": "2321",
+              "providerFailoverIndex": 2,
+              "taxonomy": "email:sendgrid",
+              "type": "leaf",
+            },
+          ],
+          "type": "branch",
+        },
+        "nodes": Array [
+          Object {
+            "address": Array [
+              "failover",
+              0,
+              0,
+            ],
+            "channel": "email",
+            "provider": "mailjet",
+            "providerConfigurationId": "7593c6b6-f241-47f0-85b4-b5386cd600er6",
+            "providerFailoverIndex": 1,
+            "taxonomy": "email:mailjet",
+            "type": "leaf",
+          },
+        ],
+        "type": "branch",
+      },
+    ],
+    "type": "branch",
+  },
+  "nodes": Array [
+    Object {
+      "address": Array [
+        0,
+      ],
+      "failover": Object {
+        "address": Array [
+          0,
+          "failover",
+        ],
+        "failover": undefined,
+        "nodes": Array [
+          Object {
+            "address": Array [
+              0,
+              "failover",
+              0,
+            ],
+            "channel": "sms",
+            "provider": "vonage",
+            "providerConfigurationId": "7593c6b6-f241-47f0-85b4-vonage",
+            "providerFailoverIndex": 2,
+            "taxonomy": "direct_message:sms:vonage",
+            "type": "leaf",
+          },
+        ],
+        "type": "branch",
+      },
+      "nodes": Array [
+        Object {
+          "address": Array [
+            0,
+            0,
+          ],
+          "channel": "sms",
+          "provider": "twilio",
+          "providerConfigurationId": "7593c6b6-f241-47f0-85b4-b5386cd60086",
+          "providerFailoverIndex": 1,
+          "taxonomy": "direct_message:sms:twilio",
+          "type": "leaf",
+        },
+      ],
+      "type": "branch",
+    },
+  ],
+  "type": "branch",
+}
+`;
+
+exports[`generate routing should generate dead leafs for providers that could not be selected 1`] = `
+Object {
+  "address": Array [],
+  "failover": undefined,
+  "nodes": Array [
+    Object {
+      "address": Array [
+        0,
+      ],
+      "nodes": Array [
+        Object {
+          "address": Array [
+            0,
+            0,
+          ],
+          "channel": "sms",
+          "failureReason": "Information required by the provider was not included.",
+          "failureType": "MISSING_PROVIDER_SUPPORT",
+          "provider": "twilio",
+          "type": "dead-leaf",
+        },
+        Object {
+          "address": Array [
+            0,
+            1,
+          ],
+          "channel": "sms",
+          "failureReason": "Information required by the provider was not included.",
+          "failureType": "MISSING_PROVIDER_SUPPORT",
+          "provider": "vonage",
+          "type": "dead-leaf",
+        },
+      ],
+      "type": "branch",
+    },
+    Object {
+      "address": Array [
+        1,
+      ],
+      "failover": Object {
+        "address": Array [
+          1,
+          "failover",
+        ],
+        "failover": undefined,
+        "nodes": Array [
+          Object {
+            "address": Array [
+              1,
+              "failover",
+              0,
+            ],
+            "channel": "email",
+            "provider": "sendgrid",
+            "providerConfigurationId": "2321",
+            "providerFailoverIndex": 2,
+            "taxonomy": "email:sendgrid",
+            "type": "leaf",
+          },
+        ],
+        "type": "branch",
+      },
+      "nodes": Array [
+        Object {
+          "address": Array [
+            1,
+            0,
+          ],
+          "channel": "email",
+          "provider": "mailjet",
+          "providerConfigurationId": "7593c6b6-f241-47f0-85b4-b5386cd600er6",
+          "providerFailoverIndex": 1,
+          "taxonomy": "email:mailjet",
+          "type": "leaf",
+        },
+      ],
+      "type": "branch",
+    },
+  ],
+  "type": "branch",
+}
+`;
+
+exports[`generate routing should handle misspelled channels and providers without puking 1`] = `
+Object {
+  "address": Array [],
+  "nodes": Array [
+    Object {
+      "address": Array [
+        0,
+      ],
+      "channel": "mailet",
+      "failureReason": "No remaining configured providers for channel or channel is invalid",
+      "failureType": "NO_PROVIDERS",
+      "type": "dead-branch",
+    },
+    Object {
+      "address": Array [
+        1,
+      ],
+      "channel": "eml",
+      "failureReason": "No remaining configured providers for channel or channel is invalid",
+      "failureType": "NO_PROVIDERS",
+      "type": "dead-branch",
+    },
+  ],
+  "type": "branch",
+}
+`;
+
+exports[`generate routing should pass tokens to provider handles functions 1`] = `
+Array [
+  Object {
+    "address": Array [],
+    "nodes": Array [
+      Object {
+        "address": Array [
+          0,
+        ],
+        "nodes": Array [
+          Object {
+            "address": Array [
+              0,
+              0,
+            ],
+            "channel": "apn",
+            "failureReason": "Information required by the provider was not included.",
+            "failureType": "MISSING_PROVIDER_SUPPORT",
+            "provider": "apn",
+            "type": "dead-leaf",
+          },
+        ],
+        "type": "branch",
+      },
+    ],
+    "type": "branch",
+  },
+  Object {
+    "address": Array [],
+    "nodes": Array [
+      Object {
+        "address": Array [
+          0,
+        ],
+        "failover": undefined,
+        "nodes": Array [
+          Object {
+            "address": Array [
+              0,
+              0,
+            ],
+            "channel": "apn",
+            "provider": "apn",
+            "providerConfigurationId": "f2661ebd-dd91-417c-8b37-a9870fd0cbf4",
+            "providerFailoverIndex": 1,
+            "taxonomy": "push:apn",
+            "type": "leaf",
+          },
+        ],
+        "type": "branch",
+      },
+    ],
+    "type": "branch",
+  },
+]
+`;
+
+exports[`generate routing should produce a complex tree where a channel sends to more than one provider in a single call 1`] = `
+Object {
+  "address": Array [],
+  "failover": Object {
+    "address": Array [
+      "failover",
+    ],
+    "failover": undefined,
+    "nodes": Array [
+      Object {
+        "address": Array [
+          "failover",
+          0,
+        ],
+        "failover": Object {
+          "address": Array [
+            "failover",
+            0,
+            "failover",
+          ],
+          "failover": undefined,
+          "nodes": Array [
+            Object {
+              "address": Array [
+                "failover",
+                0,
+                "failover",
+                0,
+              ],
+              "channel": "sms",
+              "provider": "vonage",
+              "providerConfigurationId": "7593c6b6-f241-47f0-85b4-vonage",
+              "providerFailoverIndex": 2,
+              "taxonomy": "direct_message:sms:vonage",
+              "type": "leaf",
+            },
+          ],
+          "type": "branch",
+        },
+        "nodes": Array [
+          Object {
+            "address": Array [
+              "failover",
+              0,
+              0,
+            ],
+            "channel": "sms",
+            "provider": "twilio",
+            "providerConfigurationId": "7593c6b6-f241-47f0-85b4-b5386cd60086",
+            "providerFailoverIndex": 1,
+            "taxonomy": "direct_message:sms:twilio",
+            "type": "leaf",
+          },
+        ],
+        "type": "branch",
+      },
+    ],
+    "type": "branch",
+  },
+  "nodes": Array [
+    Object {
+      "address": Array [
+        0,
+      ],
+      "nodes": Array [
+        Object {
+          "address": Array [
+            0,
+            0,
+          ],
+          "channel": "push",
+          "provider": "apn",
+          "providerConfigurationId": "f2661ebd-dd91-417c-8b37-a9870fd0cbf4",
+          "providerFailoverIndex": 1,
+          "taxonomy": "push:apn",
+          "type": "leaf",
+        },
+        Object {
+          "address": Array [
+            0,
+            1,
+          ],
+          "channel": "push",
+          "provider": "firebase-fcm",
+          "providerConfigurationId": "fsdkjhf-fdsf-sdf-sdfs-sdffsdf",
+          "providerFailoverIndex": 1,
+          "taxonomy": "push:firebase-fcm",
+          "type": "leaf",
+        },
+      ],
+      "type": "branch",
+    },
+  ],
+  "type": "branch",
+}
+`;

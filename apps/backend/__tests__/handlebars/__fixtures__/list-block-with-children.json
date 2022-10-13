@@ -1,0 +1,7 @@
+[
+  {
+    "config": "{\"child\":{\"imageHref\":\"\",\"imagePath\":\"\",\"path\":\"weapons\",\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"\",\"marks\":[]},{\"object\":\"inline\",\"type\":\"variable\",\"data\":{\"value\":\"{name}\"},\"nodes\":[{\"object\":\"text\",\"text\":\"{name}\",\"marks\":[]}]},{\"object\":\"text\",\"text\":\"\",\"marks\":[]}]}]}}},\"top\":{\"background\":\"#4C4C4C\",\"imageHref\":\"\",\"imagePath\":\"\",\"path\":\"characters\",\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"\",\"marks\":[]},{\"object\":\"inline\",\"type\":\"variable\",\"data\":{\"value\":\"{name}\"},\"nodes\":[{\"object\":\"text\",\"text\":\"{name}\",\"marks\":[]}]},{\"object\":\"text\",\"text\":\"\",\"marks\":[]}]}]}}},\"useChildren\":true,\"useImages\":false}",
+    "id": "41a1a267-688b-45bf-8851-68df4795aa67",
+    "type": "list"
+  }
+]

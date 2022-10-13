@@ -1,0 +1,48 @@
+functions:
+  ApiHandler:
+    events:
+      - http:
+          path: audiences/{audience_id}
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: audiences/{audience_id}
+          method: put
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: audiences/{audience_id}
+          method: delete
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: audiences/{audience_id}/members/{member_id}
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: audiences/{audience_id}/members/{member_id}
+          method: put
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: audiences/{audience_id}/members
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+      - http:
+          path: audiences
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+    handler: audiences/api/index.handler
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+    tags:
+      tags.courier.com/service: audiences
+
+  MembersApiHandler:
+    events:
+      - http:
+          path: members/{member_id}/audiences
+          method: get
+          authorizer: ${self:custom.authorizers.api}
+    handler: audiences/api/members.handler
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    concurrencyAutoscaling: ${self:custom.lambda.concurrencyAutoscaling.${self:custom.stage}}
+    tags:
+      tags.courier.com/service: audiences

@@ -1,0 +1,17 @@
+{{#courier-partial}}
+  </mj-wrapper>
+  <mj-wrapper css-class="c--email-footer"{{#if (path "$.templateOverrides.footerFullWidth")}} full-width="full-width"{{/if}}{{#if (path "$.templateOverrides.footerFullWidth")}} background-color="{{path "$.templateOverrides.footerBackgroundColor"}}"{{/if}}>
+    <mj-section padding="0px">
+      <mj-column>
+        <mj-text>
+            {{> courier-brand-footer @root}}
+            
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-wrapper>
+  {{#if (path "$.urls.opened")}}
+  <mj-raw><img src="{{path "$.urls.opened"}}" /></mj-raw>
+  {{/if}}
+</mj-body>
+{{/courier-partial}}

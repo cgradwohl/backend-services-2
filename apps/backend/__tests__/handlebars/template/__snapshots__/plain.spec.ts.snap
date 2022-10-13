@@ -1,0 +1,222 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`plain slate should render slateBoldItalicUnderline 1`] = `"Some bold, italic, and underlined text."`;
+
+exports[`plain slate should render slateItalicAroundBoldSlate 1`] = `"This is a test"`;
+
+exports[`plain slate should render slateLink 1`] = `"Click this link (https://example.com/link) to learn more."`;
+
+exports[`plain slate should render slateLinkWithVars 1`] = `"Link to {firstname}'s {project} (https://{domain}/{user}/)"`;
+
+exports[`plain slate should render slateNewLines 1`] = `
+"Line 1
+Line 2
+
+Line 4"
+`;
+
+exports[`plain slate should render slateScaryChars 1`] = `"Scary characters are \\", ', <, >, &, \`, =, {, and }"`;
+
+exports[`plain slate should render slateVariable 1`] = `"This is a {variable}."`;
+
+exports[`plain template blocks should render actionBlock 1`] = `"Click Here: https://www.courier.com"`;
+
+exports[`plain template blocks should render actionBlockLink 1`] = `"link text: https://www.example.com"`;
+
+exports[`plain template blocks should render conditionalTextBlock 1`] = `""`;
+
+exports[`plain template blocks should render conditionalTextBlockShown 1`] = `"Conditional text."`;
+
+exports[`plain template blocks should render dividerBlock 1`] = `"---"`;
+
+exports[`plain template blocks should render dividerBlockWithColor 1`] = `"---"`;
+
+exports[`plain template blocks should render imageBlock 1`] = `"https://s3.amazonaws.com/backend-dev-librarybucket-a6n6jb55kc98/118c6491-a35d-4b81-b10b-d22f7d20da0c/1590005909939_green-mountains.jpg"`;
+
+exports[`plain template blocks should render imageBlockWithFullAlign 1`] = `"https://example.com/img.png"`;
+
+exports[`plain template blocks should render imageBlockWithVars 1`] = `"http://example.com/{imagePath}"`;
+
+exports[`plain template blocks should render jsonnetBlock 1`] = `""`;
+
+exports[`plain template blocks should render listBlock 1`] = `
+"• Luke Skywalker
+• Boba Fett
+• Han Solo"
+`;
+
+exports[`plain template blocks should render listBlockBullets 1`] = `
+"• Luke Skywalker
+• Boba Fett
+• Han Solo"
+`;
+
+exports[`plain template blocks should render listBlockBulletsEmpty 1`] = `""`;
+
+exports[`plain template blocks should render listBlockBulletsWithChildren 1`] = `
+"Luke Skywalker
+• lightsaber
+
+Boba Fett
+• blaster
+• Z-6 Jetpack
+• flame thrower
+
+Han Solo
+• blaster pistol"
+`;
+
+exports[`plain template blocks should render listBlockTransparent 1`] = `
+"• Luke Skywalker
+• Boba Fett
+• Han Solo"
+`;
+
+exports[`plain template blocks should render listBlockTransparentWithChildImage 1`] = `
+"Luke Skywalker
+• lightsaber
+
+Boba Fett
+• blaster
+• Z-6 Jetpack
+• flame thrower
+
+Han Solo
+• blaster pistol"
+`;
+
+exports[`plain template blocks should render listBlockTransparentWithChildNotFound 1`] = `
+"Luke Skywalker
+
+Boba Fett
+
+Han Solo"
+`;
+
+exports[`plain template blocks should render listBlockTransparentWithChildren 1`] = `
+"Luke Skywalker
+• lightsaber
+
+Boba Fett
+• blaster
+• Z-6 Jetpack
+• flame thrower
+
+Han Solo
+• blaster pistol"
+`;
+
+exports[`plain template blocks should render listBlockTransparentWithTopImage 1`] = `
+"Luke Skywalker
+• lightsaber
+
+Boba Fett
+• blaster
+• Z-6 Jetpack
+• flame thrower
+
+Han Solo
+• blaster pistol"
+`;
+
+exports[`plain template blocks should render listBlockUsingObjects 1`] = `
+"Parent object
+• Child object"
+`;
+
+exports[`plain template blocks should render listBlockWithChildren 1`] = `
+"Luke Skywalker
+• lightsaber
+
+Boba Fett
+• blaster
+• Z-6 Jetpack
+• flame thrower
+
+Han Solo
+• blaster pistol"
+`;
+
+exports[`plain template blocks should render markdownBlock 1`] = `"Hello Luke. Get started with [markdown](http://daringfireball.net/projects/markdown/)."`;
+
+exports[`plain template blocks should render markdownBlockMultiLine 1`] = `
+"**This is a test**
+
+The following is a list:
+
+- A
+- B
+- C
+- D
+
+End of message"
+`;
+
+exports[`plain template blocks should render markdownBlockWithBoldVariable 1`] = `"Hello Luke!"`;
+
+exports[`plain template blocks should render markdownBlockWithTextWithTags 1`] = `"Markdown text with <strong>tags</strong><br />Should work."`;
+
+exports[`plain template blocks should render markdownBlockWithVariableWithTags 1`] = `
+"**markdown** needs to support html <em>tags</em>.
+
+As well as new lines<br><br>and new lines created by using &lt;br&gt;."
+`;
+
+exports[`plain template blocks should render quoteBlockWithLink 1`] = `"\\"Quote block with a link (https://example.com).\\""`;
+
+exports[`plain template blocks should render templateBlock 1`] = `""`;
+
+exports[`plain template blocks should render textBlock 1`] = `"This is a text block"`;
+
+exports[`plain template blocks should render textBlockWhitespace 1`] = `
+"To trim or not to trim?  
+"
+`;
+
+exports[`plain template blocks should render textBlockWithLink 1`] = `"Luke (https://example.com)"`;
+
+exports[`plain template blocks should render textBlockWithLinkWithWhitespace 1`] = `"Linkwith whitespace (https://example.com)is fun"`;
+
+exports[`plain template blocks should render textBlockWithMarks 1`] = `
+"You cannot hide forever, Luke.
+
+Give yourself to the Dark Side."
+`;
+
+exports[`plain template blocks should render textBlockWithVariable 1`] = `"Hello Luke"`;
+
+exports[`plain template blocks should render textBlockWithVariableEscaping 1`] = `
+"Escape variable values: Should escape &, <, >, \\", ', \`, and = characters.
+Escape link values: Should escape &, <, >, \\", ', \`, and = characters (https://example.com/?a=1&b=2&c=3)."
+`;
+
+exports[`plain template blocks should render textBlockWithVariableWithLineReturns 1`] = `
+"Var with line returns: Line 1
+Line 2
+
+Line 4."
+`;
+
+exports[`plain template blocks should render textBlockWithVariableWithWindowsLineReturns 1`] = `
+"line 1
+line 2
+
+line 4"
+`;
+
+exports[`plain template blocks should render welcomeBlocks 1`] = `
+"Welcome to Courier!
+
+These are content blocks.
+
+• Feel free to drag and drop me around. 
+• If you remove us don’t worry, We’ll simple move into the library under Channels for later use. 
+• A block can be shared across channels! 
+• When you are done, press Preview to send yourself a notification.
+• Use curly brackets { and } to create {variables}.
+
+Click to edit my properties!: https://www.courier.com
+
+Cheers, 
+The Courier Team"
+`;

@@ -1,0 +1,100 @@
+service: bulk
+
+custom:
+  webpack:
+    includeModules:
+      forceExclude:
+        - aws-sdk
+      forceInclude:
+        - source-map-support
+    keepOutputDirectory: true
+    packager: "yarn"
+    webpackConfig: ./webpack.config.js
+  stage: ${opt:stage, self:provider.stage}
+  vanta:
+    disabled:
+      default: true
+      production: false
+    nonProd: ${self:custom.vanta.disabled.${self:custom.stage}, self:custom.vanta.disabled.default}
+    owner: "seth@courier.com"
+
+functions:
+  BulkProfileIngestionHandler:
+    environment:
+      BULK_PROFILE_INGESTION_BUCKET_NAME:
+        Ref: BulkProfileIngestionBucket
+    events:
+      - s3:
+          bucket:
+            Ref: BulkProfileIngestionBucket
+          existing: true
+          event: s3:ObjectCreated:Put
+    handler: bulk/handler.default
+
+package:
+  individually: true
+
+plugins:
+  - serverless-webpack
+
+provider:
+  deploymentBucket:
+    blockPublicAccess: true
+    tags:
+      VantaOwner: ${self:custom.vanta.owner}
+      VantaNonProd: ${self:custom.vanta.nonProd}
+      VantaDescription: Contains deployment assets for SQS drains
+      VantaContainsUserData: false
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "s3:*"
+          Resource: "arn:aws:s3:::*"
+        - Effect: Allow
+          Action:
+            - dynamodb:ConditionCheckItem
+            - dynamodb:GetItem
+            - dynamodb:GetRecords
+            - dynamodb:PutItem
+            - dynamodb:Query
+            - dynamodb:UpdateItem
+          Resource: "*"
+  memorySize: 512
+  name: aws
+  region: us-east-1
+  runtime: nodejs14.x
+  stage: dev
+  tags:
+    tags.courier.com/elasticity: variable
+  timeout: 30
+  tracing:
+    lambda: PassThrough
+  versionFunctions: false
+
+resources:
+  Resources:
+    BulkProfileIngestionBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true
+        Tags:
+          - Key: VantaOwner
+            Value: ${self:custom.vanta.owner}
+          - Key: VantaNonProd
+            Value: ${self:custom.vanta.nonProd}
+          - Key: VantaDescription
+            Value: "Stores data for bulk ingestion of profile information"
+          - Key: VantaContainsUserData
+            Value: true
+        VersioningConfiguration:
+          Status: Enabled

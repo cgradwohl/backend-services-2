@@ -1,0 +1,41 @@
+{
+  "object": "value",
+  "document": {
+    "object": "document",
+    "data": {},
+    "nodes": [
+      {
+        "object": "block",
+        "type": "line",
+        "data": {},
+        "nodes": [
+          {
+            "object": "text",
+            "text": "Link to ",
+            "marks": []
+          },
+          {
+            "object": "inline",
+            "type": "link",
+            "data": {
+              "href": "https://{domain}/{user}/",
+              "text": "{firstname}'s {project}"
+            },
+            "nodes": [
+              {
+                "object": "text",
+                "text": "{firstname}'s {project}",
+                "marks": []
+              }
+            ]
+          },
+          {
+            "object": "text",
+            "text": "",
+            "marks": []
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,647 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/messages v3 markUndeliverable should mark a message as undeliverable 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":messageStatus": "UNDELIVERABLE",
+          ":now": 1632426903638,
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET messageStatus = :messageStatus, sent = :now",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 markUndeliverable should mark a message as undeliverable with configuration 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":configuration": "MOCK_CONFIGURATION",
+          ":messageStatus": "UNDELIVERABLE",
+          ":now": 1632426903638,
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET messageStatus = :messageStatus, sent = :now, configuration = :configuration",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 markUndeliverable should mark a message as undeliverable with internal courier error 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":errorType": "INTERNAL_COURIER_ERROR",
+          ":messageStatus": "UNDELIVERABLE",
+          ":now": 1632426903638,
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET messageStatus = :messageStatus, sent = :now, errorType = :errorType",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 markUndeliverable should mark a message as undeliverable with provider 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":messageStatus": "UNDELIVERABLE",
+          ":now": 1632426903638,
+          ":provider": "MOCK_PROVIDER",
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET messageStatus = :messageStatus, sent = :now, provider = :provider",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 markUndeliverableFromDelivery should mark a message as undeliverable 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":messageStatus": "UNDELIVERABLE",
+          ":now": 1632426903638,
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET messageStatus = :messageStatus, sent = :now",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 markUndeliverableFromDelivery should mark a message as undeliverable with configuration 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":configuration": "MOCK_CONFIGURATION",
+          ":messageStatus": "UNDELIVERABLE",
+          ":now": 1632426903638,
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET messageStatus = :messageStatus, sent = :now, configuration = :configuration",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 markUndeliverableFromDelivery should mark a message as undeliverable with internal courier error 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":errorType": "INTERNAL_COURIER_ERROR",
+          ":messageStatus": "UNDELIVERABLE",
+          ":now": 1632426903638,
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET messageStatus = :messageStatus, sent = :now, errorType = :errorType",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 markUndeliverableFromDelivery should mark a message as undeliverable with provider 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":messageStatus": "UNDELIVERABLE",
+          ":now": 1632426903638,
+          ":provider": "MOCK_PROVIDER",
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET messageStatus = :messageStatus, sent = :now, provider = :provider",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 markUnroutable should mark a message as unroutable 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":messageStatus": "UNROUTABLE",
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET messageStatus = :messageStatus",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 should create a new message 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_not_exists(pk)",
+        "Item": Object {
+          "enqueued": 1632426903638,
+          "eventId": "MOCK_EVENT_ID",
+          "gsi3pk": "MOCK_TENANT_ID/1",
+          "gsi3sk": "1632426903638",
+          "id": "MOCK_MESSAGE_ID",
+          "messageId": "MOCK_MESSAGE_ID",
+          "messageStatus": "ENQUEUED",
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+          "recipientId": "MOCK_RECIPIENT_ID",
+          "tenantId": "MOCK_TENANT_ID",
+        },
+        "TableName": "jest-mock-table-name-messages-v3",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 should increment the error count on a message 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeNames": Object {
+          "#errorCount": "errorCount",
+        },
+        "ExpressionAttributeValues": Object {
+          ":increment": 1,
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_EVENT_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "ADD #errorCount :increment",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 should mark a message as clicked 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":messageStatus": "CLICKED",
+          ":timestamp": 1632427827545,
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET messageStatus = :messageStatus, clicked = :timestamp",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 should mark a message as delivered 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk) AND messageStatus <> :clickedMessageStatus AND messageStatus <> :openedMessageStatus",
+        "ExpressionAttributeValues": Object {
+          ":clickedMessageStatus": "CLICKED",
+          ":configuration": "MOCK_CONFIGURATION",
+          ":messageStatus": "DELIVERED",
+          ":now": 1632426903638,
+          ":openedMessageStatus": "OPENED",
+          ":provider": "MOCK_PROVIDER",
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "set messageStatus = :messageStatus, delivered = :now, provider = :provider, configuration = :configuration",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 should mark a message as opened 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk) AND messageStatus <> :clickedMessageStatus",
+        "ExpressionAttributeValues": Object {
+          ":clickedMessageStatus": "CLICKED",
+          ":messageStatus": "OPENED",
+          ":timestamp": 1632427827545,
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET messageStatus = :messageStatus, opened = :timestamp",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 should mark a message as read 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":now": 1632426903638,
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET readTimestamp = :now",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 should mark a message as sent 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":configuration": "MOCK_CONFIGURATION",
+          ":now": 1632426903638,
+          ":provider": "MOCK_PROVIDER",
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET sent = :now, provider = :provider, configuration = :configuration",
+      },
+    ],
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk) AND messageStatus <> :deliveredMessageStatus",
+        "ExpressionAttributeValues": Object {
+          ":deliveredMessageStatus": "DELIVERED",
+          ":messageStatus": "SENT",
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET messageStatus = :messageStatus",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 should mark a message as simulated 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":configuration": "MOCK_CONFIGURATION",
+          ":messageStatus": "SIMULATED",
+          ":now": 1632426903638,
+          ":provider": "MOCK_PROVIDER",
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET messageStatus = :messageStatus, sent = :now, provider = :provider, configuration = :configuration",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 should mark a message as unmapped 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":messageStatus": "UNMAPPED",
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET messageStatus = :messageStatus",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 should mark a message as unread 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_MESSAGE_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "REMOVE readTimestamp",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 should set the billing units id value on a message 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk) AND attribute_not_exists(billed_units)",
+        "ExpressionAttributeNames": Object {
+          "#billed_units": "billed_units",
+        },
+        "ExpressionAttributeValues": Object {
+          ":billed_units": 1,
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_EVENT_ID",
+        },
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET #billed_units = :billed_units",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 should set the email address value on a message 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":email": "email@example.com",
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_EVENT_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET recipientEmail = :email",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`lib/messages v3 should set the notification id value on a message 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ConditionExpression": "attribute_exists(pk)",
+        "ExpressionAttributeValues": Object {
+          ":notificationId": "MOCK_NOTIFICATION_ID",
+        },
+        "Key": Object {
+          "pk": "MOCK_TENANT_ID/MOCK_EVENT_ID",
+        },
+        "ReturnValues": "NONE",
+        "TableName": "jest-mock-table-name-messages-v3",
+        "UpdateExpression": "SET notificationId = :notificationId",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;

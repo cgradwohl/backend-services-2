@@ -1,0 +1,38 @@
+Resources:
+  MessagesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - ${self:custom.lifecyclePolicyRules.deleteAfter30Days}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "File storage for log data of our customers API calls."
+      - Key: VantaContainsUserData
+        Value: true
+      VersioningConfiguration:
+        Status: Enabled
+Outputs:
+  MessagesBucketArn:
+    Export:
+      Name: backend-${self:custom.stage}-MessagesBucketArn
+    Value:
+      Fn::GetAtt: [MessagesBucket, Arn]
+  MessagesBucketName:
+    Export:
+      Name: backend-${self:custom.stage}-MessagesBucketName
+    Value:
+      Ref: MessagesBucket

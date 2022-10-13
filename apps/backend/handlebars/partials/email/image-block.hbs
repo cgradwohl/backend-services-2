@@ -1,0 +1,12 @@
+{{#courier-partial}}
+{{#unless isInColumn}}
+<mj-section css-class="c--block c--block-image">
+  <mj-column padding="10px 0px">
+{{/unless}}
+    <mj-image {{#if @width}}width="{{@width}}" {{/if}}{{#if @align}}align="{{@align}}" {{/if}}src="{{@src}}" alt="{{@alt}}"
+      {{#if @href}}href="{{get-href @href disableLinkTracking=@disableLinkTracking context="image" text=@alt}}" {{/if}}{{#if isInColumn}}padding="10px 0px"{{/if}} />
+{{#unless isInColumn}}
+  </mj-column>
+</mj-section>
+{{/unless}}
+{{/courier-partial}}

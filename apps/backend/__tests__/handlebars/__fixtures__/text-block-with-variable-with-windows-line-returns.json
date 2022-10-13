@@ -1,0 +1,7 @@
+[
+  {
+    "config": "{\"backgroundColor\":\"transparent\",\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"\",\"marks\":[]},{\"object\":\"inline\",\"type\":\"variable\",\"data\":{\"value\":\"{withWindowsLineReturns}\"},\"nodes\":[{\"object\":\"text\",\"text\":\"{withWindowsLineReturns}\",\"marks\":[]}]},{\"object\":\"text\",\"text\":\"\",\"marks\":[]}]}]}}}",
+    "id": "527e3b67-43b4-4afa-9c22-2c8868e4aefc",
+    "type": "text"
+  }
+]

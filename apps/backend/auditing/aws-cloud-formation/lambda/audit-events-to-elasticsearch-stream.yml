@@ -1,0 +1,22 @@
+functions:
+  AuditEventsToElasticSearchStream:
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - AuditEventsTable
+              - StreamArn
+          batchSize: 10
+          batchWindow: 2
+          bisectBatchOnFunctionError: true
+          functionResponseType: ReportBatchItemFailures
+          parallelizationFactor: 2
+    handler: auditing/triggers/dynamo/audit-events/elasticsearch.default
+    tags:
+      tags.courier.com/service: auditing

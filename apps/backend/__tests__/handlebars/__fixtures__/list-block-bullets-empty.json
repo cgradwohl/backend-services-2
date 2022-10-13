@@ -1,0 +1,7 @@
+[
+  {
+    "config": "{\"child\":{\"imageHref\":\"\",\"imagePath\":\"\",\"path\":\"\",\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"Child Value\",\"marks\":[]}]}]}}},\"top\":{\"background\":\"transparent\",\"imageHref\":\"\",\"imagePath\":\"\",\"path\":\"emptyArray\",\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"Test list\",\"marks\":[]}]}]}}},\"useChildren\":false,\"useImages\":false,\"conditional\":{\"filters\":[],\"logicalOperator\":\"and\"}}",
+    "id": "2946894f-bb7f-411d-a3da-49e7efca40b2",
+    "type": "list"
+  }
+]

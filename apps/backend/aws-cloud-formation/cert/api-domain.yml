@@ -1,0 +1,10 @@
+Resources:
+  ApiDomainCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Condition: ShouldCreateGlobalRoutingResources
+    Properties:
+      DomainName: "*.${self:custom.apiDomainName.${self:custom.stage}}"
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: "${self:custom.apiDomainName.${self:custom.stage}}"
+          HostedZoneId: ${self:custom.hostedZoneId}

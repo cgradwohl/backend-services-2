@@ -29,5 +29,51 @@
     "test:smoke": "SMOKE_TEST=true yarn test --runInBand --no-coverage",
     "typecheck": "tsc --noEmit",
     "yaml-get": "yaml get $1 $2"
+  },
+  "nx": {
+    "namedInputs": {
+      "default": [
+        "{projectRoot}/**/*"
+      ],
+      "production": [
+        "!{projectRoot}/**/*.spec.tsx"
+      ]
+    },
+    "targets": {
+      "build": {
+        "inputs": [
+          "production",
+          "^production"
+        ],
+        "outputs": [
+          "dist/libs/mylib"
+        ],
+        "dependsOn": [
+          "^build"
+        ]
+      },
+      "typecheck": {
+        "inputs": [
+          "production",
+          "^production"
+        ],
+        "outputs": [
+          "dist/libs/mylib"
+        ],
+        "dependsOn": [
+          "^build"
+        ]
+      },
+      "test": {
+        "inputs": [
+          "default",
+          "^production"
+        ],
+        "outputs": [],
+        "dependsOn": [
+          "build"
+        ]
+      }
+    }
   }
 }

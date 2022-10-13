@@ -1,0 +1,267 @@
+name: Deploy Courier Production
+
+on:
+  push:
+    paths-ignore:
+      - "README.md"
+    branches-ignore:
+      - "**"
+    tags:
+      - v0.*
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          cache: yarn
+          node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+        run: yarn install
+      - name: Test
+        run: yarn test --no-coverage
+        env:
+          CI: true
+
+  deploy-auditing:
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          cache: yarn
+          node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+        run: yarn install
+      - name: Deploy auditing service
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          COURIER_AUTH_TOKEN: ${{ secrets.COURIER_AUTH_TOKEN }}
+          LAUNCHDARKLY_SDK_KEY: ${{ secrets.LAUNCHDARKLY_SDK_KEY }}
+          NODE_ENV: production
+          SENTRY_ENV: production
+          STAGE: production
+        run: yarn serverless:deploy:auditing --stage $STAGE
+
+  deploy-audiences:
+    runs-on: ubuntu-latest
+    needs:
+      - test
+      - deploy-shared
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          cache: yarn
+          node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+        run: yarn install
+      - name: Deploy audiences service
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          NODE_ENV: production
+          SENTRY_ENV: production
+          STAGE: production
+        run: yarn serverless:deploy:audiences --stage $STAGE
+
+  deploy-shared:
+    runs-on: ubuntu-latest
+    needs: test
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          cache: yarn
+          node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+        run: yarn install
+      - name: Deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          CALIXA_ACCOUNT_KEY: ${{ secrets.CALIXA_ACCOUNT_KEY }}
+          CLICK_THROUGH_TRACKING_DOMAIN_NAME: ${{ secrets.CLICK_THROUGH_TRACKING_DOMAIN_NAME }}
+          CLICK_THROUGH_TRACKING_HOSTED_ZONE: ${{ secrets.CLICK_THROUGH_TRACKING_HOSTED_ZONE }}
+          COURIER_AUTH_TOKEN: ${{ secrets.COURIER_AUTH_TOKEN }}
+          COURIER_SENDGRID_API_KEY: ${{ secrets.COURIER_SENDGRID_API_KEY }}
+          COURIER_EMAIL_CONFIG_ID: ${{ secrets.COURIER_EMAIL_CONFIG_ID }}
+          COURIER_TENANT_ID: ${{ secrets.COURIER_TENANT_ID }}
+          CRYPTO_PRIVATE_KEY_256: ${{ secrets.CRYPTO_PRIVATE_KEY_256 }}
+          USERVOICE_SSO_KEY: ${{ secrets.USERVOICE_SSO_KEY }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_EXTERNAL_ID: ${{ secrets.DD_EXTERNAL_ID }}
+          GOOGLE_SEND_PROVIDER_CLIENT_ID: ${{ secrets.GOOGLE_SEND_PROVIDER_CLIENT_ID }}
+          GOOGLE_SEND_PROVIDER_CLIENT_SECRET: ${{ secrets.GOOGLE_SEND_PROVIDER_CLIENT_SECRET }}
+          GOOGLE_SEND_REDIRECT_URL: ${{ secrets.GOOGLE_SEND_REDIRECT_URL }}
+          HOSTED_ZONE_ID: ${{ secrets.HOSTED_ZONE_ID }}
+          INDENT_SIGNING_SECRET: ${{ secrets.INDENT_SIGNING_SECRET }}
+          INTERCOM_IDENTITY_VERIFICATION_SECRET: ${{ secrets.INTERCOM_IDENTITY_VERIFICATION_SECRET }}
+          IN_APP_API_URL: ${{ secrets.IN_APP_API_URL }}
+          KICKBOX_API_KEY: ${{ secrets.KICKBOX_API_KEY }}
+          LAUNCHDARKLY_SDK_KEY: ${{ secrets.LAUNCHDARKLY_SDK_KEY }}
+          NODE_ENV: production
+          PROPEL_CLIENT_ID: ${{ secrets.PROPEL_CLIENT_ID }}
+          PROPEL_CLIENT_SECRET: ${{ secrets.PROPEL_CLIENT_SECRET }}
+          SEGMENT_WRITE_KEY: ${{ secrets.SEGMENT_WRITE_KEY }}
+          SENTRY_ENV: production
+          SSO_COMMUNITY_SECRET: ${{ secrets.SSO_COMMUNITY_SECRET }}
+          SSO_DOCUMENTATION_SECRET: ${{ secrets.SSO_DOCUMENTATION_SECRET }}
+          SSO_GOOGLE_CLIENT_ID: ${{ secrets.SSO_GOOGLE_CLIENT_ID }}
+          SSO_GOOGLE_CLIENT_SECRET: ${{ secrets.SSO_GOOGLE_CLIENT_SECRET }}
+          STAGE: production
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          VERCEL_CLIENT_SECRET: ${{ secrets.VERCEL_CLIENT_SECRET }}
+          WORKOS_WEBHOOK_SECRET: ${{ secrets.WORKOS_WEBHOOK_SECRET }}
+        run: yarn serverless:deploy --stage $STAGE
+      - name: Sentry
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ENV: production
+        run: yarn sentry:release
+
+  deploy-drain:
+    runs-on: ubuntu-latest
+    needs:
+      - test
+      - deploy-shared
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          cache: yarn
+          node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+        run: yarn install
+      - name: Deploy drain service
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          NODE_ENV: production
+          SENTRY_ENV: production
+          STAGE: production
+        run: yarn serverless:deploy:drain --stage $STAGE
+
+  deploy-bulk:
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          cache: yarn
+          node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+        run: yarn install
+      - name: Deploy bulk service
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          NODE_ENV: production
+          SENTRY_ENV: production
+          STAGE: production
+        run: yarn serverless:deploy:bulk --stage $STAGE
+
+  deploy-global-request-router:
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          cache: yarn
+          node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+        run: yarn install
+      - name: Deploy Global Request Router
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          HOSTED_ZONE_ID: ${{ secrets.HOSTED_ZONE_ID }}
+          NODE_ENV: production
+          SENTRY_ENV: production
+          STAGE: production
+        run: yarn serverless:deploy:global-request-router --stage $STAGE
+
+  smoke-tests:
+    runs-on: ubuntu-latest
+    needs:
+      - test
+      - deploy-shared
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          cache: yarn
+          node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+        run: yarn install
+      - name: Smoke Test
+        env:
+          API_URL: https://api.courier.com
+          COURIER_AUTH_TOKEN: ${{ secrets.COURIER_AUTH_TOKEN }}
+          COURIER_CLIENT_KEY: Y2U3OWI3NGEtY2FhZC00NTFjLTliZDMtMGZkOTVhMmQ0ZWE4
+          STAGE: production
+        run: yarn test:smoke
+      - name: Notify Failure
+        if: failure()
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          channel: engineering
+          status: FAILED
+          color: danger

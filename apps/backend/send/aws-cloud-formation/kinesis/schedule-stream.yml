@@ -1,0 +1,18 @@
+Resources:
+  # This stream handles all incoming data from send-api handler
+  ScheduleStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      RetentionPeriodHours: 24
+      ShardCount: ${self:custom.sendPipelineV2.kinesis.scheduleStream.${self:custom.stage}.shardCount, 1}
+      StreamEncryption:
+        EncryptionType: KMS
+        KeyId:
+          Ref: AutoRotatedKmsKey
+      Tags:
+        - Key: tags.courier.com/elasticity
+          Value: fixed
+        - Key: tags.courier.com/monitoring-level
+          Value: low
+        - Key: tags.courier.com/service
+          Value: pipeline

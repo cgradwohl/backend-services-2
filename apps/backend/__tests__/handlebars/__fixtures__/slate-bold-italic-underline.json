@@ -1,0 +1,69 @@
+{
+  "object": "value",
+  "document": {
+    "object": "document",
+    "data": {},
+    "nodes": [
+      {
+        "object": "block",
+        "type": "line",
+        "data": {},
+        "nodes": [
+          {
+            "object": "text",
+            "text": "Some ",
+            "marks": []
+          },
+          {
+            "object": "text",
+            "text": "bold",
+            "marks": [
+              {
+                "object": "mark",
+                "type": "bold",
+                "data": {}
+              }
+            ]
+          },
+          {
+            "object": "text",
+            "text": ", ",
+            "marks": []
+          },
+          {
+            "object": "text",
+            "text": "italic",
+            "marks": [
+              {
+                "object": "mark",
+                "type": "italic",
+                "data": {}
+              }
+            ]
+          },
+          {
+            "object": "text",
+            "text": ", and ",
+            "marks": []
+          },
+          {
+            "object": "text",
+            "text": "underlined",
+            "marks": [
+              {
+                "object": "mark",
+                "type": "underlined",
+                "data": {}
+              }
+            ]
+          },
+          {
+            "object": "text",
+            "text": " text.",
+            "marks": []
+          }
+        ]
+      }
+    ]
+  }
+}

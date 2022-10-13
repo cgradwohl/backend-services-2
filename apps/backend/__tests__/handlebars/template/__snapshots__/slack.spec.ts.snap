@@ -1,0 +1,699 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`slack slate should render slateBoldItalicUnderline 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Some *bold*, _italic_, and underlined text.",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack slate should render slateItalicAroundBoldSlate 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "This _is_ *_a_* test",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack slate should render slateLink 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Click <https://example.com/link|this link> to learn more.",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack slate should render slateLinkWithVars 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Link to <https://{domain}/{user}/|{firstname}'s {project}>",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack slate should render slateNewLines 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Line 1
+Line 2
+
+Line 4",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack slate should render slateScaryChars 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Scary characters are \\", ', <, >, &, \`, =, {, and }",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack slate should render slateVariable 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "This is a {variable}.",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render actionBlock 1`] = `
+Array [
+  Object {
+    "elements": Array [
+      Object {
+        "action_id": undefined,
+        "text": Object {
+          "emoji": true,
+          "text": "Click Here",
+          "type": "plain_text",
+        },
+        "type": "button",
+        "url": "https://www.courier.com",
+      },
+    ],
+    "type": "actions",
+  },
+]
+`;
+
+exports[`slack template blocks should render actionBlockLink 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "<https://www.example.com|link text>",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render actionBlockWebhook 1`] = `
+Array [
+  Object {
+    "elements": Array [
+      Object {
+        "action_id": "my-action-id",
+        "text": Object {
+          "emoji": true,
+          "text": "Click Here",
+          "type": "plain_text",
+        },
+        "type": "button",
+        "url": undefined,
+      },
+    ],
+    "type": "actions",
+  },
+]
+`;
+
+exports[`slack template blocks should render conditionalTextBlock 1`] = `Array []`;
+
+exports[`slack template blocks should render conditionalTextBlockShown 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Conditional text.",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render dividerBlock 1`] = `
+Array [
+  Object {
+    "type": "divider",
+  },
+]
+`;
+
+exports[`slack template blocks should render dividerBlockWithColor 1`] = `
+Array [
+  Object {
+    "type": "divider",
+  },
+]
+`;
+
+exports[`slack template blocks should render imageBlock 1`] = `
+Array [
+  Object {
+    "alt_text": "mountains",
+    "image_url": "https://s3.amazonaws.com/backend-dev-librarybucket-a6n6jb55kc98/118c6491-a35d-4b81-b10b-d22f7d20da0c/1590005909939_green-mountains.jpg",
+    "type": "image",
+  },
+]
+`;
+
+exports[`slack template blocks should render imageBlockWithFullAlign 1`] = `
+Array [
+  Object {
+    "alt_text": " ",
+    "image_url": "https://example.com/img.png",
+    "type": "image",
+  },
+]
+`;
+
+exports[`slack template blocks should render imageBlockWithVars 1`] = `
+Array [
+  Object {
+    "alt_text": "Description: {imageDescription}",
+    "image_url": "http://example.com/{imagePath}",
+    "type": "image",
+  },
+]
+`;
+
+exports[`slack template blocks should render jsonnetBlock 1`] = `
+Array [
+  Object {
+    "accessory": Object {
+      "alt_text": "Luke Skywalker image",
+      "image_url": "https://example.com/luke.png",
+      "type": "image",
+    },
+    "text": Object {
+      "text": "Luke Skywalker",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render jsonnetBlockArray 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Number 1",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+  Object {
+    "text": Object {
+      "text": "Number 2",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+  Object {
+    "text": Object {
+      "text": "Number 3",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render listBlock 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "• Luke Skywalker
+• Boba Fett
+• Han Solo",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render listBlockBullets 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "• Luke Skywalker
+• Boba Fett
+• Han Solo",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render listBlockBulletsEmpty 1`] = `Array []`;
+
+exports[`slack template blocks should render listBlockBulletsWithChildren 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Luke Skywalker
+• lightsaber
+
+Boba Fett
+• blaster
+• Z-6 Jetpack
+• flame thrower
+
+Han Solo
+• blaster pistol",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render listBlockTransparent 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "• Luke Skywalker
+• Boba Fett
+• Han Solo",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render listBlockTransparentWithChildImage 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Luke Skywalker
+• lightsaber
+
+Boba Fett
+• blaster
+• Z-6 Jetpack
+• flame thrower
+
+Han Solo
+• blaster pistol",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render listBlockTransparentWithChildNotFound 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Luke Skywalker
+
+Boba Fett
+
+Han Solo",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render listBlockTransparentWithChildren 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Luke Skywalker
+• lightsaber
+
+Boba Fett
+• blaster
+• Z-6 Jetpack
+• flame thrower
+
+Han Solo
+• blaster pistol",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render listBlockTransparentWithTopImage 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Luke Skywalker
+• lightsaber
+
+Boba Fett
+• blaster
+• Z-6 Jetpack
+• flame thrower
+
+Han Solo
+• blaster pistol",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render listBlockUsingObjects 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Parent object
+• Child object",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render listBlockWithChildren 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Luke Skywalker
+• lightsaber
+
+Boba Fett
+• blaster
+• Z-6 Jetpack
+• flame thrower
+
+Han Solo
+• blaster pistol",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render markdownBlock 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Hello Luke. Get started with <http://daringfireball.net/projects/markdown/|markdown>.
+",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render markdownBlockMultiLine 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "​*This is a test*​
+
+The following is a list:
+
+•   A
+•   B
+•   C
+•   D
+
+End of message
+",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render markdownBlockWithBoldVariable 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Hello Luke!
+",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render markdownBlockWithTextWithTags 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Markdown text with <strong>tags</strong>
+Should work.
+",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render markdownBlockWithVariableWithTags 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "​*markdown*​ needs to support html <em>tags</em>.
+
+As well as new lines
+
+and new lines created by using &lt;br&gt;.
+",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render quoteBlockWithLink 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "> Quote block with a <https://example.com|link>.",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render templateBlock 1`] = `Array []`;
+
+exports[`slack template blocks should render textBlock 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "This is a text block",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render textBlockHeader 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "You cannot hide forever, Luke.
+
+Give yourself to the Dark Side.",
+      "type": "plain_text",
+    },
+    "type": "header",
+  },
+]
+`;
+
+exports[`slack template blocks should render textBlockWhitespace 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "To trim or not to trim?  
+",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render textBlockWithLink 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "<https://example.com|Luke>",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render textBlockWithLinkWithWhitespace 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Link<https://example.com|with whitespace>is fun",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render textBlockWithMarks 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "*You cannot hide forever,* *Luke.*
+
+_Give yourself to the Dark Side._",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render textBlockWithVariable 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Hello Luke",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render textBlockWithVariableEscaping 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Escape variable values: Should escape &, <, >, \\", ', \`, and = characters.
+Escape link values: <https://example.com/?a=1&b=2&c=3|Should escape &, <, >, \\", ', \`, and = characters>.",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render textBlockWithVariableWithLineReturns 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Var with line returns: Line 1
+Line 2
+
+Line 4.",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render textBlockWithVariableWithWindowsLineReturns 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "line 1
+line 2
+
+line 4",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`slack template blocks should render welcomeBlocks 1`] = `
+Array [
+  Object {
+    "text": Object {
+      "text": "Welcome to Courier!",
+      "type": "plain_text",
+    },
+    "type": "header",
+  },
+  Object {
+    "text": Object {
+      "text": "*These are content blocks.*",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+  Object {
+    "text": Object {
+      "text": "• Feel free to drag and drop me around. 
+• If you remove us don’t worry, We’ll simple move into the library under Channels for later use. 
+• A block can be shared across channels! 
+• When you are done, press Preview to send yourself a notification.
+• Use curly brackets *{* and *}* to create {variables}.",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+  Object {
+    "elements": Array [
+      Object {
+        "action_id": undefined,
+        "text": Object {
+          "emoji": true,
+          "text": "Click to edit my properties!",
+          "type": "plain_text",
+        },
+        "type": "button",
+        "url": "https://www.courier.com",
+      },
+    ],
+    "type": "actions",
+  },
+  Object {
+    "text": Object {
+      "text": "Cheers, 
+*The Courier Team*",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;

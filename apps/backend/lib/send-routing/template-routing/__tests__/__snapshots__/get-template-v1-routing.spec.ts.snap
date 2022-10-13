@@ -1,0 +1,224 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`get template v1 routing main routing generator should generate a routing tree from a notification 1`] = `
+Object {
+  "address": Array [],
+  "nodes": Array [
+    Object {
+      "address": Array [
+        0,
+      ],
+      "channel": "push",
+      "provider": "firebase-fcm",
+      "providerConfigurationId": "firebase",
+      "providerFailoverIndex": 1,
+      "taxonomy": "push:*",
+      "templateChannelId": "8b41124e-60cd-4092-8b73-858d4607d85f",
+      "type": "leaf",
+    },
+    Object {
+      "address": Array [
+        1,
+      ],
+      "failover": Object {
+        "address": Array [
+          1,
+          "failover",
+        ],
+        "failover": Object {
+          "address": Array [
+            1,
+            "failover",
+            "failover",
+          ],
+          "failover": undefined,
+          "nodes": Array [
+            Object {
+              "address": Array [
+                1,
+                "failover",
+                "failover",
+                0,
+              ],
+              "channel": "email",
+              "provider": "sendgrid",
+              "providerConfigurationId": "sendgrid",
+              "providerFailoverIndex": 3,
+              "taxonomy": "email:*",
+              "templateChannelId": "f9a8c713-792f-4396-80e9-69c48f9f1d2d",
+              "type": "leaf",
+            },
+          ],
+          "type": "branch",
+        },
+        "nodes": Array [
+          Object {
+            "address": Array [
+              1,
+              "failover",
+              0,
+            ],
+            "channel": "email",
+            "provider": "mailjet",
+            "providerConfigurationId": "b46abb6b-e99e-473b-927a-7d9843ec0442",
+            "providerFailoverIndex": 2,
+            "taxonomy": "email:*",
+            "templateChannelId": "f9a8c713-792f-4396-80e9-69c48f9f1d2d",
+            "type": "leaf",
+          },
+        ],
+        "type": "branch",
+      },
+      "nodes": Array [
+        Object {
+          "address": Array [
+            1,
+            0,
+          ],
+          "channel": "sms",
+          "provider": "twilio",
+          "providerConfigurationId": "twilio",
+          "providerFailoverIndex": 1,
+          "taxonomy": "direct_message:sms:*",
+          "templateChannelId": "87616a84-d4dd-4d44-afd9-bd62dda8ac4b",
+          "type": "leaf",
+        },
+      ],
+      "type": "branch",
+    },
+  ],
+  "type": "branch",
+}
+`;
+
+exports[`get template v1 routing routing summary generator should pass tokens to handles functions 1`] = `
+Object {
+  "always": Array [
+    Object {
+      "blockIds": Array [],
+      "channel": "push",
+      "channelLabel": "push-undefined",
+      "config": Object {
+        "locales": Object {},
+      },
+      "configurationId": "apn",
+      "disabled": false,
+      "id": "db52df90-94fa-475e-90d0-6f2d64076502",
+      "key": "apn",
+      "label": "",
+      "provider": "apn",
+      "providers": Array [
+        Object {
+          "config": Object {},
+          "configurationId": "apn",
+          "key": "apn",
+        },
+      ],
+      "reason": undefined,
+      "selected": true,
+      "taxonomy": "push:*",
+    },
+  ],
+  "bestOf": Array [
+    Object {
+      "blockIds": Array [
+        "92e08808-8883-4034-be2f-d372df5db3c1",
+      ],
+      "channel": "push",
+      "channelLabel": "push-undefined",
+      "config": Object {
+        "locales": Object {},
+      },
+      "configurationId": "firebase",
+      "disabled": false,
+      "id": "6721af5a-7d56-4906-a021-6f30fe84253a",
+      "key": "firebase-fcm",
+      "label": "",
+      "provider": "firebase-fcm",
+      "providers": Array [
+        Object {
+          "config": Object {},
+          "configurationId": "firebase",
+          "key": "firebase-fcm",
+        },
+      ],
+      "reason": undefined,
+      "selected": true,
+      "taxonomy": "push:*",
+    },
+  ],
+}
+`;
+
+exports[`get template v1 routing routing summary generator should produce the correct routing summary 1`] = `
+Object {
+  "always": Array [
+    Object {
+      "blockIds": Array [],
+      "channel": "push",
+      "channelLabel": "push-web",
+      "config": Object {
+        "locales": Object {},
+      },
+      "configurationId": "bfcb2dc6-6774-4642-af70-920674639f3f",
+      "disabled": false,
+      "id": "db52df90-94fa-475e-90d0-6f2d64076502",
+      "key": "courier",
+      "label": "",
+      "provider": "courier",
+      "providers": Array [
+        Object {
+          "config": Object {},
+          "configurationId": "bfcb2dc6-6774-4642-af70-920674639f3f",
+          "key": "courier",
+        },
+      ],
+      "reason": undefined,
+      "selected": true,
+      "taxonomy": "push:web:courier",
+    },
+    Object {
+      "channel": "direct_message",
+      "channelLabel": "direct_message",
+      "provider": "slack",
+      "reason": "MISSING_CONFIGURATION",
+      "selected": false,
+    },
+  ],
+  "bestOf": Array [
+    Object {
+      "blockIds": Array [
+        "92e08808-8883-4034-be2f-d372df5db3c1",
+      ],
+      "channel": "email",
+      "channelLabel": "email",
+      "config": Object {
+        "email": Object {
+          "emailSubject": "New Subject",
+          "emailTemplateConfig": Object {
+            "templateName": "line",
+            "topBarColor": "#9121C2",
+          },
+        },
+        "locales": Object {},
+      },
+      "configurationId": "b46abb6b-e99e-473b-927a-7d9843ec0442",
+      "disabled": false,
+      "id": "6721af5a-7d56-4906-a021-6f30fe84253a",
+      "key": "mailjet",
+      "label": "",
+      "provider": "mailjet",
+      "providers": Array [
+        Object {
+          "config": Object {},
+          "configurationId": "b46abb6b-e99e-473b-927a-7d9843ec0442",
+          "key": "mailjet",
+        },
+      ],
+      "reason": undefined,
+      "selected": true,
+      "taxonomy": "email:*",
+    },
+  ],
+}
+`;

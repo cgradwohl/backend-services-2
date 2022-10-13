@@ -1,0 +1,7 @@
+[
+  {
+    "config": "{\"imageSrc\":\"\",\"imagePath\":\"http://example.com/{imagePath}\",\"altText\":\"Description: {imageDescription}\",\"imageHref\":\"https://example.com/{imageLink}\"}",
+    "id": "a0c2d1d2-a9b6-4997-a6da-22762bd3b7b7",
+    "type": "image"
+  }
+]

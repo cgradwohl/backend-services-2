@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`get routing tree returns a routing tree when enabled for tenant 1`] = `
+Object {
+  "routingTree": Object {
+    "address": Array [],
+    "nodes": Array [
+      Object {
+        "address": Array [
+          0,
+        ],
+        "nodes": Array [
+          Object {
+            "address": Array [
+              0,
+              0,
+            ],
+            "channel": "sms",
+            "failureReason": "Information required by the provider was not included.",
+            "failureType": "MISSING_PROVIDER_SUPPORT",
+            "provider": "twilio",
+            "type": "dead-leaf",
+          },
+          Object {
+            "address": Array [
+              0,
+              1,
+            ],
+            "channel": "sms",
+            "failureReason": "Information required by the provider was not included.",
+            "failureType": "MISSING_PROVIDER_SUPPORT",
+            "provider": "vonage",
+            "type": "dead-leaf",
+          },
+        ],
+        "type": "branch",
+      },
+    ],
+    "type": "branch",
+  },
+  "strategy": Object {
+    "channels": Object {},
+    "providers": Object {},
+    "routing": Object {
+      "channels": Array [
+        "sms",
+      ],
+      "method": "all",
+    },
+  },
+}
+`;

@@ -1,0 +1,32 @@
+[
+  {
+    "config": "{\"backgroundColor\":\"{color}\",\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"Lorem ipsum dolor, sit amet.\",\"marks\":[]}]}]}}}",
+    "id": "daf5356d-451d-4dbe-bb61-90d02e41e821",
+    "type": "text"
+  },
+  {
+    "config": "{\"dividerColor\":\"{color}\"}",
+    "id": "de8ad2a6-ba05-4e77-95c6-70f9f1751a33",
+    "type": "divider"
+  },
+  {
+    "config": "{\"align\":\"center\",\"backgroundColor\":\"{color}\",\"href\":\"https://www.courier.com\",\"style\":\"button\",\"text\":\"Click Here\"}",
+    "id": "51a270c3-d272-46f7-a171-cd1c0a74b860",
+    "type": "action"
+  },
+  {
+    "config": "{\"child\":{\"imageHref\":\"\",\"imagePath\":\"\",\"path\":\"\",\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"Child Value\",\"marks\":[]}]}]}}},\"top\":{\"background\":\"{color}\",\"imageHref\":\"\",\"imagePath\":\"\",\"path\":\"characters\",\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"\",\"marks\":[]},{\"object\":\"inline\",\"type\":\"variable\",\"data\":{\"value\":\"{name}\"},\"nodes\":[{\"object\":\"text\",\"text\":\"{name}\",\"marks\":[]}]},{\"object\":\"text\",\"text\":\"\",\"marks\":[]}]}]}}},\"useChildren\":false,\"useImages\":false}",
+    "id": "857fa610-a9ef-4736-807c-baa1b1f7d413",
+    "type": "list"
+  },
+  {
+    "config": "{\"child\":{\"imageHref\":\"\",\"imagePath\":\"\",\"path\":\"weapons\",\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"\",\"marks\":[]},{\"object\":\"inline\",\"type\":\"variable\",\"data\":{\"value\":\"{name}\"},\"nodes\":[{\"object\":\"text\",\"text\":\"{name}\",\"marks\":[]}]},{\"object\":\"text\",\"text\":\"\",\"marks\":[]}]}]}}},\"top\":{\"background\":\"{color}\",\"imageHref\":\"\",\"imagePath\":\"\",\"path\":\"characters\",\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"\",\"marks\":[]},{\"object\":\"inline\",\"type\":\"variable\",\"data\":{\"value\":\"{name}\"},\"nodes\":[{\"object\":\"text\",\"text\":\"{name}\",\"marks\":[]}]},{\"object\":\"text\",\"text\":\"\",\"marks\":[]}]}]}}},\"useChildren\":true,\"useImages\":true}",
+    "id": "994f6891-dd39-43b7-aaa5-193655ac1ef5",
+    "type": "list"
+  },
+  {
+    "config": "{\"borderColor\":\"{color}\",\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"Cras lacinia elit fringilla consequat placerat...\",\"marks\":[]}]}]}}}",
+    "id": "ab4769f5-5479-4711-a74c-388f61e53ed4",
+    "type": "quote"
+  }
+]

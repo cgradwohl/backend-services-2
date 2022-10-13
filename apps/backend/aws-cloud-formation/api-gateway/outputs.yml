@@ -1,0 +1,23 @@
+Outputs:
+  ApiGatewayRestApiId:
+    Export:
+      Name: backend-${self:custom.stage}-ApiGatewayRestApiId
+    Value:
+      Ref: ApiGatewayRestApi
+  ApiGatewayRestApiRootResourceId:
+    Export:
+      Name: backend-${self:custom.stage}-ApiGatewayRestApiRootResourceId
+    Value:
+      Fn::GetAtt:
+        - ApiGatewayRestApi
+        - RootResourceId
+  ApiUrl:
+    Description: "The API Gateway URL for public facing endpoints"
+    Export:
+      Name: backend-${self:custom.stage}-ApiUrl
+    Value:
+      Fn::Join:
+        - ""
+        - - "https://"
+          - Ref: ApiGatewayRestApi
+          - ".execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}"

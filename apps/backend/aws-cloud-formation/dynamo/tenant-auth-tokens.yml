@@ -1,0 +1,34 @@
+Resources:
+  TenantAuthTokensTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.prefix}-tenant-auth-tokens
+      AttributeDefinitions:
+        - AttributeName: tenantId
+          AttributeType: S
+        - AttributeName: authToken
+          AttributeType: S
+      KeySchema:
+        - AttributeName: authToken
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: by-tenant-index
+          KeySchema:
+            - AttributeName: tenantId
+              KeyType: HASH
+            - AttributeName: authToken
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL # Make All columns available in index
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Contains authentication tokens used for developers to access the Courier API. Not used for user authentication."
+      - Key: VantaContainsUserData
+        Value: false

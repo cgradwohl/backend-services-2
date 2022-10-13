@@ -1,0 +1,319 @@
+Resources:
+  # HACK: named thus because:
+  # https://github.com/serverless/serverless/issues/4588#issuecomment-356837495
+  CognitoUserPoolCognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      # Generate a name based on the stage
+      UserPoolName: ${self:custom.prefix}_users
+      # Set email as an alias
+      UsernameAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: false
+          RequireNumbers: false
+          RequireSymbols: false
+          RequireUppercase: false
+
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      # Generate an app client name based on the stage
+      ClientName: ${self:custom.prefix}_users_client
+      UserPoolId:
+        Ref: CognitoUserPoolCognitoUserPool
+      ExplicitAuthFlows:
+        - ADMIN_NO_SRP_AUTH
+      GenerateSecret: false
+      SupportedIdentityProviders: ${self:custom.supportedIdentityProviders.${self:custom.stage}}
+      CallbackURLs: ${self:custom.appSsoUrls.${self:custom.stage}.signIn}
+      LogoutURLs: ${self:custom.appSsoUrls.${self:custom.stage}.signOut}
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthScopes:
+        - email
+        - openid
+        - profile
+        - aws.cognito.signin.user.admin
+      # this prevents user existence-related errors that create vulnerabilities
+      # https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pool-managing-errors.html
+      PreventUserExistenceErrors: ENABLED
+    DependsOn:
+      - CognitoUserPoolIdentityOktaBenevity
+      - CognitoUserPoolIdentityOktaColor
+      - CognitoUserPoolIdentityOktaDrata
+      - CognitoUserPoolIdentityOktaEarnestResearch
+      - CognitoUserPoolIdentityOktaDrewDev
+      - CognitoUserPoolIdentityOktaExpel
+      - CognitoUserPoolIdentityOktaLattice
+      - CognitoUserPoolIdentityOktaLaunchDarkly
+      - CognitoUserPoolIdentityOktaNewRelic
+      - CognitoUserPoolIdentityOktaOyster
+      - CognitoUserPoolIdentityOktaSeer
+      - CognitoUserPoolIdentityProviderGoogle
+
+  CognitoUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: ${self:custom.awsCognitoUserPoolDomain.${self:custom.stage}}
+      UserPoolId:
+        Ref: CognitoUserPoolCognitoUserPool
+    DependsOn: CognitoUserPoolCognitoUserPool
+
+  CognitoUserPoolIdentityProviderGoogle:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId:
+        Ref: CognitoUserPoolCognitoUserPool
+      ProviderName: Google
+      ProviderDetails:
+        client_id: ${self:custom.googleSso.${self:custom.stage}.clientId}
+        client_secret: ${self:custom.googleSso.${self:custom.stage}.clientSecret}
+        authorize_scopes: email openid profile
+      ProviderType: Google
+      AttributeMapping:
+        email: email
+        email_verified: email_verified
+        name: name
+        picture: picture
+        username: sub
+    DependsOn: CognitoUserPoolCognitoUserPool
+
+  CognitoUserPoolIdentityOktaBenevity:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId:
+        Ref: CognitoUserPoolCognitoUserPool
+      ProviderName: OktaBenevity
+      ProviderDetails:
+        MetadataURL: https://benevity.okta.com/app/exkt3fzxttCYjINDz0x7/sso/saml/metadata
+      ProviderType: SAML
+      AttributeMapping:
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress
+    DependsOn: CognitoUserPoolCognitoUserPool
+
+  CognitoUserPoolIdentityOktaExpel:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId:
+        Ref: CognitoUserPoolCognitoUserPool
+      ProviderName: OktaExpel
+      ProviderDetails:
+        MetadataURL: https://expel.okta.com/app/exkd8nyuz66lT4QvC2p7/sso/saml/metadata
+      ProviderType: SAML
+      AttributeMapping:
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress
+    DependsOn: CognitoUserPoolCognitoUserPool
+
+  CognitoUserPoolIdentityOktaDrata:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId:
+        Ref: CognitoUserPoolCognitoUserPool
+      ProviderName: OktaDrata
+      ProviderDetails:
+        MetadataURL: https://drata.okta.com/app/exkpyw7pz0gGSjYsd696/sso/saml/metadata
+      ProviderType: SAML
+      AttributeMapping:
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress
+    DependsOn: CognitoUserPoolCognitoUserPool
+
+  CognitoUserPoolIdentityOktaDrewDev:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId:
+        Ref: CognitoUserPoolCognitoUserPool
+      ProviderName: OktaDrewDev
+      ProviderDetails:
+        MetadataURL: https://dev-65411915.okta.com/app/exk27ayu395c9o2T05d7/sso/saml/metadata
+      ProviderType: SAML
+      AttributeMapping:
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress
+    DependsOn: CognitoUserPoolCognitoUserPool
+
+  CognitoUserPoolIdentityOktaLattice:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId:
+        Ref: CognitoUserPoolCognitoUserPool
+      ProviderName: OktaLattice
+      ProviderDetails:
+        MetadataURL: https://latticehq.okta.com/app/exkgpx32hba9xlIGq357/sso/saml/metadata
+      ProviderType: SAML
+      AttributeMapping:
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress
+    DependsOn: CognitoUserPoolCognitoUserPool
+
+  CognitoUserPoolIdentityOktaLaunchDarkly:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId:
+        Ref: CognitoUserPoolCognitoUserPool
+      ProviderName: OktaLaunchDarkly
+      ProviderDetails:
+        MetadataURL: https://launchdarkly.okta.com/app/exkkqt27jlWEBZFvx357/sso/saml/metadata
+      ProviderType: SAML
+      AttributeMapping:
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress
+    DependsOn: CognitoUserPoolCognitoUserPool
+
+  CognitoUserPoolIdentityOktaEarnestResearch:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId:
+        Ref: CognitoUserPoolCognitoUserPool
+      ProviderName: OktaEarnestResearch
+      ProviderDetails:
+        MetadataURL: https://earnestresearch.okta.com/app/exkl1rdeeqMoatjxr357/sso/saml/metadata
+      ProviderType: SAML
+      AttributeMapping:
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress
+    DependsOn: CognitoUserPoolCognitoUserPool
+
+  CognitoUserPoolIdentityOktaColor:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId:
+        Ref: CognitoUserPoolCognitoUserPool
+      ProviderName: OktaColor
+      ProviderDetails:
+        MetadataFile: |
+          <?xml version="1.0" encoding="UTF-8"?><md:EntityDescriptor entityID="http://www.okta.com/exkfsgu2smlPWOLye2p7" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDmjCCAoKgAwIBAgIGAV4SnRLhMA0GCSqGSIb3DQEBCwUAMIGNMQswCQYDVQQGEwJVUzETMBEG
+          A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+          MBIGA1UECwwLU1NPUHJvdmlkZXIxDjAMBgNVBAMMBWNvbG9yMRwwGgYJKoZIhvcNAQkBFg1pbmZv
+          QG9rdGEuY29tMB4XDTE3MDgyNDA0NTkzN1oXDTI3MDgyNDA1MDAzNlowgY0xCzAJBgNVBAYTAlVT
+          MRMwEQYDVQQIDApDYWxpZm9ybmlhMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMQ0wCwYDVQQKDARP
+          a3RhMRQwEgYDVQQLDAtTU09Qcm92aWRlcjEOMAwGA1UEAwwFY29sb3IxHDAaBgkqhkiG9w0BCQEW
+          DWluZm9Ab2t0YS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCfNgb/EKr1OxAQ
+          75crPim0ocNCHpIPo7O993DPWbhu1oyo/TFv0BUc6SmyyMgVJXz45IN8KATQfYgNs/ONLGMiKGZQ
+          TL9jrKUuLncOwT5f+wlx+eCfKGm9bpdtO82Kwuu3oI5831cHpGCUBeyozSSvOcDlc9WCQ6XULrMR
+          Ox2OXNo0aN5W5h9Atyp6UFNOuDKeb9aqAGPrE6/lUNt5ixjfTuphxzsQUwrdJhWhwynzgAy2lVvS
+          RTCrI8tBPOvK+4FAxwN3b+xo+IQVzC+uXcwh9mtuxgJrRzkUctRUvln91i8GCriEsBe1Lu/xW1dI
+          KLPM0S7tEHbClqjPLnPQ7FvFAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAD4uwoyPlJvaj0L2HAUx
+          UHsHa14O44oTQGlncUYlfjf4c1c2g/AAPHlVPD8r0V1uK58gWuAbhZBS29GPnQj9CnHagzPM6OLS
+          94fFZ7aCGcDJeMirEUvD12/WUT7qviUJQ8PS8mJSNVksigHcdZ4w/rfViV2owoRqKGBlllW9ugBd
+          YqyRYcivQ4pPq4avdAOEwq6Bxuo3D+COPZd87D0lcSSEfpR0aGLfk3W/Y6fM9+RbR8+2WwLPBvNF
+          4Z9JlqxwG4ldxMf3ETf0lTt7o6RfTF4nPh+CbeT0pdgllMgst2V31KqngFLXv1/zBcjK5UvvDxHn
+          ZIo+75UTlH62iwhwVoc=</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://sso.color.com/app/color_courier_1/exkfsgu2smlPWOLye2p7/sso/saml"/><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://sso.color.com/app/color_courier_1/exkfsgu2smlPWOLye2p7/sso/saml"/></md:IDPSSODescriptor></md:EntityDescriptor>
+      ProviderType: SAML
+      AttributeMapping:
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress
+    DependsOn: CognitoUserPoolCognitoUserPool
+
+  CognitoUserPoolIdentityOktaNewRelic:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId:
+        Ref: CognitoUserPoolCognitoUserPool
+      ProviderName: OktaNewRelic
+      ProviderDetails:
+        MetadataFile: |
+          <?xml version="1.0" encoding="UTF-8"?><md:EntityDescriptor entityID="http://www.okta.com/exkvcjzz1u4FyxKZN0x7" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDoDCCAoigAwIBAgIGAV2mjFgVMA0GCSqGSIb3DQEBCwUAMIGQMQswCQYDVQQGEwJVUzETMBEG
+          A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+          MBIGA1UECwwLU1NPUHJvdmlkZXIxETAPBgNVBAMMCG5ld3JlbGljMRwwGgYJKoZIhvcNAQkBFg1p
+          bmZvQG9rdGEuY29tMB4XDTE3MDgwMzA1MjIyMVoXDTI3MDgwMzA1MjMyMVowgZAxCzAJBgNVBAYT
+          AlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMQ0wCwYDVQQK
+          DARPa3RhMRQwEgYDVQQLDAtTU09Qcm92aWRlcjERMA8GA1UEAwwIbmV3cmVsaWMxHDAaBgkqhkiG
+          9w0BCQEWDWluZm9Ab2t0YS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCdShp7
+          v454iG2ltuS9vkn2+SPWA1mF2nfd16ZzSH3OJX6e2ScTIGlUci0AJQPn7J0t4zSPNqc8lgLLfK0x
+          uq6ixFHVt7Zb54Jji51Jz8ezjU3QoCtPGjVefBxpRlv6S4dIeIsZvFkExYC9tbKDRmTBxSqx+sX3
+          7yEne+r467/zX7Mtekf68eKg/pwz9iuZ+Z2/L/ArEHpSPOJ0jiLGqXOgmko/FsEofn3qqA4fUvGb
+          TNlw7R+XOnkmj8t7buJfyDrxsZwQXPGe+JGP934HBgAog1ckosmeXa6FgVIErECztpHztqFp5aCx
+          GCujSnLIkC1s33dfMYPzvlNqv68tmJrTAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAEju2vENCToQ
+          ML3X9kcK3Pgj1nojYDtHRU92Lf/NPl/4g1wKl06poq0rX5fBjAp2tpDXPhyUAaCX9tTd7tdefY7W
+          HUv16Rb0InflxJQ/V/5ToAjaqvsEfcu/7Aej7lNGSycWE5+NwO1V1lTni6ZPjK2WMXVEehLfBLeW
+          z8jCrR5Jv3vMWidHrEoF1jl6RxocDBQu9yuHkrpu1CsgF3IF6RoEDtQHf9u8LbwNZugRWfn9dko9
+          TngJXC6H6E9gHtqUSZcHlSslGAeHYdXM/bSzuVtFFjNyfeUX7J/ysAKd6jSZWFbFYy95Ev94cGnT
+          P5AQ/q6I89TkfP/sXn4XOZk6nzA=</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://newrelic.okta.com/app/newrelic_courier_1/exkvcjzz1u4FyxKZN0x7/sso/saml"/><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://newrelic.okta.com/app/newrelic_courier_1/exkvcjzz1u4FyxKZN0x7/sso/saml"/></md:IDPSSODescriptor></md:EntityDescriptor>
+      ProviderType: SAML
+      AttributeMapping:
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress
+    DependsOn: CognitoUserPoolCognitoUserPool
+
+  CognitoUserPoolIdentityOktaOyster:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId:
+        Ref: CognitoUserPoolCognitoUserPool
+      ProviderName: OktaOyster
+      ProviderDetails:
+        MetadataFile: |
+          <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" entityID="http://www.okta.com/exk6kut1r9WY2FNEI5d7">
+          <md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+          <md:KeyDescriptor use="signing">
+          <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+          <ds:X509Data>
+          <ds:X509Certificate>MIIDoDCCAoigAwIBAgIGAYNaDFfyMA0GCSqGSIb3DQEBCwUAMIGQMQswCQYDVQQGEwJVUzETMBEG A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU MBIGA1UECwwLU1NPUHJvdmlkZXIxETAPBgNVBAMMCG95c3RlcmhyMRwwGgYJKoZIhvcNAQkBFg1p bmZvQG9rdGEuY29tMB4XDTIyMDkyMDA4MzcyMVoXDTMyMDkyMDA4MzgyMVowgZAxCzAJBgNVBAYT AlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMQ0wCwYDVQQK DARPa3RhMRQwEgYDVQQLDAtTU09Qcm92aWRlcjERMA8GA1UEAwwIb3lzdGVyaHIxHDAaBgkqhkiG 9w0BCQEWDWluZm9Ab2t0YS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDtowNw RJtJ3y9WXZf1z8Q88R9ENG8wdWbpxjLf7B/+YswyYjXst2u/a+OjzPira5DwlYMRmYsDAy5OiPLW PhKqpJZXvFi6aS4c9FQFMUvTkjxw+9m6S0SdotXZLoA0fNV1RnGzgqX6wZxpxC0N8DWe2dWIPJQ1 AkBIgKv9rjc/3iRDEkNnHEYqumf20OAgUIK7WQdtzgTHcyGG93fWn/oMAL7zRjmAGByg5r13mKuv 9Yk9tIoO3f9atcCOzCvAShB1Fp9hcDq0Nzav3DYlZryFl1iYgWJljiMfcorrsHsgNopZEfzqs+7x bUqrFJaGzxcN31AHSKz2RG/Y1YPVQdVTAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAC/aWwmEwckI TCdoVEeo3uRQFZTKCmc6OyOWnWKfh26B9OOSYOYaG1cKt50ww2kXhbYMchmcSAdhDo0bs10ZKzUb uE65Hp1U5y3cW/p9tTb9Yi5iUeYwM/VJMieLV7IZEJdK64cSK77zIo4XNSnxJPTdOEbUaLfhgScN wI1d7jMcX9ZZj/UmTfV/oeIY3mS/nTXorruZwkSgxsWCXceimAQPtoPafs0xS0Ks9IOhqf99EaR/ +mkNbUtIb9JdHhSQxIKYE8mwo9hZfXHe6vkNaSrPgbAaWVCddRi9AJYD1LlSFvemQmtNxXH/Jr/N igu40Ubzcy3eiplCLD+xjFbGKng=</ds:X509Certificate>
+          </ds:X509Data>
+          </ds:KeyInfo>
+          </md:KeyDescriptor>
+          <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat>
+          <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat>
+          <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://oysterhr.okta.com/app/oysterhr_courier_2/exk6kut1r9WY2FNEI5d7/sso/saml"/>
+          <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://oysterhr.okta.com/app/oysterhr_courier_2/exk6kut1r9WY2FNEI5d7/sso/saml"/>
+          </md:IDPSSODescriptor>
+          </md:EntityDescriptor>
+      ProviderType: SAML
+      AttributeMapping:
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress
+    DependsOn: CognitoUserPoolCognitoUserPool
+
+  CognitoUserPoolIdentityOktaSeer:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId:
+        Ref: CognitoUserPoolCognitoUserPool
+      ProviderName: OktaSeer
+      ProviderDetails:
+        MetadataFile: |
+          <?xml version="1.0" encoding="UTF-8"?><md:EntityDescriptor entityID="http://www.okta.com/exk7obseacUEBdSsz4x7" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDpjCCAo6gAwIBAgIGAYFk5z+LMA0GCSqGSIb3DQEBCwUAMIGTMQswCQYDVQQGEwJVUzETMBEG
+          A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+          MBIGA1UECwwLU1NPUHJvdmlkZXIxFDASBgNVBAMMC3NlZXJtZWRpY2FsMRwwGgYJKoZIhvcNAQkB
+          Fg1pbmZvQG9rdGEuY29tMB4XDTIyMDYxNTAxMDcwNVoXDTMyMDYxNTAxMDgwNVowgZMxCzAJBgNV
+          BAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMQ0wCwYD
+          VQQKDARPa3RhMRQwEgYDVQQLDAtTU09Qcm92aWRlcjEUMBIGA1UEAwwLc2Vlcm1lZGljYWwxHDAa
+          BgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIB
+          AQC1grxIl/j6EsBMdu9WruXpj4w89oSTJQ1AIRs4/wWWdB8fk1SDYI/s85twJwlqrdggLu2lb3+7
+          djke6CI2qofuHltfQYJqLqvzRUpx66z7qc+wJQK7kMWF40soZPSz2XuwZzFZjW4mbUIUvr1hWMd7
+          Rn5iQeoHp5eLDnGmhjtCOIU3RwBguam72B0ZcMcSDmnRo3nFMwzPDkv9clJhjFdwKwmKr5GoN8Am
+          gCxJ+t987oTsi/VxgdL/5+seZ+ODXkDPfa5B+5q5KjHM6yC+HaCVPPwQ9dtOS7+e7V328NXaSfmt
+          2ApVfWZORycHJewNqYN+Hb1xmMGdguEdJI69ahDbAgMBAAEwDQYJKoZIhvcNAQELBQADggEBADeE
+          xsFxJBXyae8mgTKYWOEV8ZXng3cABIgiVIrxJ7W09QMilunfEPCCCMLJIISqfuXF4manQP36qI8e
+          n1kP5+qdpvvV28zg5Z5DYBEc4PbAhWcLYU5po+bx6uB4YXcsofYmaIwxytlCMJvUhbEJrArolIFq
+          +MtQIm71OWqHdQe5TAAoTlPb2eKv5badFv5OGVhcfn5t46VOxsGpN3ZHC6Bg03Pk86L19u2c2GWi
+          MOvrsPLj/33MKhvvnOT85n5QldCmrKXrO5KygoUePECJtMwQWDNhvDAja8k5fH2nhCRVilNSACle
+          UygzEqhSrxq1cVwxP9ZkZQj6svh8e+ZMyB0=</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://seermedical.okta.com/app/seermedical_courier_2/exk7obseacUEBdSsz4x7/sso/saml"/><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://seermedical.okta.com/app/seermedical_courier_2/exk7obseacUEBdSsz4x7/sso/saml"/></md:IDPSSODescriptor></md:EntityDescriptor>
+      ProviderType: SAML
+      AttributeMapping:
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress
+    DependsOn: CognitoUserPoolCognitoUserPool
+
+# Print out results
+Outputs:
+  UserPoolId:
+    Export:
+      Name: backend-${self:custom.stage}-UserPoolId
+    Value:
+      Ref: CognitoUserPoolCognitoUserPool
+
+  UserPoolClientId:
+    Value:
+      Ref: CognitoUserPoolClient
+
+  UserPoolDomainUri:
+    Value: ${self:custom.awsCognitoUserPoolUri}
+
+  UserPoolIdentityProviderGoogle:
+    Value:
+      Ref: CognitoUserPoolIdentityProviderGoogle
+
+  CognitoUserPoolArn:
+    Export:
+      Name: backend-${self:custom.stage}-CognitoUserPoolArn
+    Value:
+      Fn::GetAtt:
+        - CognitoUserPoolCognitoUserPool
+        - Arn

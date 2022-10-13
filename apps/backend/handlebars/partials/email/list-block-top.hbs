@@ -1,0 +1,73 @@
+{{#courier-partial}}
+{{#link-context "item" @index}}
+{{#if (condition @variant "==" "bullets")}}
+{{#if @hasChildren}}
+{{#if (condition @index ">" 0)}}
+<div style="padding-top:20px;text-align:left">
+{{else}}
+<div style="text-align:left">
+{{/if}}
+  {{#link-context "rich-text"}}
+{{#partial-block-indent-fix}}
+  {{else}}{{> @partial-block }}{{/partial-block-indent-fix}}
+  {{/link-context}}
+</div>
+{{> child-content }}
+{{else}}
+{{#if (condition @index ">" 0)}}
+<li style="margin:0;padding:10px 0 0;text-align:left">
+{{else}}
+<li style="margin:0;padding:0;text-align:left">
+{{/if}}
+  {{#link-context "rich-text"}}
+{{#partial-block-indent-fix}}
+  {{else}}{{> @partial-block }}{{/partial-block-indent-fix}}
+  {{/link-context}}
+</li>
+{{/if}}
+{{else}}
+{{#courier-list-styles}}
+<mj-section css-class="c--block c--block-list">
+  <mj-column{{#if @itemStyle}} style="{{@itemStyle}}"{{/if}}{{#unless (or @first @hasChildren)}} padding="0px"{{/unless}}>
+    <mj-table padding="0px" {{courier-email-text-style "text"}} css-class="{{trim (concat "c--text-" (default @textStyle "text") " " (text-direction @prerenderedContent))}}">
+      <tr{{#if @rowStyle}} style="{{@rowStyle}}"{{/if}}>
+        {{#if (condition @variant "==" "numbers")}}
+        <td style="padding:{{@textColPadding}};padding-right:0;vertical-align: top;" width="25px">
+          #{{inc @index}}
+        </td>
+        {{/if}}
+        {{#if (condition @variant "==" "images")}}
+        {{! TODO: register imageHref }}
+        <td style="padding:{{@imageColPadding}}" width="{{@imageWidth}}px">
+          {{#if @imageHref}}<a href="{{@imageHref}}">{{/if}}<img src="{{@imagePath}}" width="{{@imageWidth}}px" height="{{@imageWidth}}px" />{{#if @imageHref}}</a>{{/if}}
+        </td>
+        {{/if}}
+        <td{{#if (condition @textColSpan ">" 1)}} colspan="{{@textColSpan}}"{{/if}} style="padding:{{@textColPadding}};text-align:left" width="{{@textColWidth}}px">
+          {{#link-context "rich-text"}}
+{{#partial-block-indent-fix}}
+          {{else}}{{> @partial-block }}{{/partial-block-indent-fix}}
+          {{/link-context}}
+        </td>
+      </tr>
+      {{#if @hasChildren}}
+      {{#if (condition @childVariant "==" "bullets")}}
+          {{! indent to same level as where it will be used }}
+          {{#prerender "prerenderedChildList"}}{{> child-content }}{{/prerender}}
+      {{#if @prerenderedChildList}}
+      <tr>
+        <td{{#if (condition @variant "==" "images")}} colspan="2"{{/if}}{{#if @childPadding}} style="padding:{{@childPadding}}"{{/if}}>
+          {{{@prerenderedChildList}}}
+        </td>
+      </tr>
+      {{/if}}
+      {{else}}
+      {{> child-content }}
+      {{/if}}
+      {{/if}}
+    </mj-table>
+  </mj-column>
+</mj-section>
+{{/courier-list-styles}}
+{{/if}}
+{{/link-context}}
+{{/courier-partial}}

@@ -1,0 +1,29 @@
+name: Manual Smoke Test
+
+# Controls when the workflow will run
+on: workflow_dispatch
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  smoke-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          cache: yarn
+          node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+        run: yarn install
+      - name: Smoke Test
+        env:
+          API_URL: https://api.courier.com
+          COURIER_AUTH_TOKEN: ${{ secrets.COURIER_AUTH_TOKEN }}
+          STAGE: production
+        run: yarn test:smoke

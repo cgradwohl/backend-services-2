@@ -1,0 +1,11 @@
+export const putToken = jest.fn();
+export const putTokens = jest.fn();
+export const getToken = jest.fn();
+export const deleteToken = jest.fn();
+export const getTokensByRecipient = jest.fn();
+export const updateToken = jest.fn();
+export const validateToken = jest.fn();
+export const invalidateToken = jest.fn();
+export const getTokensByProvider = jest.fn();
+export const evaluateTokenFreshness = jest.fn();
+export const updateTokenUsageStatus = jest.fn();

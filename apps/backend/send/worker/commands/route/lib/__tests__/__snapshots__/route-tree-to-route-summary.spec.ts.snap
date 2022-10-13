@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`route tree to route summary should emit a well formed summary 1`] = `
+Array [
+  Object {
+    "channel": "sms",
+    "configurationId": "7593c6b6-f241-47f0-85b4-b5386cd60086",
+    "id": undefined,
+    "provider": "twilio",
+    "selected": true,
+    "taxonomy": "direct_message:sms:twilio",
+  },
+  Object {
+    "channel": "email",
+    "reason": "Channel conditional failed",
+    "selected": false,
+    "type": "FILTERED",
+  },
+]
+`;

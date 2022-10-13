@@ -1,0 +1,62 @@
+{{#courier-partial}}
+{{#prerender "prerenderedPreview"}}{{#link-context "rich-text"}}{{> @partial-block }}{{/link-context}}{{/prerender}}
+<mj-head>
+  <mj-attributes>
+    <mj-all font-family="Helvetica, Arial, sans-serif" />
+    <mj-text padding="0px" />
+    <mj-image padding="0px" />
+    <mj-wrapper padding="20px 0 0 0" />
+    <mj-section padding="8px 30px" background-color="#ffffff" border-left="1px solid #f5f5f5" border-right="1px solid #f5f5f5"/>
+    <mj-column padding="0px" background-color="#ffffff" />
+  </mj-attributes>
+  <mj-style inline="inline">
+    .c--email-header, .c--email-footer {
+      background: #FFFFFF;
+    }
+
+    .c--email-header {
+      border-bottom: 1px solid #f5f5f5;
+      border-top: 6px solid {{default @topBarColor "white"}};
+      border-radius: 7px 7px 0 0;
+    }
+
+    {{#if @showCourierFooter}}
+      .c--courier-footer {
+        border-radius: 0 0 7px 7px;
+        border-bottom: 1px solid #f5f5f5;
+      }
+    {{else}}
+      .c--email-footer {
+        border-radius: 0 0 7px 7px;
+        border-bottom: 1px solid #f5f5f5;
+      }
+    {{/if}}
+
+    .c--email-body {
+      padding-bottom: 20px;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    a {
+      color: #2a9edb;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .text-rtl {
+      direction: rtl;
+    }
+  </mj-style>
+  {{!-- <mj-preview>
+    <mj-raw>
+      {{{@prerenderedPreview}}}
+    </mj-raw>
+  </mj-preview> --}}
+  {{#if @brandEnabled}}
+    <mj-raw>{{> courier-brand-head}}</mj-raw>
+  {{/if}}
+</mj-head>
+{{/courier-partial}}

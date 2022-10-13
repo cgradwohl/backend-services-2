@@ -1,0 +1,11 @@
+functions:
+  SetElasticSearchAuditEventsIndex:
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      ELASTIC_SEARCH_AUDIT_EVENTS_SHARDS: ${self:custom.elasticsearch.auditEvents.${self:custom.stage}.shards}
+    handler: auditing/bin/fns/set-elasticsearch-audit-events-index.handle
+    tags:
+      tags.courier.com/service: auditing

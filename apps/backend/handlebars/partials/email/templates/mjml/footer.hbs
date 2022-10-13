@@ -1,0 +1,8 @@
+{{#courier-partial}}
+  {{> courier-brand-footer @root}}
+
+  {{#if (path "$.urls.opened")}}
+  <mj-raw><img src="{{path "$.urls.opened"}}" /></mj-raw>
+  {{/if}}
+</mj-body>
+{{/courier-partial}}

@@ -1,0 +1,39 @@
+name: Test Pull Request
+
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+        run: yarn install
+      - name: Type Check
+        run: yarn typecheck
+        env:
+          CI: true
+      - name: Type Check
+        run: yarn generate-validators
+      - name: Test
+        run: yarn test
+        env:
+          CI: true
+      - uses: codecov/codecov-action@v2
+        with:
+          token: ${{secrets.CODECOV_TOKEN}} # not required for public repos
+          files: ./coverage/coverage-final.json # optional
+          flags: unittests # optional
+          name: codecov-umbrella # optional
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
+

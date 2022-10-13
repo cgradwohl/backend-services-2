@@ -1,0 +1,15 @@
+{{#courier-partial}}{{#prerender "prerenderedText"}}{{#link-context "rich-text"}}{{> @partial-block}}{{/link-context}}{{/prerender}}{{#unless isInColumn}}<mj-section css-class="c--block c--block-text">
+  <mj-column background-color="{{default @backgroundColor "transparent"}}"
+    padding="4px {{#if @backgroundColor}}20px{{else}}0px{{/if}}"{{border-config @borderEnabled color=@borderColor size=@borderSize}}>
+{{/unless}}
+    {{#if isInColumn}}
+    <mj-text {{courier-email-text-style @textStyle}} container-background-color="{{default @backgroundColor "transparent"}}" padding="4px {{#if @backgroundColor}}20px{{else}}0px{{/if}}" align="{{default @align "left"}}" css-class="{{trim (concat "c--text-" (default @textStyle "text") " " (text-direction @prerenderedText))}}">
+    {{else}}
+    <mj-text {{courier-email-text-style @textStyle}} align="{{default @align "left"}}" css-class="{{trim (concat "c--text-" (default @textStyle "text") " " (text-direction @prerenderedText))}}">
+    {{/if}}
+{{#partial-block-indent-fix}}
+        {{else}}{{{@prerenderedText}}}{{/partial-block-indent-fix}}
+    </mj-text>
+{{#unless isInColumn}}
+  </mj-column>
+</mj-section>{{/unless}}{{/courier-partial}}

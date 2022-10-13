@@ -1,0 +1,4153 @@
+# Current: 3.0.3 ReadMe Supports: 3.0.2
+# NOTE: ReadMe is investigating a bug around $ref responses.
+#   Responses will be inlined as a work around.
+openapi: 3.0.2
+
+# https://gist.github.com/troygoode/2a1c83d55dc825def70aae1818d74016
+
+info:
+  version: "1.0.0"
+  title: "Courier API Reference"
+  description: "The Courier REST API."
+  termsOfService: "https://www.courier.com/"
+  contact:
+    name: "Courier Team"
+    email: "support@courier.com"
+    url: "https://www.courier.com"
+
+externalDocs:
+  description: "Courier API Documentation"
+  url: "https://docs.courier.com"
+
+servers:
+  - url: https://api.courier.com
+
+tags:
+  - name: "Send API"
+    description: "Send API"
+  - name: "Automation API"
+    description: "Automation API"
+  - name: "Brands API"
+    description: "Brands API"
+  - name: "Events API"
+    description: "Events API"
+  - name: "Lists API"
+    description: "Lists API"
+  - name: "Messages API"
+    description: "Messages API"
+  - name: "Profiles API"
+    description: "Profiles API"
+  - name: "Preferences API"
+    description: "Preferences API"
+
+paths:
+  /automations/invoke:
+    post:
+      tags:
+        - "Automation API"
+      summary: "POST /automations/invoke"
+      description: "Invoke an ad hoc automation run."
+      operationId: "invokeAutomation"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AutomationRun"
+            example:
+              brand: "<BRAND_ID>"
+              template: "<TEMPLATE_NAME_OR_ID>"
+              recipient: "<RECIPIENT_ID>"
+              data: {}
+              profile: {}
+              automation:
+                cancelation_token: "<CANCELATION_TOKEN>"
+                steps:
+                  [
+                    {
+                      action: "send",
+                      data: {},
+                      profile: {},
+                      recipient: "<RECIPIENT_ID>",
+                      template: "<TEMPLATE_ID>",
+                      brand: "<BRAND_ID>",
+                      override: {},
+                      if: "<CONDITIONAL_EXPRESSION>",
+                      ref: "<STEP_REFERENCE>",
+                    },
+                    { action: "delay", duration: "1 hour" },
+                    {
+                      action: "cancel",
+                      cancelationToken: "<CANCELATION_TOKEN>",
+                      if: "<CONDITIONAL_EXPRESSION>",
+                    },
+                  ]
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  runId:
+                    type: "string"
+                    description: "A unique identifier associated with the automation run."
+              examples:
+                response:
+                  value:
+                    runId: "1-5e2b2615-05efbb3acab9172f88dd3f6f"
+  /automations/{templateId}/invoke:
+    post:
+      tags:
+        - "Automation API"
+      summary: "POST /automations/{templateId}/invoke"
+      description: "Invoke an automation run from an automation template."
+      operationId: "invokeAutomationTemplate"
+      parameters:
+        - in: "path"
+          required: true
+          name: "templateId"
+          description: "A unique identifier representing the automation template to be invoked. This could be the Automation Template ID or the Automation Template Alias."
+          schema:
+            type: "string"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AutomationTemplate"
+            example:
+              template: "<TEMPLATE_NAME_OR_ID>"
+              recipient: "<RECIPIENT_ID>"
+              data: {}
+              profile: {}
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  runId:
+                    type: "string"
+                    description: "A unique identifier associated with the automation run."
+              examples:
+                response:
+                  value:
+                    runId: "1-5e2b2615-05efbb3acab9172f88dd3f6f"
+
+  /automations/runs/{run_id}:
+    get:
+      tags:
+        - "Automation API"
+      summary: "GET /automations/runs/{run_id}"
+      description: "Retrieve information and status of a given automation run."
+      operationId: "getAutomationRunById"
+      parameters:
+        - in: "path"
+          required: true
+          name: "run_id"
+          description: "A unique identifier associated with the automation run you wish to retrieve."
+          schema:
+            type: "string"
+            default: "1-5e2b2615-05efbb3acab9172f88dd3f6f"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AutomationRun"
+
+  /send:
+    post:
+      tags:
+        - "Send API"
+      summary: "POST /send"
+      description: "Send a notification to a specified recipient."
+      operationId: "sendMessage"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Send"
+            example:
+              event: "04de5ab9-8314-2e39d6b"
+              recipient: "0460766e-8463-4905-ae98-b72c7aef41d6"
+              preferences:
+                notifications:
+                  {
+                    H4CHKV5GCYMYHNHM3VJF9BX1M5HR:
+                      {
+                        status: "OPTED_IN",
+                        channel_preferences: [{ channel: "direct_message" }],
+                        rule:
+                          [
+                            {
+                              type: "snooze",
+                              until: "2021-12-31T00:00:00.000Z",
+                            },
+                          ],
+                      },
+                  }
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  messageId:
+                    type: "string"
+                    description: "A unique identifier associated with the message sent."
+              examples:
+                response:
+                  value:
+                    messageId: "1-5e2b2615-05efbb3acab9172f88dd3f6f"
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+  /send/list:
+    post:
+      tags:
+        - "Send API"
+        - "Lists API"
+      summary: "POST /send/list"
+      description: "Send a notification to list(s) subscribers"
+      operationId: sendList
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/SendList"
+                - $ref: "#/components/schemas/SendPattern"
+            example:
+              event: "04de5ab9-8314-2e39d6b"
+              list: "example.list.id"
+              pattern: "example.pattern.*"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  messageId:
+                    type: "string"
+                    description: "A unique identifier associated with the messages sent to a list's subscribers."
+              examples:
+                response:
+                  value:
+                    messageId: "1-5e2b2615-05efbb3acab9172f88dd3f6f"
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+  /send/{event}/routing:
+    post:
+      tags:
+        - "Send API"
+      summary: "POST /send/{event}/routing"
+      operationId: getRoutingInfo
+      parameters:
+        - in: "path"
+          required: true
+          name: "event"
+          description: "A unique identifier representing the event that was used to send the event."
+          schema:
+            type: "string"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                recipients:
+                  type: "array"
+                  items:
+                    properties:
+                      schema:
+                        $ref: "#/components/schemas/SendRouteRecipient"
+            example:
+              recipients:
+                - recipient: "0460766e-8463-4905-ae98-b72c7aef41d6"
+                  profile:
+                    email: "user@example.com"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  results:
+                    type: "array"
+                    items:
+                      type: "array"
+                      items:
+                        properties:
+                          recipient:
+                            type: "string"
+                          routing:
+                            anyOf:
+                              - type: "object"
+                                properties:
+                                  reason:
+                                    type: "string"
+                                  selected:
+                                    type: "boolean"
+                              - type: "object"
+                                properties:
+                                  channelsSummary:
+                                    type: "array"
+                                    items:
+                                      properties:
+                                        channel:
+                                          type: "string"
+                                        reason:
+                                          type: "string"
+                                          enum:
+                                            - "CHANNEL_DISABLED"
+                                            - "FILTERED"
+                                            - "FILTERED_AT_PROVIDER"
+                                            - "FILTERED_OUT_AT_CHANNEL"
+                                            - "INCOMPLETE_PROFILE_DATA"
+                                            - "MISSING_CONFIGURATION"
+                                            - "MISSING_CONFIGURATION_ID"
+                                            - "NO_PROVIDERS"
+                                            - "UNMAPPED"
+                                            - "UNPUBLISHED"
+                                        selected:
+                                          type: "boolean"
+                                        type:
+                                          type: "string"
+                                          enum:
+                                            - "always"
+                                            - "bestOf"
+                                  preferences:
+                                    type: "object"
+              examples:
+                response:
+                  value:
+                    results:
+                      - - recipient: "0460766e-8463-4905-ae98-b72c7aef41d6"
+                          routing:
+                            reason: "UNMAPPED"
+                            selected: false
+                      - - recipient: "14141aaf-ssf3-4145-ae14-14141sfasf11"
+                          routing:
+                            channelsSummary:
+                              - channel: "sendgrid"
+                                reason: "INCOMPLETE_PROFILE_DATA"
+                                selected: false
+                              - channel: "twilio"
+                                selected: true
+                            preferences:
+                              categories: {}
+                              notifications: {}
+
+  /brands:
+    get:
+      tags:
+        - "Brands API"
+      summary: "GET /brands"
+      description: "Get the list of brands"
+      operationId: getBrands
+      parameters:
+        - in: "query"
+          required: false
+          name: "cursor"
+          description: "A unique identifier that allows for fetching the next set of brands."
+          schema:
+            type: "string"
+            example: "MTU4OTQ5NTI1ODY4NywxLTVlYmRjNWRhLTEwODZlYWFjMWRmMjEwMTNjM2I0ZjVhMA=="
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  paging:
+                    $ref: "#/components/schemas/Paging"
+                  results:
+                    type: "array"
+                    description: "An array of brands"
+                    items:
+                      $ref: "#/components/schemas/Brand"
+              examples:
+                response:
+                  value:
+                    paging:
+                      cursor:
+                      more: false
+                    results:
+                      - created: 1591814489093
+                        id: "VHEGJ8NQEB4T3JM3SZJ8TWD27JPG"
+                        name: "My First Brand"
+                        published: 1591814489121
+                        settings:
+                          email:
+                            header:
+                              barColor: "#9D3789"
+                            footer: {}
+                        updated: 1591814489143
+                        version: "2020-06-10T18:41:29.093Z"
+
+    post:
+      tags:
+        - "Brands API"
+      summary: "POST /brands"
+      description: "Create a new brand"
+      operationId: createBrand
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                id:
+                  description: Brand identifier
+                  example: "C8CPX6HQZ5M7Q5KAMW5CXC4N98DH"
+                  type: "string"
+                name:
+                  description: Brand name
+                  example: "Example Brand Name"
+                  type: "string"
+                settings:
+                  $ref: "#/components/schemas/BrandSettings"
+                snippets:
+                  $ref: "#/components/schemas/BrandSnippets"
+              required:
+                - "name"
+                - "settings"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+              examples:
+                response:
+                  value:
+                    created: 1591814489093
+                    id: "VHEGJ8NQEB4T3JM3SZJ8TWD27JPG"
+                    name: "My First Brand"
+                    published: 1591814489121
+                    settings:
+                      email:
+                        header:
+                          barColor: "#9D3789"
+                        footer: {}
+                    updated: 1591814489143
+                    version: "2020-06-10T18:41:29.093Z"
+
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+        "402":
+          # $ref: "#/components/responses/PaymentRequired"
+          description: "Payment Required"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - authorization_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Limit Exceeded"
+                    type: authorization_error
+        "409":
+          description: "Already Exists"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Already Exists"
+                    type: "invalid_request_error"
+  /brands/{brand_id}:
+    get:
+      tags:
+        - "Brands API"
+      summary: "GET /brands/{brand_id}"
+      description: "Fetch a specific brand by brand ID."
+      operationId: getBrand
+      parameters:
+        - in: "path"
+          required: true
+          name: "brand_id"
+          description: "A unique identifier associated with the brand you wish to retrieve."
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "The Brand was successfully retrieved"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+              examples:
+                response:
+                  value:
+                    created: 1591814489093
+                    id: "VHEGJ8NQEB4T3JM3SZJ8TWD27JPG"
+                    name: "My First Brand"
+                    published: 1591814489121
+                    settings:
+                      email:
+                        header:
+                          barColor: "#9D3789"
+                        footer: {}
+                    updated: 1591814489143
+                    version: "2020-06-10T18:41:29.093Z"
+        "404":
+          # $ref: "#/components/responses/NotFound"
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Not Found"
+                    type: invalid_request_error
+    put:
+      tags:
+        - "Brands API"
+      summary: "PUT /brands/{brand_id}"
+      description: "Replace an existing brand with the supplied values."
+      operationId: replaceBrand
+      parameters:
+        - in: "path"
+          required: true
+          name: "brand_id"
+          description: "A unique identifier associated with the brand you wish to update."
+          schema:
+            type: string
+            default: "C8CPX6HQZ5M7Q5KAMW5CXC4N98DH"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  description: Brand name
+                  example: "Example Brand Name"
+                  type: "string"
+                settings:
+                  $ref: "#/components/schemas/BrandSettings"
+                snippets:
+                  $ref: "#/components/schemas/BrandSnippets"
+              required:
+                - "name"
+                - "settings"
+        required: true
+      responses:
+        "200":
+          description: "The Brand was successfully replaced"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+              examples:
+                response:
+                  value:
+                    created: 1591814489093
+                    id: "VHEGJ8NQEB4T3JM3SZJ8TWD27JPG"
+                    name: "My First Brand"
+                    published: 1591814489121
+                    settings:
+                      email:
+                        header:
+                          barColor: "#9D3789"
+                        footer: {}
+                    updated: 1591814489143
+                    version: "2020-06-10T18:41:29.093Z"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+        "404":
+          # $ref: "#/components/responses/NotFound"
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Not Found"
+                    type: invalid_request_error
+    delete:
+      tags:
+        - "Brands API"
+      summary: "DELETE /brands/{brand_id}"
+      description: "Delete a brand by brand ID."
+      operationId: deleteBrand
+      parameters:
+        - in: "path"
+          required: true
+          name: "brand_id"
+          description: "A unique identifier associated with the brand you wish to retrieve."
+          schema:
+            type: "string"
+      responses:
+        "204":
+          description: "The brand was successfully deleted"
+        "409":
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    error: "Cannot delete default brand"
+                    type: "invalid_request_error"
+
+  /messages:
+    get:
+      tags:
+        - "Messages API"
+      summary: "GET /messages"
+      description: "Fetch the statuses of messages you've previously sent."
+      operationId: "getMessages"
+      parameters:
+        - in: "query"
+          required: false
+          name: "cursor"
+          description: "A unique identifier that allows for fetching the next set of message statuses."
+          schema:
+            type: "string"
+            example: "MTU4OTQ5NTI1ODY4NywxLTVlYmRjNWRhLTEwODZlYWFjMWRmMjEwMTNjM2I0ZjVhMA=="
+        - in: "query"
+          required: false
+          name: "event"
+          description: "A unique identifier representing the event that was used to send the event."
+          schema:
+            type: string
+            example: "welcome-message"
+        - in: "query"
+          required: false
+          name: "list"
+          description: "A unique identifier representing the list the message was sent to."
+          schema:
+            type: string
+            example: "event-change"
+        - in: "query"
+          required: false
+          name: "messageId"
+          description: "A unique identifier representing the `message_id` returned from either /send or /send/list."
+          schema:
+            type: string
+            example: "1-5fa64f03-2a3d64b92a1f1a061ab4c3c3"
+        - in: "query"
+          required: false
+          name: "notification"
+          description: "A unique identifier representing the notification that was used to send the event."
+          schema:
+            type: string
+            example: "1-5fa64f03-2a3d64b92a1f1a061ab4c3c3"
+        - in: "query"
+          required: false
+          name: "recipient"
+          description: "A unique identifier representing the recipient associated with the requested profile."
+          schema:
+            type: string
+            example: "0460766e-8463-4905-ae98-b72c7aef41d6"
+        - in: "query"
+          required: false
+          name: "status"
+          description: "An indicator of the current status of the message. Multiple status values can be passed in."
+          schema:
+            type: string
+            example: "OPENED"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  paging:
+                    $ref: "#/components/schemas/Paging"
+                  results:
+                    type: "array"
+                    description: "An array of Messages"
+                    items:
+                      $ref: "#/components/schemas/PartialMessage"
+              examples:
+                response:
+                  value:
+                    paging:
+                      cursor: "MTU4OTQ5NTI1ODY4NywxLTVlYmRjNWRhLTEwODZlYWFjMWRmMjEwMTNjM2I0ZjVhMA=="
+                      more: true
+                    results:
+                      - clicked: 1589563890843
+                        delivered: 1589563972000
+                        enqueued: 1589563863773
+                        event: user-added
+                        id: 1-5ebed1d7-945a128f3f8f373b8d5a772c
+                        notification: GEFGNB2GNQ4MZVHW4WV4R8Q8ZVN5
+                        opened: 1589563890411
+                        recipient: <recipient (e.g. email address)>
+                        sent: 1589563865697
+                        status: CLICKED
+  /messages/{message_id}:
+    get:
+      tags:
+        - "Messages API"
+      summary: "GET /messages/{message_id}"
+      description: "Fetch the status of a message you've previously sent."
+      operationId: "getMessageById"
+      parameters:
+        - in: "path"
+          required: true
+          name: "message_id"
+          description: "A unique identifier associated with the message you wish to retrieve (results from a send)."
+          schema:
+            type: "string"
+            default: "1-5e2b2615-05efbb3acab9172f88dd3f6f"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+              examples:
+                response:
+                  value:
+                    clicked: 1589563890843
+                    delivered: 1589563972000
+                    enqueued: 1589563863773
+                    event: user-added
+                    id: 1-5ebed1d7-945a128f3f8f373b8d5a772c
+                    notification: GEFGNB2GNQ4MZVHW4WV4R8Q8ZVN5
+                    opened: 1589563890411
+                    providers:
+                      - channel:
+                          key: sendgrid
+                          template: 5e95b992-3505-4f66-8808-f91d5d0fe8c9
+                        clicked: 1589563890843
+                        delivered: 1589563972000
+                        opened: 1589563890411
+                        provider: sendgrid
+                        reference:
+                          message_id: <unique_identifier>
+                          x-message-id: <unique_identifier>
+                        sent: 1589563865697
+                        status: CLICKED
+                    recipient: <recipient (e.g. email address)>
+                    sent: 1589563865697
+                    status: CLICKED
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+
+        "404":
+          # $ref: "#/components/responses/NotFound"
+          description: "Message Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Not Found"
+                    type: invalid_request_error
+  /messages/{message_id}/history:
+    get:
+      tags:
+        - "Messages API"
+      summary: "GET /messages/{message_id}/history"
+      description: "Fetch the array of events of a message you've previously sent."
+      operationId: "getMessageHistoryById"
+      parameters:
+        - in: "path"
+          required: true
+          name: "message_id"
+          description: "A unique identifier associated with the message you wish to retrieve (results from a send)."
+          schema:
+            type: "string"
+            default: "1-5e2b2615-05efbb3acab9172f88dd3f6f"
+        - in: "query"
+          required: false
+          name: "type"
+          description: "A supported Message History type that will filter the events returned."
+          schema:
+            $ref: "#/components/schemas/MessageHistoryType"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  results:
+                    type: "array"
+                    description: "An array of events of a previously sent message"
+                    items:
+                      $ref: "#/components/schemas/MessageHistory"
+              examples:
+                response:
+                  value:
+                    results:
+                      - data:
+                          name: Courier
+                        event: "<Event | Notification ID>"
+                        profile: {}
+                        recipient: "<Recipient ID>"
+                        ts: 1589563863911
+                        type: ENQUEUED
+                      - event_id: "<Event>"
+                        notification_id: "<Notification ID>"
+                        ts: 1589563864340
+                        type: MAPPED
+                      - merged_profile: {}
+                        received_profile: {}
+                        stored_profile: {}
+                        ts: 1589563864419
+                        type: PROFILE_LOADED
+                      - channel:
+                          id: 5e95b992-3505-4f66-8808-f91d5d0fe8c9
+                        integration:
+                          id: 8431c89d-aff0-484c-914d-36a257ea371f
+                          provider: sendgrid
+                        output: {}
+                        ts: 1589563864500
+                        type: RENDERED
+                      - channel:
+                          id: ae25b99c-3d05-4f26-8108-f91d5d0fe8c9
+                        integration:
+                          id: 8431c89d-aff0-484c-914d-36a257ea371f
+                          provider: sendgrid
+                        ts: 1589563865697
+                        type: SENT
+                      - channel:
+                          id: 5e95b992-3505-4f66-8808-f91d5d0fe8c9
+                        provider:
+                          id: sendgrid
+                        ts: 1589563890843
+                        type: CLICKED
+                      - channel:
+                          id: 5e95b992-3505-4f66-8808-f91d5d0fe8c9
+                        integration:
+                          id: 8431c89d-aff0-484c-914d-36a257ea371f
+                          provider: sendgrid
+                        ts: 1589563972000
+                        type: DELIVERED
+
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+
+        "404":
+          # $ref: "#/components/responses/NotFound"
+          description: "Message Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Not Found"
+                    type: invalid_request_error
+
+  /messages/{message_id}/output:
+    get:
+      tags:
+        - "Messages API"
+      summary: "GET /messages/{message_id}/output"
+      description: "Fetch the output of rendered events of a message you've previously sent."
+      operationId: "getMessageOutput"
+      parameters:
+        - in: "path"
+          required: true
+          name: "message_id"
+          description: "A unique identifier associated with the message you wish to retrieve (results from a send)."
+          schema:
+            type: "string"
+            default: "1-5e2b2615-05efbb3acab9172f88dd3f6f"
+
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  results:
+                    type: "array"
+                    description: "An array of render output of a previously sent message"
+                    items:
+                      $ref: "#/components/schemas/MessageOutputItem"
+              examples:
+                response:
+                  value:
+                    results:
+                      - channel: "email"
+                        channel_id: "channel-id-1"
+                        content:
+                          {
+                            html: "<div>Lorem Ipsum</div>",
+                            subject: "Hello World",
+                            text: "Lorem Ipsum",
+                          }
+                      - channel: "push"
+                        channel_id: "channel-id-2"
+                        content:
+                          {
+                            blocks:
+                              [
+                                {
+                                  text: "Lorem ipsum dolor, sit amet.",
+                                  type: "text",
+                                },
+                              ],
+                            body: "Lorem ipsum dolor, sit amet.",
+                            title: "Foobar is awesome",
+                          }
+
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+
+        "404":
+          # $ref: "#/components/responses/NotFound"
+          description: "Message Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Not Found"
+                    type: invalid_request_error
+
+  /events:
+    get:
+      tags:
+        - "Events API"
+      summary: "GET /events"
+      description: "Fetch the list of events"
+      operationId: "getEvents"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  results:
+                    type: "array"
+                    description: "An array of events"
+                    items:
+                      $ref: "#/components/schemas/Event"
+              examples:
+                response:
+                  value:
+                    results:
+                      - event: "new-account"
+                        id: "notification-id-1"
+                        type: "notification"
+                      - event: "new-user"
+                        id: "notification-id-2"
+                        type: "notification"
+  /events/{event_id}:
+    get:
+      tags:
+        - "Events API"
+      summary: "GET /events/{event_id}"
+      description: "Fetch a specific event by event ID."
+      operationId: "getEventById"
+      parameters:
+        - in: "path"
+          required: true
+          name: "event_id"
+          description: "A unique identifier associated with the event you wish to retrieve."
+          schema:
+            type: "string"
+            default: "new-user"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+              examples:
+                response:
+                  value:
+                    id: "notification-id-1"
+                    type: "notification"
+        "404":
+          # $ref: "#/components/responses/NotFound"
+          description: "Event Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Not Found"
+                    type: invalid_request_error
+    put:
+      tags:
+        - "Events API"
+      summary: "PUT /events/{event_id}"
+      description: "Replace an existing event with the supplied values or create a new event if one does not already exist."
+      operationId: "replaceEventById"
+      parameters:
+        - in: "path"
+          required: true
+          name: "event_id"
+          description: "A unique identifier associated with the event you wish to update."
+          schema:
+            type: string
+            default: "new-user"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventMapping"
+      responses:
+        "200":
+          # $ref: "#/components/responses/ChangedSuccess"
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+              examples:
+                response:
+                  value:
+                    id: "notification-id-1"
+                    type: "notification"
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+
+  /lists:
+    get:
+      tags:
+        - "Lists API"
+      summary: "GET /lists"
+      description: "Get the list of lists"
+      operationId: getLists
+      parameters:
+        - in: "query"
+          required: false
+          name: "cursor"
+          description: "A unique identifier that allows for fetching the next set of lists."
+          schema:
+            type: "string"
+            example: "MTU4OTQ5NTI1ODY4NywxLTVlYmRjNWRhLTEwODZlYWFjMWRmMjEwMTNjM2I0ZjVhMA=="
+            default: null
+        - in: "query"
+          required: false
+          name: "pattern"
+          description: "A pattern used to filter the list items returned. Pattern types supported: exact match on `list_id` or a pattern of one or more pattern parts. you may replace a part with either: `*` to match all parts in that position, or `**` to signify a wildcard `endsWith` pattern match."
+          schema:
+            type: "string"
+            default: "exact-list-id OR example.*, example.**, example.*.list"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                properties:
+                  paging:
+                    $ref: "#/components/schemas/Paging"
+                  results:
+                    items:
+                      $ref: "#/components/schemas/List"
+  /lists/{list_id}:
+    get:
+      tags:
+        - "Lists API"
+      summary: "GET /lists/{list_id}"
+      description: "Get the list items."
+      operationId: getList
+      parameters:
+        - in: "path"
+          required: true
+          name: "list_id"
+          description: "A unique identifier associated with the list you wish to retrieve."
+          schema:
+            type: "string"
+            default: "example.list.id"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/List"
+        "404":
+          # $ref: "#/components/responses/NotFound"
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Not Found"
+                    type: invalid_request_error
+    put:
+      tags:
+        - "Lists API"
+      summary: "PUT /lists/{list_id}"
+      description: "Create or replace an existing list with the supplied values."
+      operationId: putList
+      parameters:
+        - in: "path"
+          required: true
+          name: "list_id"
+          description: "A unique identifier associated with the list you wish to create or update."
+          schema:
+            type: string
+            default: "example.list.id"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  description: List name
+                  default: "Example List Name"
+                  type: "string"
+                preferences:
+                  $ref: "#/components/schemas/Preferences"
+              required:
+                - "id"
+                - "name"
+        required: true
+      responses:
+        "204":
+          description: "The list was successfully created."
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+    delete:
+      tags:
+        - "Lists API"
+      summary: "DELETE /lists/{list_id}"
+      description: "Delete a list by list ID."
+      operationId: deleteList
+      parameters:
+        - in: "path"
+          required: true
+          name: "list_id"
+          description: "A unique identifier associated with the list you wish to retrieve."
+          schema:
+            type: "string"
+            default: "example.list.id"
+      responses:
+        "204":
+          description: "The list was successfully deleted"
+        "404":
+          # $ref: "#/components/responses/NotFound"
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Not Found"
+                    type: invalid_request_error
+  /lists/{list_id}/restore:
+    put:
+      tags:
+        - "Lists API"
+      summary: "PUT /lists/{list_id}/restore"
+      description: "Restore an existing list."
+      operationId: putListRestore
+      parameters:
+        - in: "path"
+          required: true
+          name: "list_id"
+          description: "A unique identifier associated with the list you wish to restore."
+          schema:
+            type: string
+            default: "example.list.id"
+      responses:
+        "204":
+          description: "The list was successfully restored."
+        "404":
+          # $ref: "#/components/responses/NotFound"
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Not Found"
+                    type: invalid_request_error
+  /lists/{list_id}/subscriptions:
+    get:
+      tags:
+        - "Lists API"
+      summary: "GET /lists/{list_id}/subscriptions"
+      description: "Get the list's subscriptions"
+      operationId: getListSubscriptions
+      parameters:
+        - in: "path"
+          required: true
+          name: "list_id"
+          description: "A unique identifier associated with the list from which you wish to retrieve subscriptions."
+          schema:
+            type: "string"
+            default: "example.list.id"
+        - in: "query"
+          required: false
+          name: "cursor"
+          description: "A unique identifier that allows for fetching the next set of list subscriptions"
+          schema:
+            type: "string"
+            default: "MTU4OTQ5NTI1ODY4NywxLTVlYmRjNWRhLTEwODZlYWFjMWRmMjEwMTNjM2I0ZjVhMA=="
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  paging:
+                    $ref: "#/components/schemas/Paging"
+                  items:
+                    type: "array"
+                    description: "An array of list subscriptions"
+                    items:
+                      $ref: "#/components/schemas/ListSubscription"
+              examples:
+                response:
+                  value:
+                    paging:
+                      cursor:
+                      more: false
+                    items:
+                      - recipient: "0460766e-8463-4905-ae98-b72c7aef41d6"
+                        created: "2020-06-10T18:41:29.093Z"
+        "404":
+          # $ref: "#/components/responses/NotFound"
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Not Found"
+                    type: invalid_request_error
+    put:
+      tags:
+        - "Lists API"
+      summary: "PUT /lists/{list_id}/subscriptions"
+      description: "Subscribe multiple recipients to a list (note: if the List does not exist, it will be automatically created)"
+      operationId: createListSubscriptions
+      parameters:
+        - in: "path"
+          required: true
+          name: "list_id"
+          description: "A unique identifier associated with the list."
+          schema:
+            type: string
+            default: "example.list.id"
+      requestBody:
+        description: "recipient subscriptions"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - recipients
+              properties:
+                recipients:
+                  type: "array"
+                  description: "array of recipient subscriptions"
+                  items:
+                    type: "object"
+                    required:
+                      - recipientId
+                    properties:
+                      recipientId:
+                        type: "string"
+                        description: "The id of the recipient intended to subscribe to this List."
+                      preferences:
+                        $ref: "#/components/schemas/Preferences"
+                  default:
+                    [
+                      {
+                        recipientId: "0460766e-8463-4905-ae98-b72c7aef41d6",
+                        preferences:
+                          {
+                            notifications:
+                              {
+                                "H4CHKV5GCYMYHNHM3VJF9BX1M5HR":
+                                  {
+                                    status: "OPTED_IN",
+                                    channel_preferences:
+                                      [{ channel: "direct_message" }],
+                                  },
+                              },
+                          },
+                      },
+                    ]
+
+      responses:
+        "204":
+          description: "The recipients were successfully subscribed to the list"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+    post:
+      tags:
+        - "Lists API"
+      summary: "POST /lists/{list_id}/subscriptions"
+      description: "Subscribes additional recipients to the list (note: if the list does not exist, it will be automatically created)."
+      operationId: updateListSubscriptions
+      parameters:
+        - in: "path"
+          required: true
+          name: "list_id"
+          description: "A unique identifier associated with the list."
+          schema:
+            type: string
+            default: "example.list.id"
+      requestBody:
+        description: "recipient subscriptions"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - recipients
+              properties:
+                recipients:
+                  type: "array"
+                  description: "array of recipient subscriptions"
+                  items:
+                    type: "object"
+                    required:
+                      - recipientId
+                    properties:
+                      recipientId:
+                        type: "string"
+                        description: "The id of the recipient intended to subscribe to this list."
+                      preferences:
+                        $ref: "#/components/schemas/Preferences"
+                  default:
+                    [
+                      {
+                        recipientId: "0460766e-8463-4905-ae98-b72c7aef41d6",
+                        preferences:
+                          {
+                            notifications:
+                              {
+                                "H4CHKV5GCYMYHNHM3VJF9BX1M5HR":
+                                  {
+                                    status: "OPTED_IN",
+                                    channel_preferences:
+                                      [{ channel: "direct_message" }],
+                                  },
+                              },
+                          },
+                      },
+                    ]
+
+      responses:
+        "204":
+          description: "The recipients were successfully subscribed to the list"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+
+  /lists/{list_id}/subscriptions/{recipient_id}:
+    put:
+      tags:
+        - "Lists API"
+      summary: "PUT /lists/{list_id}/subscriptions/{recipient_id}"
+      description: "Subscribe a recipient to an existing list (note: if the List does not exist, it will be automatically created)."
+      operationId: putListSubscription
+      parameters:
+        - in: "path"
+          required: true
+          name: "list_id"
+          description: "A unique identifier representing the list id"
+          schema:
+            type: string
+            default: "example.list.id"
+        - in: "path"
+          required: true
+          name: "recipient_id"
+          description: "A unique identifier representing the recipient associated with the list"
+          schema:
+            type: string
+            default: "0460766e-8463-4905-ae98-b72c7aef41d6"
+      requestBody:
+        description: "recipient subscription"
+        required: false
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                preferences:
+                  $ref: "#/components/schemas/Preferences"
+      responses:
+        "204":
+          description: "The list subscription was successfully created."
+    delete:
+      tags:
+        - "Lists API"
+      summary: "DELETE /lists/{list_id}/subscriptions/{recipient_id}"
+      description: "Delete a subscription to a list by list and recipient ID."
+      operationId: deleteListSubscription
+      parameters:
+        - in: "path"
+          required: true
+          name: "list_id"
+          description: "A unique identifier associated with the list you wish to retrieve."
+          schema:
+            type: "string"
+            default: "example.list.id"
+        - in: "path"
+          required: true
+          name: "recipient_id"
+          description: "A unique identifier representing the recipient associated with the list"
+          schema:
+            type: string
+            default: "0460766e-8463-4905-ae98-b72c7aef41d6"
+      responses:
+        "204":
+          description: "The list subscription was successfully deleted"
+        "404":
+          # $ref: "#/components/responses/NotFound"
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Not Found"
+                    type: invalid_request_error
+
+  /profiles/{recipient_id}:
+    get:
+      tags:
+        - "Profiles API"
+      summary: "GET /profiles/{recipient_id}"
+      description: "Returns the specified recipient Profile."
+      operationId: "getProfileByRecipientId"
+      parameters:
+        - in: path
+          required: true
+          name: "recipient_id"
+          description: "A unique identifier representing the recipient associated with the requested profile."
+          schema:
+            type: string
+            default: "0460766e-8463-4905-ae98-b72c7aef41d6"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              # Removing as work around for displaying Profile properties
+              # schema:
+              #  $ref: "#/components/schemas/Profile"
+              examples:
+                response:
+                  value:
+                    profile:
+                      email: "user@example.com"
+                      phone_number: "555-555-5555"
+                    preferences:
+                      notifications:
+                        "notification_id":
+                          "status": "OPTED_OUT"
+                      categories:
+                        "category_id":
+                          "status": "OPTED_IN"
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+
+    post:
+      tags:
+        - "Profiles API"
+      summary: "POST /profiles/{recipient_id}"
+      description: "Merge the supplied values with an existing profile or create a new profile if one doesn't already exist."
+      operationId: "mergeProfileByRecipientId"
+      parameters:
+        - in: "path"
+          required: true
+          name: "recipient_id"
+          description: "A unique identifier representing the recipient associated with the profile you intend to create."
+          schema:
+            type: string
+            default: "0460766e-8463-4905-ae98-b72c7aef41d6"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Profile"
+      responses:
+        "200":
+          #$ref: "#/components/responses/ChangedSuccess"
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+              examples:
+                response:
+                  value:
+                    status: "SUCCESS"
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+
+    patch:
+      tags:
+        - "Profiles API"
+      summary: "PATCH /profiles/{recipient_id}"
+      description: "Apply a JSON Patch (RFC 6902) to the specified profile or create one if a profile doesn't already exist."
+      operationId: "patchProfileByRecipientId"
+      parameters:
+        - in: "path"
+          required: true
+          name: "recipient_id"
+          description: "A unique identifier representing the recipient associated with the profile you intend to update."
+          schema:
+            type: string
+            default: "0460766e-8463-4905-ae98-b72c7aef41d6"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                patch:
+                  type: "array"
+                  description: "An array of patch operations. [Learn more](http://jsonpatch.com/)"
+                  items:
+                    type: "object"
+                    description: "A patch operation. [Learn more](http://jsonpatch.com/)"
+                    required:
+                      - op
+                      - path
+                      - value
+                    properties:
+                      op:
+                        type: "string"
+                        enum:
+                          - "add"
+                          - "remove"
+                          - "replace"
+                          - "copy"
+                          - "move"
+                          - "test"
+                        description: "The operation to perform."
+                      path:
+                        type: "string"
+                        description: "The JSON path specifying the part of the profile to operate on."
+                      value:
+                        type: "string"
+                        description: "The value for the operation."
+              default:
+                patch:
+                  - op: "replace"
+                    path: "/email"
+                    value: "test@example.com"
+      responses:
+        "200":
+          # $ref: "#/components/responses/ChangedSuccess"
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+              examples:
+                response:
+                  value:
+                    status: "SUCCESS"
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+
+    put:
+      tags:
+        - "Profiles API"
+      summary: "PUT /profiles/{recipient_id}"
+      description: "Replace an existing profile with the supplied values or create a new profile if one does not already exist."
+      operationId: "replaceProfileByRecipientId"
+      parameters:
+        - in: "path"
+          required: true
+          name: "recipient_id"
+          description: "A unique identifier representing the recipient associated with the profile you intend to update."
+          schema:
+            type: string
+            default: "0460766e-8463-4905-ae98-b72c7aef41d6"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Profile"
+      responses:
+        "200":
+          # $ref: "#/components/responses/ChangedSuccess"
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+              examples:
+                response:
+                  value:
+                    status: "SUCCESS"
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+
+    delete:
+      tags:
+        - "Profiles API"
+      summary: "DELETE /profiles/{recipient_id}"
+      description: "Deletes the specified recipient Profile."
+      operationId: "deleteProfileByRecipientId"
+      parameters:
+        - in: path
+          required: true
+          name: "recipient_id"
+          description: "A unique identifier representing the recipient associated with the requested profile."
+          schema:
+            type: string
+            default: "0460766e-8463-4905-ae98-b72c7aef41d6"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+              examples:
+                response:
+                  value:
+                    status: "SUCCESS"
+
+  /profiles/{recipient_id}/lists:
+    get:
+      tags:
+        - "Profiles API"
+      summary: "GET /profiles/{recipient_id}/lists"
+      description: "Returns the subscribed lists for a specified recipient Profile."
+      operationId: "getListsForProfileByRecipientId"
+      parameters:
+        - in: path
+          required: true
+          name: "recipient_id"
+          description: "A unique identifier representing the recipient associated with the requested profile."
+          schema:
+            type: string
+            default: "0460766e-8463-4905-ae98-b72c7aef41d6"
+        - in: "query"
+          required: false
+          name: "cursor"
+          description: "A unique identifier that allows for fetching the next set of list subscriptions"
+          schema:
+            type: "string"
+            default: "MTU4OTQ5NTI1ODY4NywxLTVlYmRjNWRhLTEwODZlYWFjMWRmMjEwMTNjM2I0ZjVhMA=="
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  paging:
+                    $ref: "#/components/schemas/Paging"
+                  results:
+                    type: "array"
+                    description: "An array of lists"
+                    items:
+                      $ref: "#/components/schemas/List"
+              examples:
+                response:
+                  value:
+                    paging:
+                      cursor: null
+                      more: false
+                    results:
+                      - created: "2020-06-10T18:41:29.093Z"
+                        id: "example.list.id"
+                        name: "Example List Name"
+                        updated: "2020-06-10T18:41:29.093Z"
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+    post:
+      tags:
+        - "Profiles API"
+      summary: "POST /profiles/{recipient_id}/lists"
+      description: "Subscribes the given {recipient_id} to the lists. If the list does not exist, Courier will create it"
+      operationId: "postListsForProfileByRecipientId"
+      parameters:
+        - in: path
+          required: true
+          name: "recipient_id"
+          description: "A unique identifier representing the recipient associated with the requested profile."
+          schema:
+            type: string
+            default: "0460766e-8463-4905-ae98-b72c7aef41d6"
+      responses:
+        "204":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+              examples:
+                response:
+                  value:
+                    status: "SUCCESS"
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                lists:
+                  type: "array"
+                  items:
+                    type: "object"
+                    properties:
+                      listId:
+                        description: List id
+                        type: "string"
+                      preferences:
+                        $ref: "#/components/schemas/Preferences"
+              required:
+                - "id"
+                - "name"
+    delete:
+      tags:
+        - "Profiles API"
+      summary: "DELETE /profiles/{recipient_id}/lists"
+      description: "Removes the list subscriptions for given {recipient_id}."
+      operationId: "deleteListsForProfileByRecipientId"
+      parameters:
+        - in: path
+          required: true
+          name: "recipient_id"
+          description: "A unique identifier representing the recipient associated with the requested profile."
+          schema:
+            type: string
+            default: "0460766e-8463-4905-ae98-b72c7aef41d6"
+      responses:
+        "204":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+              examples:
+                response:
+                  value:
+                    status: "SUCCESS"
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+  /preferences:
+    get:
+      tags:
+        - "Preferences API"
+      summary: "GET /preferences"
+      description: "Get a list of existing notifications and categories"
+      operationId: "getAllPreferences"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  uncategorized:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Notification"
+                  categories:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Category"
+              examples:
+                response:
+                  value:
+                    uncategorized:
+                      - id: "9e5bb2cf-1ad4-4151-8f57-78e9754ce7dc"
+                        title: "Untitled Notification"
+                        config:
+                          type: "OPT_IN"
+                    categories:
+                      - id: "6ab6f268-d60c-43d9-9987-93f6ed835b94"
+                        title: "New Category"
+                        config:
+                          type: "REQUIRED"
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+  /preferences/{recipient_id}:
+    get:
+      tags:
+        - "Preferences API"
+      summary: "GET /preferences/{recipient_id}"
+      description: "Get the preferences stored under a specified recipient ID."
+      operationId: "getPreferencesByRecipientId"
+      parameters:
+        - in: path
+          required: true
+          name: "recipient_id"
+          description: "A unique identifier representing the recipient associated with the requested profile."
+          schema:
+            type: string
+            default: "0460766e-8463-4905-ae98-b72c7aef41d6"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Preferences"
+              examples:
+                response:
+                  value:
+                    notifications:
+                      "A5NRCABA0SMWNZQ92D1WQ9RDAA85":
+                        status: "OPTED_OUT"
+                    categories:
+                      "W951R8G37V49KZMK8DEKW8Z588BZ":
+                        status: "OPTED_IN"
+                        channel_preferences:
+                          [{ "channel": ["direct_message", "email"] }]
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+
+    put:
+      tags:
+        - "Preferences API"
+      summary: "PUT /preferences/{recipient_id}"
+      description: "Replace an existing set of preferences with the supplied values or create a new set of preferences if they do not already exist."
+      operationId: "replacePreferencesByRecipientId"
+      parameters:
+        - in: path
+          required: true
+          name: "recipient_id"
+          description: "A unique identifier representing the recipient associated with the profile you intend to update."
+          schema:
+            type: string
+            default: "0460766e-8463-4905-ae98-b72c7aef41d6"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Preferences"
+      responses:
+        "200":
+          # $ref: "#/components/responses/ChangedSuccess"
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+              examples:
+                response:
+                  value:
+                    status: "SUCCESS"
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+
+    patch:
+      tags:
+        - "Preferences API"
+      summary: "PATCH /preferences/{recipient_id}"
+      description: "Apply a JSON Patch (RFC 6902) to the specified preferences or create one if a profile doesn't already exist."
+      operationId: "patchPreferencesByRecipientId"
+      parameters:
+        - in: "path"
+          required: true
+          name: "recipient_id"
+          description: "A unique identifier representing the recipient associated with the preferences you intend to update."
+          schema:
+            type: string
+            default: "0460766e-8463-4905-ae98-b72c7aef41d6"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                patch:
+                  type: "array"
+                  description: "An array of patch operations. [Learn more](http://jsonpatch.com/)"
+                  items:
+                    type: "object"
+                    description: "A patch operation. [Learn more](http://jsonpatch.com/)"
+                    required:
+                      - op
+                      - path
+                      - value
+                    properties:
+                      op:
+                        type: "string"
+                        enum:
+                          - "add"
+                          - "remove"
+                          - "replace"
+                        description: "The operation to perform."
+                      path:
+                        type: "string"
+                        description: "The JSON path specifying the part of the preferences to operate on."
+                      value:
+                        type: "string"
+                        description: "The value for the operation."
+              default:
+                patch:
+                  - op: "replace"
+                    path: "/notifications/:notificationId/status"
+                    value: "OPTED_IN"
+      responses:
+        "200":
+          # $ref: "#/components/responses/ChangedSuccess"
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+              examples:
+                response:
+                  value:
+                    status: "SUCCESS"
+        "400":
+          # $ref: "#/components/responses/BadRequest"
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "A message describing the error that occurred."
+                  type:
+                    description: "The type of error that occurred."
+                    enum:
+                      - invalid_request_error
+                    type: string
+              examples:
+                response:
+                  value:
+                    message: "Error Message"
+                    type: invalid_request_error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+    basicAuth:
+      type: http
+      scheme: basic
+
+  responses:
+    BadRequest:
+      description: "Bad Request"
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "A message describing the error that occurred."
+              type:
+                description: "The type of error that occurred."
+                enum:
+                  - invalid_request_error
+                type: string
+          examples:
+            response:
+              value:
+                message: "Error Message"
+                type: invalid_request_error
+    ChangedSuccess:
+      description: "OK"
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+          examples:
+            response:
+              value:
+                status: "SUCCESS"
+    NotFound:
+      description: "Not Found"
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "A message describing the error that occurred."
+              type:
+                description: "The type of error that occurred."
+                enum:
+                  - invalid_request_error
+                type: string
+          examples:
+            response:
+              value:
+                message: "Not Found"
+                type: invalid_request_error
+    PaymentRequired:
+      description: "Payment Required"
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "A message describing the error that occurred."
+              type:
+                description: "The type of error that occurred."
+                enum:
+                  - authorization_error
+                type: string
+          examples:
+            response:
+              value:
+                message: "Limit Exceeded"
+                type: authorization_error
+
+  schemas:
+    AccessorType:
+      type: "object"
+      required:
+        - $ref
+      properties:
+        $ref:
+          type: "string"
+          description: "The path to the value to be accessed. The root of the path must be either a property in run context or a step reference."
+          example: "data.foo.bar"
+    RunContext:
+      type: "object"
+      description: "An object that includes any data you want to make available to a subsequent step via an accessor type."
+      properties:
+        brand:
+          description: "A unique identifier that represents the brand that should be used for rendering the notification."
+          type: string
+        data:
+          description: "An object that includes any data you want to pass to a message template or accessor type. The data will populate the corresponding template variables."
+          type: object
+        profile:
+          description: "An object that includes any key-value pairs required by your chosen Integrations (see our [Provider Documentation](https://docs.courier.com/docs) for the requirements for each Integration.) If profile information is included in the request and that information already exists in the profile for the recipientId, that information will be merged."
+          type: object
+        template:
+          description: 'A unique identifier that can be mapped to an individual Notification. This could be the "Notification ID” on Notification detail pages (see the [Notifications page](https://app.courier.com/designer/notifications) in the Courier app) or a custom string mapped to the event in [settings](https://app.courier.com/settings/events).'
+          type: string
+        recipient:
+          description: "A unique identifier associated with the recipient of the delivered message."
+          type: string
+    AutomationRun:
+      type: "object"
+      required:
+        - automation
+      properties:
+        automation:
+          type: "object"
+          required:
+            - steps
+          properties:
+            steps:
+              type: array
+              items:
+                anyOf:
+                  - $ref: "#/components/schemas/CancelStep"
+                  - $ref: "#/components/schemas/DelayStep"
+                  - $ref: "#/components/schemas/SendStep"
+                  - $ref: "#/components/schemas/SendListStep"
+                  - $ref: "#/components/schemas/UpdateProfileStep"
+                  - $ref: "#/components/schemas/InvokeStep"
+                  - $ref: "#/components/schemas/FetchDataStep"
+            cancelation_token:
+              description: "The string that is associated with the cancelable automation run."
+              oneOf:
+                - type: string
+                - $ref: "#/components/schemas/AccessorType"
+        brand:
+          type: "string"
+          description: A unique identifier that represents the brand that should be used for rendering the notification.
+          default: W50NC77P524K14M5300PGPEK4JMJ
+        template:
+          type: "string"
+          description: 'A unique identifier that can be mapped to an individual Notification. This could be the "Notification ID” on Notification detail pages (see the [Notifications page](https://app.courier.com/designer/notifications) in the Courier app) or a custom string mapped to the event in [settings](https://app.courier.com/settings/events).'
+          default: "EXAMPLE_NOTIFICATION"
+        recipient:
+          type: "string"
+          description: "A unique identifier associated with the recipient of the delivered message."
+          default: "8ec8c99a-c5f7-455b-9f60-8222b8a27056"
+        data:
+          type: "string"
+          description: "An object that includes any data you want to pass to a message template. The data will populate the corresponding template variables."
+          format: "json"
+          default: '{"name": "Jane Doe","age": 27}'
+        profile:
+          type: "string"
+          description: "An object that includes any key-value pairs required by your chosen Integrations (see our [Provider Documentation](https://docs.courier.com/docs) for the requirements for each Integration.) If profile information is included in the request and that information already exists in the profile for the recipientId, that information will be merged."
+          format: "json"
+          default: '{"phone_number": "2025550125","email": "hello@example.com"}'
+
+    CancelStep:
+      type: "object"
+      required:
+        - action
+        - cancelation_token
+      properties:
+        action:
+          type: string
+          description: "cancel"
+        cancelation_token:
+          description: "The string that is associated with the cancelable automation run."
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        if:
+          type: string
+          description: "A boolean expression whose value is used to determine the execution of the step. Can optionally consume step reference data."
+        ref:
+          type: string
+          description: "A read only pointer to a step and its data."
+
+    DelayStep:
+      type: "object"
+      required:
+        - action
+      properties:
+        action:
+          description: "delay"
+          type: string
+        duration:
+          description: "The human readable time duration. A duration value and unit is required, e.g. 5 minutes"
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        until:
+          description: "The ISO 8601 timestamp that describes the length of the delay."
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        if:
+          type: string
+          description: "A boolean expression whose value is used to determine the execution of the step. Can optionally consume step reference data."
+        ref:
+          type: string
+          description: "A pointer to step and its data."
+
+    SendStep:
+      type: "object"
+      required:
+        - action
+        - recipient
+        - template
+      properties:
+        action:
+          type: string
+          description: "send"
+        recipient:
+          description: "A unique identifier associated with the recipient of the delivered message."
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        template:
+          description: 'A unique identifier that can be mapped to an individual Notification. This could be the "Notification ID” on Notification detail pages (see the [Notifications page](https://app.courier.com/designer/notifications) in the Courier app) or a custom string mapped to the event in [settings](https://app.courier.com/settings/events).'
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        brand:
+          description: A unique identifier that represents the brand that should be used for rendering the notification.
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        data:
+          description: "An object that includes any data you want to pass to a message template. The data will populate the corresponding template variables."
+          format: "json"
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        override:
+          description: "An object that is merged into the request sent by Courier to the provider to override properties or to gain access to features in the provider API that are not natively supported by Courier."
+          format: "json"
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        profile:
+          description: "An object that includes any key-value pairs required by your chosen Integrations (see our [Provider Documentation](https://docs.courier.com/docs) for the requirements for each Integration.) If profile information is included in the request and that information already exists in the profile for the recipientId, that information will be merged."
+          format: "json"
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        idempotency_expiry:
+          description: "A unix epoch timestamp (seconds) or an ISO_8601 date string that describes how long the idempotency_key is valid."
+          oneOf:
+            - type: string
+            - type: integer
+            - $ref: "#/components/schemas/AccessorType"
+        idempotency_key:
+          description: "A unique value generated by the client which the server uses to recognize subsequent retries of the same request."
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        if:
+          type: string
+          description: "A boolean expression whose value is used to determine the execution of the step. Can optionally consume step reference data."
+        ref:
+          type: string
+          description: "A pointer to step and its data."
+    SendListStep:
+      type: "object"
+      required:
+        - action
+        - list
+        - template
+      properties:
+        action:
+          type: string
+          description: "send-list"
+        list:
+          description: "The list name."
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        brand:
+          description: A unique identifier that represents the brand that should be used for rendering the notification.
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        data:
+          description: "An object that includes any data you want to pass to a message template. The data will populate the corresponding template variables."
+          format: "json"
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        override:
+          description: "An object that is merged into the request sent by Courier to the provider to override properties or to gain access to features in the provider API that are not natively supported by Courier."
+          format: "json"
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        template:
+          description: 'A unique identifier that can be mapped to an individual Notification. This could be the "Notification ID” on Notification detail pages (see the [Notifications page](https://app.courier.com/designer/notifications) in the Courier app) or a custom string mapped to the event in [settings](https://app.courier.com/settings/events).'
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        idempotency_expiry:
+          description: "A unix epoch timestamp (seconds) or an ISO_8601 date string that describes how long the idempotency_key is valid."
+          oneOf:
+            - type: string
+            - type: integer
+            - $ref: "#/components/schemas/AccessorType"
+        idempotency_key:
+          description: "A unique value generated by the client which the server uses to recognize subsequent retries of the same request."
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        if:
+          type: string
+          description: "A boolean expression whose value is used to determine the execution of the step. Can optionally consume step reference data."
+        ref:
+          type: string
+          description: "A pointer to step and its data."
+    UpdateProfileStep:
+      type: "object"
+      required:
+        - action
+        - recipient_id
+        - merge
+        - profile
+      properties:
+        action:
+          type: "string"
+          description: "update-profile"
+        recipient_id:
+          description: "A unique identifier associated with the recipient you want to update profile of"
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        merge:
+          description: "Merge algorithm (none, overwrite, replace or soft-merge)"
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        profile:
+          description: "An object that includes any key-value pairs associated with the recipient profile"
+          format: "json"
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        if:
+          type: string
+          description: "A boolean expression whose value is used to determine the execution of the step. Can optionally consume step reference data."
+        ref:
+          type: string
+          description: "A pointer to step and its data."
+    InvokeStep:
+      type: "object"
+      required:
+        - action
+        - template
+      properties:
+        action:
+          type: "string"
+          description: "invoke"
+        template:
+          description: "The templateId of the automation template to invoke."
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        context:
+          description: "A run context definition, available to every step at execution."
+          oneOf:
+            - $ref: "#/components/schemas/RunContext"
+            - $ref: "#/components/schemas/AccessorType"
+        if:
+          type: string
+          description: "A boolean expression whose value is used to determine the execution of the step. Can optionally consume step reference data."
+        ref:
+          type: string
+          description: "A pointer to step and its data."
+
+    FetchDataStep:
+      type: "object"
+      required:
+        - action
+        - merge_strategy
+        - webhook
+      properties:
+        action:
+          type: "string"
+          description: "fetch-data"
+        merge_strategy:
+          type: "string"
+          enum: ["replace", "none", "overwrite", "soft-merge"]
+        webhook:
+          type: "object"
+          required:
+            - url
+          properties:
+            url:
+              type: "string"
+              description: "The url resource, whose response will mutate run context."
+            body:
+              type: "object"
+              description: "The request payload."
+            headers:
+              type: "object"
+              description: "The request headers."
+            params:
+              type: "object"
+              description: "The request parameters."
+            method:
+              type: "string"
+              enum: ["GET", "POST"]
+              description: "The http verb of the request."
+        idempotency_expiry:
+          description: "A unix epoch timestamp (seconds) or and ISO_8601 date string that describes how long the idempotency_key is valid."
+          oneOf:
+            - type: string
+            - type: integer
+            - $ref: "#/components/schemas/AccessorType"
+        idempotency_key:
+          description: "A unique value generated by the client which the server uses to recognize subsequent retries of the same request."
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/AccessorType"
+        if:
+          type: string
+          description: "A boolean expression whose value is used to determine the execution of the step. Can optionally consume step reference data."
+        ref:
+          type: string
+          description: "A pointer to step and its data."
+
+    AutomationTemplate:
+      type: "object"
+      properties:
+        brand:
+          type: "string"
+          description: A unique identifier that represents the brand that should be used for rendering the notification.
+          default: W50NC77P524K14M5300PGPEK4JMJ
+        data:
+          type: "string"
+          description: "An object that includes any data you want to pass to a message template. The data will populate the corresponding template variables."
+          format: "json"
+          default: '{"name": "Jane Doe","age": 27}'
+        profile:
+          type: "string"
+          description: "An object that includes any key-value pairs required by your chosen Integrations (see our [Provider Documentation](https://docs.courier.com/docs) for the requirements for each Integration.) If profile information is included in the request and that information already exists in the profile for the recipientId, that information will be merged."
+          format: "json"
+          default: '{"phone_number": "2025550125","email": "hello@example.com"}'
+        recipient:
+          type: "string"
+          description: "A unique identifier associated with the recipient of the delivered message."
+          default: "8ec8c99a-c5f7-455b-9f60-8222b8a27056"
+        template:
+          type: "string"
+          description: 'A unique identifier that can be mapped to an individual Notification. This could be the "Notification ID” on Notification detail pages (see the [Notifications page](https://app.courier.com/designer/notifications) in the Courier app) or a custom string mapped to the event in [settings](https://app.courier.com/settings/events).'
+          default: "EXAMPLE_NOTIFICATION"
+
+    Brand:
+      type: "object"
+      properties:
+        created:
+          description: The date/time of when the brand was created. Represented in milliseconds since Unix epoch.
+          example: 1591753605265
+          type: number
+        id:
+          description: Brand Identifier
+          example: "C8CPX6HQZ5M7Q5KAMW5CXC4N98DH"
+          type: "string"
+        name:
+          description: Brand name
+          example: "Example Brand Name"
+          type: "string"
+        published:
+          description: The date/time of when the brand was published. Represented in milliseconds since Unix epoch.
+          example: 1591753605265
+          type: number
+        settings:
+          $ref: "#/components/schemas/BrandSettings"
+        updated:
+          description: The date/time of when the brand was updated. Represented in milliseconds since Unix epoch.
+          example: 1591753605265
+          type: number
+        snippets:
+          $ref: "#/components/schemas/BrandSnippets"
+        version:
+          description: The version identifier for the brand
+          example: "2020-06-19T18:51:36.083Z"
+          type: string
+    BrandSettings:
+      properties:
+        colors:
+          description: Brand colors
+          properties:
+            primary:
+              description: Primary brand color
+              example: "#9D3789"
+              type: "string"
+            secondary:
+              description: Secondary brand color
+              example: "#9D3789"
+              type: "string"
+            tertiary:
+              description: Tertiary brand color
+              example: "#9D3789"
+              type: "string"
+          type: "object"
+        email:
+          description: Contains brand settings for emails
+          properties:
+            footer:
+              description: Contains brand settings for the email footer
+              properties:
+                markdown:
+                  description: "Markdown formatted content that will be rendered in the email footer"
+                  example: "**Bold** and _italic_ with a [link](https://www.courier.com)"
+                  type: "string"
+                social:
+                  properties:
+                    facebook:
+                      properties:
+                        url:
+                          description: URL of Facebook Presence
+                          example: "https://www.facebook.com/example"
+                          type: "string"
+                      type: "object"
+                    instagram:
+                      properties:
+                        url:
+                          description: URL of Instagram Presence
+                          example: "https://www.instagram.com/example"
+                          type: "string"
+                      type: "object"
+                    linkedin:
+                      properties:
+                        url:
+                          description: URL of LinkedIn Presence
+                          example: "https://www.linkedin.com/example"
+                          type: "string"
+                      type: "object"
+                    medium:
+                      properties:
+                        url:
+                          description: URL of Medium Presence
+                          example: "https://www.medium.com/example"
+                          type: "string"
+                      type: "object"
+                    twitter:
+                      properties:
+                        url:
+                          description: URL of Twitter Presence
+                          example: "https://www.twitter.com/example"
+                          type: "string"
+                      type: "object"
+                  type: "object"
+              type: "object"
+            header:
+              description: Contains brand settings for the email header
+              properties:
+                barColor:
+                  description: "The color email header bar"
+                  example: "#9D3789"
+                  type: "string"
+                logo:
+                  properties:
+                    href:
+                      description: A URL that the logo, when clicked on, will link to.
+                      example: "https://www.courier.com"
+                      type: "string"
+                    image:
+                      description: A URL pointing to the logo image
+                      example: "https://www.courier.com/logo.png"
+                      type: "string"
+                  type: "object"
+              type: "object"
+          type: "object"
+    BrandSnippet:
+      additionalProperties: false
+      description: Individual snippet information
+      properties:
+        format:
+          enum:
+            - handlebars
+          type: "string"
+        name:
+          type: "string"
+        value:
+          type: "string"
+      required:
+        - "format"
+        - "name"
+        - "value"
+      type: "object"
+    BrandSnippets:
+      additionalProperties: false
+      properties:
+        items:
+          items:
+            $ref: "#/components/schemas/BrandSnippet"
+          type: "array"
+      type: "object"
+    PreferenceType:
+      enum:
+        - OPT_IN
+        - OPT_OUT
+        - REQUIRED
+      type: "string"
+      description: "Whether or not the notification is opt in, opt out or required."
+      default: OPT_OUT
+    ChannelPreferences:
+      additionalProperties: false
+      type: "object"
+      description: "This preference allows you to specify channel preferences, custom to your recipient. E.g. If recipient A, only wants to be notified using SMS, you can set the channel_preferences for the recipient to `direct_message` and Courier will use `direct_message` as first mode to send notification"
+      properties:
+        channel:
+          enum:
+            - direct_message
+            - email
+            - push
+          type: string
+    PreferenceRules:
+      additionalProperties: true
+      properties:
+        type:
+          enum:
+            - snooze
+          type: "string"
+          description: "snooze rule takes start (optional) and until in the form of iso-8601 date string format, to allow recipient to opt-out from a given notification"
+          required: ["type"]
+      example:
+        type: "snooze"
+        until: "2021-12-31T00:00:00.000Z"
+    PreferenceStatus:
+      enum:
+        - OPTED_IN
+        - OPTED_OUT
+      type: "string"
+      description: "Whether or not the recipient has opted in or out."
+    Preference:
+      type: "object"
+      additionalProperties: false
+      properties:
+        channel_preferences:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ChannelPreferences"
+        rules:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/PreferenceRules"
+        status:
+          $ref: "#/components/schemas/PreferenceStatus"
+    Preferences:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "notifications"
+      properties:
+        notifications:
+          description: "json object that contains notification ids with the respective preferences"
+          type: "object"
+          properties:
+            "0JVTTJRAVZMMSRJK0AXKVA8TXMBE":
+              $ref: "#/components/schemas/Preference"
+        categories:
+          description: "json object that contains category ids with the respective preferences"
+          type: "object"
+          properties:
+            "^.*$":
+              $ref: "#/components/schemas/Preference"
+        templateId:
+          type: "string"
+          description: "specify an optional preference template id to validate preferences before persisting it"
+
+      example:
+        {
+          notifications:
+            {
+              H4CHKV5GCYMYHNHM3VJF9BX1M5HR:
+                {
+                  status: "OPTED_IN",
+                  channel_preferences: [{ channel: "direct_message" }],
+                },
+            },
+          templateId: "W951R8G37V49KZMK8DEKW8Z588BZ",
+        }
+    Category:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          description: "A unique identifier for the category."
+        title:
+          type: "string"
+          description: "The title of the category."
+        config:
+          type: "object"
+          properties:
+            type:
+              $ref: "#/components/schemas/PreferenceType"
+        notifications:
+          type: "array"
+          description: "A list of notifications included in the category."
+          items:
+            $ref: "#/components/schemas/Notification"
+    Event:
+      type: "object"
+      properties:
+        event:
+          type: "string"
+          description: "A unique event identifier"
+        id:
+          type: "string"
+          description: "The ID of the notification this event maps to"
+        type:
+          enum: ["notification"]
+          type: "string"
+          description: "The type of event"
+    List:
+      type: "object"
+      properties:
+        created:
+          description: The date/time of when the list was created. Represented as a string in ISO format.
+          example: "2020-06-10T18:41:29.093Z"
+          type: string
+        id:
+          description: List Identifier
+          example: "example.list.id"
+          type: "string"
+        name:
+          description: List name
+          example: "Example List Name"
+          type: "string"
+        updated:
+          description: The date/time of when the list was updated. Represented as a string in ISO format.
+          example: "2020-06-10T18:41:29.093Z"
+          type: string
+        preferences:
+          $ref: "#/components/schemas/Preferences"
+    ListSubscription:
+      type: "object"
+      properties:
+        recipientId:
+          type: "string"
+          format: "string"
+          description: "An identifier for the recipient subscribing to the list."
+          example: "0460766e-8463-4905-ae98-b72c7aef41d6"
+        created:
+          type: "string"
+          format: "string"
+          description: The date/time of when the list was created. Represented as a string in ISO format.
+          example: "2020-06-10T18:41:29.093Z"
+        preferences:
+          $ref: "#/components/schemas/Preferences"
+    MessageProvider:
+      type: "object"
+      properties:
+        channel:
+          type: "object"
+          description: "Contains information related to the channel."
+          properties:
+            key:
+              type: "string"
+              description: "A string that represents an internal identifier of the channel."
+            name:
+              type: "string"
+              description: "A string that is the user defined label of the channel."
+            template:
+              type: "string"
+              description: "A unique identifier for the channel."
+        sent:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which Courier passed the message to the Integration provider. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611074138
+        delivered:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which the Integration provider delivered the message. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611077139
+        clicked:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which the recipient clicked on a tracked link for the first time. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611084123
+        opened:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which the recipient opened a message for the first time. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611083411
+        error:
+          type: "string"
+          description: "A message describing the error that occurred."
+          default: "400 Bad Request"
+        provider:
+          type: "string"
+          description: "The Integration provider responsible for delivering the message."
+          default: "twilio"
+        reference:
+          type: "object"
+          description: "An object that stores the unique identifiers provided by the Integration provider when Courier sends the message."
+          default:
+            messsage_id: "<unique identifier from Integration provider>"
+            x-message-id": "<unique identifier from Integration provider>"
+        status:
+          $ref: "#/components/schemas/MessageProviderStatus"
+    MessageProviderStatus:
+      type: "string"
+      enum:
+        - "CLICKED"
+        - "DELIVERED"
+        - "OPENED"
+        - "SENT"
+        - "UNDELIVERABLE"
+      description: >
+        Message Provider Status:
+
+        * `CLICKED` -  The recipient has clicked on any link in the message at least one time.
+
+        * `DELIVERED` - The provider successfully delivered the message to the recipient.
+
+        * `OPENED` - The recipient has opened the message at least one time.
+
+        * `SENT`- The message has been accepted by the provider.
+
+        * `UNDELIVERABLE` - The message could not be delivered to at least one provider, or the provider could not deliver the message to the recipient. This can happen for multiple reasons: an error, insufficient profile data, invalid notification setup, invalid integration configuration, etc.
+      default: "SENT"
+    MessageStatus:
+      allOf:
+        - $ref: "#/components/schemas/MessageProviderStatus"
+        - type: "string"
+          enum:
+            - "ENQUEUED"
+            - "UNMAPPED"
+          description: >
+            Message Status:
+
+            * `CLICKED` -  The recipient has clicked on any link in the message at least one time.
+
+            * `DELIVERED` - The provider successfully delivered the message to the recipient.
+
+            * `ENQUEUED` - The request has been received to send a message, is waiting in the work queue.
+
+            * `OPENED` - The recipient has opened the message at least one time.
+
+            * `SENT`- The message has been accepted by the provider.
+
+            * `UNDELIVERABLE` - The message could not be delivered to at least one provider, or the provider could not deliver the message to the recipient. This can happen for multiple reasons: an error, insufficient profile data, invalid notification setup, invalid integration configuration, etc.
+
+            * `UNMAPPED` - Could not find a corresponding notification or event for the messages.
+          default: "DELIVERED"
+    PartialMessage:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          description: "A unique identifier associated with the message you wish to retrieve (results from a send)."
+          default: "1-5e2b2615-05efbb3acab9172f88dd3f6f"
+        status:
+          $ref: "#/components/schemas/MessageStatus"
+        enqueued:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which Courier received the message request. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611073426
+        sent:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which Courier passed the message to the Integration provider. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611074138
+        delivered:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which the Integration provider delivered the message. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611077139
+        opened:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which the recipient opened a message for the first time. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611083411
+        clicked:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which the recipient clicked on a tracked link for the first time. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611084123
+        recipient:
+          type: "string"
+          description: "A unique identifier associated with the recipient of the delivered message."
+          default: "CC607F6E84A34305AE98B72C"
+        event:
+          type: "string"
+          description: "A unique identifier associated with the event of the delivered message."
+          default: "my-event"
+        notification:
+          type: "string"
+          description: "A unique identifier associated with the notification of the delivered message."
+          default: "TAFGNB3GNQ4MZVHW4WV4R8Q8ZVN4"
+        error:
+          type: "string"
+          description: "A message describing the error that occurred."
+          default: "400 Bad Request"
+        reason:
+          type: "string"
+          enum:
+            - "FILTERED"
+            - "NO_CHANNELS"
+            - "NO_PROVIDERS"
+            - "OPT_IN_REQUIRED"
+            - "PROVIDER_ERROR"
+            - "UNPUBLISHED"
+            - "UNSUBSCRIBED"
+          description: >
+            Reason:
+
+            * `FILTERED` -  The recipient did not receive the notification because of a condition that passed.
+
+            * `NO_CHANNELS` - The notification did contain any valid channels.
+
+            * `NO_PROVIDERS` - The notification did not contain a configured provider for a channel.
+
+            * `PROVIDER_ERROR`- The Integration provider had an error when sending a notification.
+
+            * `UNPUBLISHED` - The notification hasn't been published yet.
+
+            * `UNSUBSCRIBED` - The recipient did not receive the notification because they chose to unsubscribe from it.
+          default: "UNSUBSCRIBED"
+    Message:
+      allOf:
+        - $ref: "#/components/schemas/PartialMessage"
+        - type: "object"
+          properties:
+            providers:
+              type: "array"
+              description: "Contains a list of the last events for each provider within a channel."
+              items:
+                $ref: "#/components/schemas/MessageProvider"
+    MessageHistoryType:
+      allOf:
+        - $ref: "#/components/schemas/MessageStatus"
+        - type: "string"
+          enum:
+            - "FILTERED"
+            - "MAPPED"
+            - "PROFILE_LOADED"
+            - "RENDERED"
+          description: >
+            Message History Type:
+
+            * `CLICKED` -  The recipient has clicked on any link in the message at least one time.
+
+            * `DELIVERED` - The provider successfully delivered the message to the recipient.
+
+            * `ENQUEUED` - The request has been received to send a message, is waiting in the work queue.
+
+            * `FILTERED` - The Notification or Event did not get sent because it was filtered by a condition.
+
+            * `MAPPED` - The Notification has successfully been mapped to an Event.
+
+            * `OPENED` - The recipient has opened the message at least one time.
+
+            * `PROFILE_LOADED` - The Profile has successfully been merged between what was received on the Send Endpoint and what was stored.
+
+            * `RENDERED`- The message has been rendered for one or more providers. Contains pointers to actual rendered content.
+
+            * `SENT`- The message has been accepted by the provider.
+
+            * `UNDELIVERABLE` - The message could not be delivered to at least one provider, or the provider could not deliver the message to the recipient. This can happen for multiple reasons: an error, insufficient profile data, invalid notification setup, invalid integration configuration, etc.
+
+            * `UNMAPPED` - Could not find a corresponding Notification or Event for the messages.
+          default: "DELIVERED"
+    MessageHistory:
+      type: "object"
+      oneOf:
+        - $ref: "#/components/schemas/MessageHistoryEnqueuedItem"
+        - $ref: "#/components/schemas/MessageHistoryMappedItem"
+        - $ref: "#/components/schemas/MessageHistoryProfileLoadedItem"
+        - $ref: "#/components/schemas/MessageHistoryRenderedItem"
+        - $ref: "#/components/schemas/MessageHistoryRoutedItem"
+        - $ref: "#/components/schemas/MessageHistoryDeliveredItem"
+        - $ref: "#/components/schemas/MessageHistoryUndeliverableItem"
+    MessageHistoryEnqueuedItem:
+      type: "object"
+      properties:
+        data:
+          type: "string"
+          description: "The data bag used while sending the message"
+        event:
+          type: "string"
+          description: "The event used while sending the message"
+        profile:
+          type: "string"
+          description: "The profile bag used while sending the message"
+        override:
+          type: "string"
+          description: "The override bag used while sending the message"
+        recipient:
+          type: "string"
+          description: "The recipient used while sending the message"
+        ts:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which the recipient opened a message for the first time. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611083411
+        type:
+          type: string
+          enum: [ENQUEUED]
+    MessageHistoryMappedItem:
+      type: "object"
+      properties:
+        event_id:
+          type: "string"
+          description: "The event ID used while sending the message"
+        notification_id:
+          type: "string"
+          description: "The notification ID used while sending the message"
+        ts:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which the recipient opened a message for the first time. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611083411
+        type:
+          type: string
+          enum: [MAPPED]
+    MessageHistoryProfileLoadedItem:
+      type: "object"
+      properties:
+        merged_profile:
+          type: "object"
+          description: "The profile merged while sending the message"
+        received_profile:
+          type: "object"
+          description: "The profile received while sending the message"
+        stored_profile:
+          type: "object"
+          description: "The profile stored while sending the message"
+        ts:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which the recipient opened a message for the first time. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611083411
+        type:
+          type: string
+          enum: [PROFILE_LOADED]
+    MessageHistoryRenderedItem:
+      type: "object"
+      properties:
+        channel:
+          type: "object"
+          description: "The channel used while sending the message"
+          properties:
+            id:
+              type: "string"
+              description: "The ID of the channel used while sending the message"
+        integration:
+          type: "object"
+          description: "The integration used while sending the message"
+          properties:
+            id:
+              type: "string"
+              description: "The ID of the integration used while sending the message"
+            provider:
+              type: "string"
+              description: "The name of the provider used while sending the message"
+        output:
+          type: "object"
+          description: "The path to fetch the output rendered while sending the message"
+          properties:
+            html:
+              type: "string"
+              description: "The path to fetch html content of the rendered message"
+            title:
+              type: "string"
+              description: "The path to fetch title of the rendered message"
+            body:
+              type: "string"
+              description: "The path to fetch body of the rendered message"
+            subject:
+              type: "string"
+              description: "The path to fetch subject of the rendered message"
+            blocks:
+              type: "string"
+              description: "The path to fetch blocks of the rendered message"
+            text:
+              type: "string"
+              description: "The text of the rendered message"
+        ts:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which the recipient opened a message for the first time. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611083411
+        type:
+          type: string
+          enum: [RENDERED]
+    MessageHistoryRoutedItem:
+      type: "object"
+      properties:
+        channel:
+          type: "object"
+          description: "The channel used while sending the message"
+          properties:
+            id:
+              type: "string"
+              description: "The ID of the channel used while sending the message"
+        integration:
+          type: "object"
+          description: "The integration used while sending the message"
+          properties:
+            id:
+              type: "string"
+              description: "The ID of the integration used while sending the message"
+            provider:
+              type: "string"
+              description: "The name of the provider used while sending the message"
+        ts:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which the recipient opened a message for the first time. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611083411
+        type:
+          type: string
+          enum: [DELIVERING, SENT, OPENED, CLICKED]
+    MessageHistoryDeliveredItem:
+      type: "object"
+      properties:
+        channel:
+          type: "object"
+          description: "The channel used while sending the message"
+          properties:
+            id:
+              type: "string"
+              description: "The ID of the channel used while sending the message"
+        integration:
+          type: "object"
+          description: "The integration used while sending the message"
+          properties:
+            id:
+              type: "string"
+              description: "The ID of the integration used while sending the message"
+            provider:
+              type: "string"
+              description: "The name of the provider used while sending the message"
+        reference:
+          type: "object"
+          description: "The reference to the delivered message"
+        ts:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which the recipient opened a message for the first time. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611083411
+        type:
+          type: string
+          enum: [DELIVERED]
+    MessageHistoryUndeliverableItem:
+      type: "object"
+      properties:
+        channel:
+          type: "object"
+          description: "The channel used while sending the message"
+          properties:
+            id:
+              type: "string"
+              description: "The ID of the channel used while sending the message"
+        integration:
+          type: "object"
+          description: "The integration used while sending the message"
+          properties:
+            id:
+              type: "string"
+              description: "The ID of the integration used while sending the message"
+            provider:
+              type: "string"
+              description: "The name of the provider used while sending the message"
+        error_message:
+          type: "string"
+          description: "The error message for undeliverable message"
+        ts:
+          type: "integer"
+          format: "unixmilli"
+          description: "A UTC timestamp at which the recipient opened a message for the first time. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970)."
+          default: 1562611083411
+        type:
+          type: string
+          enum: [UNDELIVERABLE]
+    MessageOutputItem:
+      type: "object"
+      properties:
+        channel:
+          type: "string"
+          description: "The channel used for rendering the message"
+        channel_id:
+          type: "string"
+          description: "The ID of channel used for rendering the message"
+        content:
+          type: "object"
+          properties:
+            html:
+              type: "string"
+              description: "The html content of the rendered message"
+            title:
+              type: "string"
+              description: "The title of the rendered message"
+            body:
+              type: "string"
+              description: "The body of the rendered message"
+            subject:
+              type: "string"
+              description: "The subject of the rendered message"
+            text:
+              type: "string"
+              description: "The text of the rendered message"
+            blocks:
+              type: "array"
+              description: "The blocks of the rendered message"
+              items:
+                properties:
+                  type:
+                    type: "string"
+                    description: "The block type of the rendered message block"
+                  text:
+                    type: "string"
+                    description: "The block text of the rendered message block"
+
+    Notification:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          description: "The unique identifier for the notification."
+        title:
+          type: "string"
+          description: "The title of the notification."
+        config:
+          type: "object"
+          properties:
+            type:
+              $ref: "#/components/schemas/PreferenceType"
+    Paging:
+      type: "object"
+      properties:
+        cursor:
+          example: "MTU4OTQ5NTI1ODY4NywxLTVlYmRjNWRhLTEwODZlYWFjMWRmMjEwMTNjM2I0ZjVhMA=="
+          type: "string"
+          description: "A unique identifier that allows for fetching the next set of objects."
+          default: "MTU4OTQ5NTI1ODY4NywxLTVlYmRjNWRhLTEwODZlYWFjMWRmMjEwMTNjM2I0ZjVhMA=="
+        more:
+          example: true
+          type: "boolean"
+          description: "Whether or not there are more message statuses that can be fetched."
+          default: true
+    EventMapping:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          description: "The ID of the notification this event maps to"
+          default: "notification-id-1"
+        type:
+          enum: ["notification"]
+          type: "string"
+          description: "The type of event"
+          default: "notification"
+      required: ["id", "type"]
+    SendBasics:
+      type: "object"
+      required:
+        - event
+      properties:
+        event:
+          type: "string"
+          description: 'A unique identifier that can be mapped to an individual Notification. This could be the "Notification ID” on Notification detail pages (see the [Notifications page](https://app.courier.com/designer/notifications) in the Courier app) or a custom string mapped to the event in [settings](https://app.courier.com/settings/events).'
+          default: "EXAMPLE_NOTIFICATION"
+        brand:
+          type: "string"
+          description: A unique identifier that represents the brand that should be used for rendering the notification.
+          default: W50NC77P524K14M5300PGPEK4JMJ
+        data:
+          type: "string"
+          description: "An object that includes any data you want to pass to a message template. The data will populate the corresponding template variables."
+          format: "json"
+          default: '{"name": "Jane Doe","age": 27}'
+        override:
+          type: "string"
+          description: "An object that is merged into the request sent by Courier to the provider to override properties or to gain access to features in the provider API that are not natively supported by Courier."
+          format: "json"
+    Send:
+      type: "object"
+      required:
+        - event
+        - recipient
+      properties:
+        event:
+          type: "string"
+          description: 'A unique identifier that can be mapped to an individual Notification. This could be the "Notification ID” on Notification detail pages (see the [Notifications page](https://app.courier.com/designer/notifications) in the Courier app) or a custom string mapped to the event in [settings](https://app.courier.com/settings/events).'
+          default: "EXAMPLE_NOTIFICATION"
+        recipient:
+          type: "string"
+          description: "A unique identifier associated with the recipient of the delivered message."
+          default: "8ec8c99a-c5f7-455b-9f60-8222b8a27056"
+        brand:
+          type: "string"
+          description: A unique identifier that represents the brand that should be used for rendering the notification.
+          default: W50NC77P524K14M5300PGPEK4JMJ
+        data:
+          type: "string"
+          description: "An object that includes any data you want to pass to a message template. The data will populate the corresponding template variables."
+          format: "json"
+          default: '{"name": "Jane Doe","age": 27}'
+        override:
+          type: "string"
+          description: "An object that is merged into the request sent by Courier to the provider to override properties or to gain access to features in the provider API that are not natively supported by Courier."
+          format: "json"
+        preferences:
+          type: "string"
+          description: "An object that includes any preferences for the recipient."
+          format: "json"
+        profile:
+          type: "string"
+          description: "An object that includes any key-value pairs required by your chosen Integrations (see our [Provider Documentation](https://docs.courier.com/docs) for the requirements for each Integration.) If profile information is included in the request and that information already exists in the profile for the recipientId, that information will be merged."
+          format: "json"
+          default: '{"phone_number": "2025550125","email": "hello@example.com"}'
+    SendRouteRecipient:
+      type: "object"
+      required:
+        - recipient
+      properties:
+        recipient:
+          type: "string"
+          description: "A unique identifier associated with the recipient of the delivered message."
+          default: "8ec8c99a-c5f7-455b-9f60-8222b8a27056"
+        data:
+          type: "string"
+          description: "An object that includes any data you want to pass to a message template. The data will populate the corresponding template variables."
+          format: "json"
+          default: '{"name": "Jane Doe","age": 27}'
+        preferences:
+          type: "string"
+          description: "An object that includes any preferences for the recipient."
+          format: "json"
+        profile:
+          type: "string"
+          description: "An object that includes any key-value pairs required by your chosen Integrations (see our [Provider Documentation](https://docs.courier.com/docs) for the requirements for each Integration.) If profile information is included in the request and that information already exists in the profile for the recipientId, that information will be merged."
+          format: "json"
+          default: '{"phone_number": "2025550125","email": "hello@example.com"}'
+    SendList:
+      title: "By List"
+      allOf:
+        - type: "object"
+          required:
+            - list
+          properties:
+            list:
+              type: "string"
+              description: "The list id intended to send."
+              default: "ExampleListId"
+              example: "ExampleListId"
+        - $ref: "#/components/schemas/SendBasics"
+    SendPattern:
+      title: "By List Pattern"
+      allOf:
+        - type: "object"
+          required:
+            - pattern
+          properties:
+            pattern:
+              type: "string"
+              description: "The pattern used to identify list(s) intended to send."
+              default: "example.list.*"
+              example: "example.list.*"
+        - $ref: "#/components/schemas/SendBasics"
+    ProfileOIDC:
+      type: "object"
+      properties:
+        address:
+          type: object
+          properties:
+            formatted:
+              type: string
+            street_address:
+              type: string
+            locality:
+              type: string
+            region:
+              type: string
+            postal_code:
+              type: string
+            country:
+              type: string
+        birthdate:
+          type: string
+        email:
+          type: string
+        email_verified:
+          type: boolean
+        family_name:
+          type: string
+        gender:
+          type: string
+        given_name:
+          type: string
+        locale:
+          type: string
+        middle_name:
+          type: string
+        name:
+          type: string
+        nickname:
+          type: string
+        phone_number:
+          type: string
+        phone_number_verified:
+          type: boolean
+        picture:
+          type: string
+        preferred_name:
+          type: string
+        profile:
+          type: string
+        sub:
+          type: string
+        updated_at:
+          type: string
+        website:
+          type: string
+        zoneinfo:
+          type: string
+        custom:
+          description: "A free form object. Due to a limitation of the API Explorer, you can only enter string key/values below, but this API accepts more complex object structures."
+          type: object
+          additionalProperties: true
+    ProfileSlack:
+      type: object
+      properties:
+        slack:
+          description: "[Learn more](https://docs.courier.com/docs/slack)"
+          oneOf:
+            - title: Send to Slack Channel
+              type: object
+              properties:
+                access_token:
+                  type: string
+                channel:
+                  type: string
+            - title: Send DM (w/ email)
+              type: object
+              properties:
+                access_token:
+                  type: string
+                email:
+                  type: string
+            - title: Send DM (w/ user_id)
+              type: object
+              properties:
+                access_token:
+                  type: string
+                user_id:
+                  type: string
+            - title: Incoming Webhooks
+              type: object
+              properties:
+                incoming_webhook:
+                  type: object
+                  properties:
+                    url:
+                      type: string
+    ProfileMSTeams:
+      type: object
+      properties:
+        ms_teams:
+          description: "[Learn more](https://docs.courier.com/docs/microsoft-teams)"
+          oneOf:
+            - title: Send to an MS Teams User
+              type: object
+              properties:
+                user_id:
+                  type: string
+                tenant_id:
+                  type: string
+                service_url:
+                  type: string
+            - title: Send to an MS Teams Channel
+              type: object
+              properties:
+                conversation_id:
+                  type: string
+                tenant_id:
+                  type: string
+                service_url:
+                  type: string
+    ProfileExpo:
+      type: object
+      properties:
+        expo:
+          description: "[Learn more](https://docs.courier.com/docs/expo)"
+          oneOf:
+            - title: Single Token
+              type: object
+              properties:
+                token:
+                  type: string
+            - title: Multiple Tokens
+              type: object
+              properties:
+                tokens:
+                  type: array
+                  items:
+                    type: string
+    ProfileAirship:
+      type: object
+      properties:
+        airship:
+          description: "[Learn more](https://docs.courier.com/docs/airship)"
+          type: object
+          properties:
+            audience:
+              type: object
+              properties:
+                named_user:
+                  type: string
+            device_types:
+              type: array
+              items:
+                type: string
+    ProfileAPN:
+      type: object
+      properties:
+        apn:
+          description: "[Learn more](https://docs.courier.com/docs/apple-push-notification)"
+          type: string
+    ProfileAWSSNSPush:
+      type: object
+      properties:
+        target_arn:
+          description: "[Learn more](https://docs.courier.com/docs/aws-sns-push)"
+          type: string
+    ProfileDiscord:
+      type: object
+      properties:
+        discord:
+          description: "[Learn more](https://docs.courier.com/docs/discord)"
+          oneOf:
+            - title: Send to Discord Channel
+              type: object
+              properties:
+                channel_id:
+                  type: string
+            - title: Send DM
+              type: object
+              properties:
+                user_id:
+                  type: string
+    ProfileFirebase:
+      type: object
+      properties:
+        firebaseToken:
+          description: "[Learn more](https://docs.courier.com/docs/firebase-fcm)"
+          type: string
+    ProfileOneSignalPush:
+      type: object
+      properties:
+        oneSignalPlayerID:
+          description: "[Learn more](https://docs.courier.com/docs/onesignal-push)"
+          type: string
+    ProfileFacebookMessenger:
+      type: object
+      properties:
+        facebookPSID:
+          description: "[Learn more](https://docs.courier.com/docs/facebook-messenger)"
+          type: string
+    ProfileIntercom:
+      type: object
+      properties:
+        intercom:
+          description: "[Learn more](https://docs.courier.com/docs/intercom)"
+          type: object
+          properties:
+            from:
+              type: string
+            to:
+              type: object
+              properties:
+                id:
+                  type: string
+    ProfileWebhook:
+      type: object
+      properties:
+        webhook:
+          description: "[Learn more](https://docs.courier.com/docs/webhook-integration)"
+          type: object
+          properties:
+            url:
+              type: string
+            method:
+              type: string
+              enum: [POST, GET]
+            headers:
+              type: object
+              additionalProperties:
+                type: string
+            authentication:
+              type: object
+              properties:
+                mode:
+                  type: string
+                  enum: [none, basic, bearer]
+                username:
+                  type: string
+                password:
+                  type: string
+                token:
+                  type: string
+            profile:
+              type: string
+              enum: [limited, expanded]
+    Profile:
+      type: object
+      properties:
+        profile:
+          description: "An object that includes any key-value pairs required by your chosen Integrations."
+          allOf:
+            - $ref: "#/components/schemas/ProfileOIDC"
+            - $ref: "#/components/schemas/ProfileAirship"
+            - $ref: "#/components/schemas/ProfileAPN"
+            - $ref: "#/components/schemas/ProfileAWSSNSPush"
+            - $ref: "#/components/schemas/ProfileDiscord"
+            - $ref: "#/components/schemas/ProfileExpo"
+            - $ref: "#/components/schemas/ProfileFacebookMessenger"
+            - $ref: "#/components/schemas/ProfileFirebase"
+            - $ref: "#/components/schemas/ProfileIntercom"
+            - $ref: "#/components/schemas/ProfileMSTeams"
+            - $ref: "#/components/schemas/ProfileOneSignalPush"
+            - $ref: "#/components/schemas/ProfileSlack"
+            - $ref: "#/components/schemas/ProfileWebhook"
+          #default:
+          #  email: normanosborn@oscorp.com
+          #  phone_number: 555-555-5555
+
+security:
+  - bearerAuth: []
+  - basicAuth: []

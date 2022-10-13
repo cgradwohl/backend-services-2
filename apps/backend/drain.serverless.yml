@@ -1,0 +1,133 @@
+service: drain
+
+configValidationMode: error
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    packager: "yarn"
+    includeModules:
+      forceExclude:
+        - aws-sdk
+      forceInclude:
+        - source-map-support
+    keepOutputDirectory: true
+  stage: ${opt:stage, self:provider.stage}
+  prefix: ${self:custom.stage}_backend
+  vanta:
+    disabled:
+      default: true
+      production: false
+    owner: "seth@courier.com"
+    nonProd: ${self:custom.vanta.disabled.${self:custom.stage}, self:custom.vanta.disabled.default}
+
+functions:
+  SqsDLQDrain:
+    handler: drain-service/sqs/dlq/index.handle
+    events:
+      - sqs:
+          arn: !ImportValue backend-${self:custom.stage}-SqsCheckDeliveryStatusDLQArn
+          batchSize: 1
+      - sqs:
+          arn: !ImportValue backend-${self:custom.stage}-SqsCreateStripeUsageRecordDLQArn
+          batchSize: 1
+      - sqs:
+          arn: !ImportValue backend-${self:custom.stage}-SqsPrepareDLQArn
+          batchSize: 1
+      - sqs:
+          arn: !ImportValue backend-${self:custom.stage}-SqsRouteDLQArn
+          batchSize: 1
+      - sqs:
+          arn: !ImportValue backend-${self:custom.stage}-SqsSegmentEventsDLQArn
+          batchSize: 1
+      - sqs:
+          arn: !ImportValue backend-${self:custom.stage}-SqsSendListOrPatternDLQArn
+          batchSize: 1
+      - sqs:
+          arn: !ImportValue backend-${self:custom.stage}-SqsTestNotificationDLQArn
+          batchSize: 1
+      - sqs:
+          arn: !ImportValue backend-${self:custom.stage}-SqsUpdateReportedUsageDLQArn
+          batchSize: 1
+      - sqs:
+          arn: !ImportValue backend-${self:custom.stage}-SqsAutomationStepDLQArn
+          batchSize: 1
+      - sqs:
+          arn: !ImportValue backend-${self:custom.stage}-SqsBulkJobDLQArn
+          batchSize: 1
+      - sqs:
+          arn: !ImportValue backend-${self:custom.stage}-SqsBulkJobPageDLQArn
+          batchSize: 1
+
+package:
+  individually: true
+
+plugins:
+  - serverless-cloudformation-sub-variables
+  - serverless-pseudo-parameters
+  - serverless-webpack
+
+provider:
+  deploymentBucket:
+    blockPublicAccess: true
+    tags:
+      VantaOwner: ${self:custom.vanta.owner}
+      VantaNonProd: ${self:custom.vanta.nonProd}
+      VantaDescription: Contains deployment assets for SQS drains
+      VantaContainsUserData: false
+  environment:
+    SQS_DLQ_BUCKET:
+      Ref: SqsDlqBucket
+    STAGE: ${self:custom.stage}
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "s3:*"
+          Resource: "arn:aws:s3:::*"
+        - Effect: "Allow"
+          Action:
+            - "sqs:*"
+          Resource:
+            Fn::Join:
+              - ""
+              - - "arn:aws:sqs:"
+                - Ref: AWS::Region
+                - ":"
+                - Ref: AWS::AccountId
+                - ":*"
+        - Effect: "Allow"
+          Action:
+            - lambda:InvokeFunction
+          Resource:
+            Fn::Join:
+              - ":"
+              - - "arn:aws:lambda"
+                - Ref: AWS::Region
+                - Ref: AWS::AccountId
+                - "function"
+                - "*"
+        - Effect: "Allow"
+          Action:
+            - "kms:Encrypt"
+            - "kms:Decrypt"
+            - "kms:DescribeKey"
+            - "kms:GenerateDataKey"
+            - "kms:GenerateDataKeyWithoutPlaintext"
+            - "kms:ReEncrypt*"
+          Resource: "*"
+  memorySize: 512
+  name: aws
+  region: us-east-1
+  runtime: nodejs14.x
+  stage: dev
+  tags:
+    tags.courier.com/elasticity: variable
+  timeout: 30
+  tracing:
+    lambda: PassThrough
+  versionFunctions: false
+
+resources:
+  - ${file(drain-service/aws-cloud-formation/s3/sqs-dlq.yml)}

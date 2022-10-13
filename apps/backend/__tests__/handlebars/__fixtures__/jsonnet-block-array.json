@@ -1,0 +1,7 @@
+[
+  {
+    "config": "{\"template\":\"[\\n  {\\n      \\\"type\\\": \\\"section\\\",\\n      \\\"text\\\": {\\n          \\\"type\\\": \\\"mrkdwn\\\",\\n          \\\"text\\\": \\\"Number %s\\\" %  number\\n      }\\n  }\\n  for number in ['1', '2', '3']\\n]\"}",
+    "id": "d6ad9b9f-d51d-4040-ad21-ce393eb97546",
+    "type": "jsonnet"
+  }
+]

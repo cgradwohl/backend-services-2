@@ -1,0 +1,53 @@
+{
+  "eventID": "58b85224a89da7c6aacbbbacc52a27b3",
+  "eventName": "REMOVE",
+  "eventVersion": "1.1",
+  "eventSource": "aws:dynamodb",
+  "awsRegion": "us-east-1",
+  "dynamodb": {
+    "ApproximateCreationDateTime": 1627576700,
+    "Keys": {
+      "pk": {
+        "S": "b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302/message:received/1-6101ec8d-61f34c5b1022141036ab6c01"
+      }
+    },
+    "OldImage": {
+      "pk": {
+        "S": "b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302/message:received/1-6101ec8d-61f34c5b1022141036ab6c01"
+      },
+      "json": {
+        "M": {
+          "DetailType": {
+            "S": "message:received"
+          },
+          "Detail": {
+            "M": {
+              "s3Path": {
+                "S": "b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302/message_received_1-6101ec8d-61f34c5b1022141036ab6c01.json"
+              },
+              "retryCount": {
+                "N": "11"
+              },
+              "tenantId": {
+                "S": "b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302"
+              },
+              "messageId": {
+                "S": "1-6101ec8d-61f34c5b1022141036ab6c01"
+              }
+            }
+          },
+          "Source": {
+            "S": "com.courier/send"
+          }
+        }
+      },
+      "ttl": {
+        "N": "60"
+      }
+    },
+    "SequenceNumber": "911040800000000009602623128",
+    "SizeBytes": 472,
+    "StreamViewType": "NEW_AND_OLD_IMAGES"
+  },
+  "eventSourceARN": "arn:aws:dynamodb:us-east-1:680178896378:table/backend-dev-DeliveryStatusTableV2-L91JIRF3HZ9Y/stream/2022-09-17T00:27:27.666"
+}

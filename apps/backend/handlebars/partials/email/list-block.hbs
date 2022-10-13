@@ -1,0 +1,25 @@
+{{#courier-partial}}
+{{#if (condition @variant "==" "bullets")}}
+{{#prerender "prerenderedContent"}}{{> @partial-block }}{{/prerender~}}
+{{#if (trim @prerenderedContent)}}
+<mj-section css-class="c--block c--block-list">
+  <mj-column padding-top="0px">
+    <mj-text {{courier-email-text-style "text"}} css-class="{{trim (concat "c--text-" (default @textStyle "text") " " (text-direction @prerenderedContent))}}">
+        {{#if @hasChildren}}
+{{#partial-block-indent-fix}}
+        {{else}}{{{@prerenderedContent}}}{{/partial-block-indent-fix}}
+        {{else}}
+        <ul style="margin:0;padding-left:20px;">
+{{#partial-block-indent-fix}}
+          {{else}}{{{@prerenderedContent}}}{{/partial-block-indent-fix}}
+        </ul>
+        {{/if}}
+    </mj-text>
+  </mj-column>
+</mj-section>
+{{/if}}
+{{else}}
+{{! each list item will have its own section }}
+{{> @partial-block }}
+{{/if}}
+{{/courier-partial}}

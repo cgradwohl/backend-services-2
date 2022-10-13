@@ -1,0 +1,7 @@
+[
+  {
+    "config": "{\"borderColor\":\"#CBD5E0\",\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"Quote block with a \",\"marks\":[]},{\"object\":\"inline\",\"type\":\"link\",\"data\":{\"href\":\"https://example.com\",\"text\":\"link\"},\"nodes\":[{\"object\":\"text\",\"text\":\"link\",\"marks\":[]}]},{\"object\":\"text\",\"text\":\".\",\"marks\":[]}]}]}}}",
+    "id": "ec58343f-2c14-4472-b132-94fb451fc7c0",
+    "type": "quote"
+  }
+]

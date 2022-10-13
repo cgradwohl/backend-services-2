@@ -1,0 +1,24 @@
+Resources:
+  AutomationStore:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: VantaOwner
+          Value: ${self:custom.vanta.owner}
+        - Key: VantaNonProd
+          Value: ${self:custom.vanta.nonProd}
+        - Key: VantaDescription
+          Value: "File storage for the events when customers send a notification."
+        - Key: VantaContainsUserData
+          Value: true
+      VersioningConfiguration:
+        Status: Enabled

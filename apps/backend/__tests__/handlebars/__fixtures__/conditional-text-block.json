@@ -1,0 +1,7 @@
+[
+  {
+    "config": "{\"backgroundColor\":\"transparent\",\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"Conditional text.\",\"marks\":[]}]}]}},\"conditional\":{\"filters\":[{\"source\":\"data\",\"property\":\"name\",\"value\":\"Luke\",\"operator\":\"EQUALS\",\"id\":\"3c82e5ed-35a1-41e1-a7c2-a21df01827fb\"},{\"source\":\"profile\",\"property\":\"email\",\"value\":\"luke@courier.com\",\"operator\":\"EQUALS\",\"id\":\"f26cc2b4-8dd6-41a5-b927-2029adc1c213\"}],\"logicalOperator\":\"and\"}}",
+    "id": "3126b5bb-4560-4671-b265-235e7c8d5737",
+    "type": "text"
+  }
+]

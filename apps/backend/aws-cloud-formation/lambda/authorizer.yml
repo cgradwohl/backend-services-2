@@ -1,0 +1,8 @@
+Outputs:
+  ApiAuthorizerArn:
+    Export:
+      Name: backend-${self:custom.stage}-ApiAuthorizerArn
+    Value:
+      Fn::GetAtt:
+        - ApiAuthorizerLambdaFunction
+        - Arn

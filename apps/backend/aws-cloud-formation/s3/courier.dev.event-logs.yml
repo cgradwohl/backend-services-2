@@ -1,0 +1,124 @@
+Resources:
+  EventLogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      ReplicationConfiguration:
+        Role: !GetAtt
+          - EventLogsBucketBackupRole
+          - Arn
+        Rules:
+          - Destination:
+              Bucket: !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref EventLogsReplicationBucket
+              StorageClass: STANDARD
+            Id: Backup
+            Prefix: ''
+            Status: Enabled
+      Tags:
+        - Key: VantaOwner
+          Value: ${self:custom.vanta.owner}
+        - Key: VantaNonProd
+          Value: ${self:custom.vanta.nonProd}
+        - Key: VantaDescription
+          Value: "File storage for the events when customers send a notification."
+        - Key: VantaContainsUserData
+          Value: true
+      VersioningConfiguration:
+        Status: Enabled
+
+  EventLogsReplicationBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: VantaOwner
+          Value: ${self:custom.vanta.owner}
+        - Key: VantaNonProd
+          Value: ${self:custom.vanta.nonProd}
+        - Key: VantaDescription
+          Value: "Replication bucket used by snowflake."
+        - Key: VantaContainsUserData
+          Value: true
+      VersioningConfiguration:
+        Status: Enabled
+
+  EventLogsBucketBackupRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - s3.amazonaws.com
+
+  EventLogsBucketBackupPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - 's3:GetReplicationConfiguration'
+              - 's3:ListBucket'
+            Effect: Allow
+            Resource:
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref EventLogsBucket
+          - Action:
+              - 's3:GetObjectVersion'
+              - 's3:GetObjectVersionAcl'
+            Effect: Allow
+            Resource:
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref EventLogsBucket
+                  - /*
+          - Action:
+              - 's3:ReplicateObject'
+              - 's3:ReplicateDelete'
+            Effect: Allow
+            Resource:
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref EventLogsReplicationBucket
+                  - /*
+      PolicyName: EventLogsBucketBackupPolicy
+      Roles:
+        - !Ref EventLogsBucketBackupRole
+
+Outputs:
+  EventLogsBucketName:
+    Export:
+      Name: backend-${self:custom.stage}-EventLogsBucketName
+    Value:
+      Ref: EventLogsBucket
+  EventLogsBucketArn:
+    Export:
+      Name: backend-${self:custom.stage}-EventLogsBucketArn
+    Value:
+      Fn::GetAtt: [EventLogsBucket, Arn]

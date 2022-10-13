@@ -1,0 +1,171 @@
+{
+  "backgroundColor": "transparent",
+  "value": {
+    "object": "value",
+    "document": {
+      "object": "document",
+      "data": {},
+      "nodes": [
+        {
+          "object": "block",
+          "type": "line",
+          "data": {},
+          "nodes": [
+            {
+              "object": "text",
+              "text": "Hello ",
+              "marks": [
+                {
+                  "object": "mark",
+                  "type": "bold",
+                  "data": {}
+                }
+              ]
+            },
+            {
+              "object": "inline",
+              "type": "variable",
+              "data": {
+                "value": "{firstName}"
+              },
+              "nodes": [
+                {
+                  "object": "text",
+                  "text": "{firstName}",
+                  "marks": [
+                    {
+                      "object": "mark",
+                      "type": "bold",
+                      "data": {}
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "object": "text",
+              "text": ",\\n\\n",
+              "marks": [
+                {
+                  "object": "mark",
+                  "type": "bold",
+                  "data": {}
+                }
+              ]
+            },
+            {
+              "object": "text",
+              "text": "How is your ",
+              "marks": [
+                {
+                  "object": "mark",
+                  "type": "underlined",
+                  "data": {}
+                }
+              ]
+            },
+            {
+              "object": "inline",
+              "type": "highlight",
+              "data": {
+                "color": "#FFCC58",
+                "brandColors": false
+              },
+              "nodes": [
+                {
+                  "object": "text",
+                  "text": "day",
+                  "marks": [
+                    {
+                      "object": "mark",
+                      "type": "underlined",
+                      "data": {}
+                    },
+                    {
+                      "object": "mark",
+                      "type": "textColor",
+                      "data": {
+                        "color": "#24AF9C",
+                        "brandColors": false
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "object": "text",
+              "text": "?\\n\\n",
+              "marks": [
+                {
+                  "object": "mark",
+                  "type": "underlined",
+                  "data": {}
+                }
+              ]
+            },
+            {
+              "object": "text",
+              "text": "I hope it is ",
+              "marks": []
+            },
+            {
+              "object": "text",
+              "text": "well",
+              "marks": [
+                {
+                  "object": "mark",
+                  "type": "italic",
+                  "data": {}
+                },
+                {
+                  "object": "mark",
+                  "type": "bold",
+                  "data": {}
+                }
+              ]
+            },
+            {
+              "object": "text",
+              "text": " ",
+              "marks": [
+                {
+                  "object": "mark",
+                  "type": "italic",
+                  "data": {}
+                }
+              ]
+            },
+            {
+              "object": "text",
+              "text": ":)\\n\\nClick ",
+              "marks": []
+            },
+            {
+              "object": "inline",
+              "type": "link",
+              "data": {
+                "href": "https://www.courier.com",
+                "text": "Here",
+                "disableLinkTracking": false
+              },
+              "nodes": [
+                {
+                  "object": "text",
+                  "text": "Here",
+                  "marks": []
+                }
+              ]
+            },
+            {
+              "object": "text",
+              "text": "",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "align": "left"
+}

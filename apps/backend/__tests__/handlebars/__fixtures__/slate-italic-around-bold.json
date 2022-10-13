@@ -1,0 +1,53 @@
+{
+  "object": "value",
+  "document": {
+    "data": {},
+    "object": "document",
+    "nodes": [
+      {
+        "data": {},
+        "object": "block",
+        "type": "line",
+        "nodes": [
+          {
+            "marks": [],
+            "object": "text",
+            "text": "This "
+          },
+          {
+            "object": "text",
+            "text": "is ",
+            "marks": [
+              {
+                "data": {},
+                "object": "mark",
+                "type": "italic"
+              }
+            ]
+          },
+          {
+            "object": "text",
+            "text": "a",
+            "marks": [
+              {
+                "data": {},
+                "object": "mark",
+                "type": "italic"
+              },
+              {
+                "data": {},
+                "object": "mark",
+                "type": "bold"
+              }
+            ]
+          },
+          {
+            "marks": [],
+            "object": "text",
+            "text": " test"
+          }
+        ]
+      }
+    ]
+  }
+}

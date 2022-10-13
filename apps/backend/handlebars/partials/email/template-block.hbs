@@ -1,0 +1,10 @@
+{{#courier-partial}}
+<mj-section css-class="c--block c--block-template">
+  <mj-column>
+    <mj-text {{courier-email-text-style "text"}} css-class="c--text-text">
+        {{#courier-template-block}}{{> @partial-block }}{{/courier-template-block}}
+
+    </mj-text>
+  </mj-column>
+</mj-section>
+{{/courier-partial}}

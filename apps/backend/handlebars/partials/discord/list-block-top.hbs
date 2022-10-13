@@ -1,0 +1,10 @@
+{{#courier-partial}}
+{{#link-context "item" @index}}
+{{#unless @first}}{{>br}}{{/unless~}}
+{{#unless @hasChildren}}+ {{/unless}}{{#link-context "rich-text"}}{{#trim-left}}{{> @partial-block}}{{/trim-left}}{{/link-context~}}
+{{#if @hasChildren}}
+{{> child-content ~}}
+{{#unless @last}}{{>br}}{{/unless~}}
+{{/if}}
+{{/link-context}}
+{{/courier-partial}}

@@ -1,0 +1,7 @@
+[
+  {
+    "config": "{\"imageSrc\":\"https://s3.amazonaws.com/backend-dev-librarybucket-a6n6jb55kc98/118c6491-a35d-4b81-b10b-d22f7d20da0c/1590005909939_green-mountains.jpg\",\"imagePath\":\"https://s3.amazonaws.com/backend-dev-librarybucket-a6n6jb55kc98/118c6491-a35d-4b81-b10b-d22f7d20da0c/1590005909939_green-mountains.jpg\",\"altText\":\"mountains\",\"imageHref\":\"https://example.com/mountains\"}",
+    "id": "a0c2d1d2-a9b6-4997-a6da-22762bd3b7b7",
+    "type": "image"
+  }
+]

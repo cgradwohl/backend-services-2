@@ -1,0 +1,11 @@
+#!/bin/bash
+
+yarn --silent serverless:info-verbose $@ | sed -e '1,/^Stack Outputs/d' -e '$d' > .describe.temp.yml
+
+echo "NEXT_STATIC_AWS_IDENTITY_POOL_ID=\"$(yarn --silent yaml2json .describe.temp.yml | npx json IdentityPoolId)\""
+echo "NEXT_STATIC_AWS_USER_POOL_ID=\"$(yarn --silent yaml2json .describe.temp.yml | npx json UserPoolId)\""
+echo "NEXT_STATIC_AWS_USER_POOL_URI=\"$(yarn --silent yaml2json .describe.temp.yml | npx json UserPoolDomainUri)\""
+echo "NEXT_STATIC_AWS_USER_POOL_WEB_CLIENT_ID=\"$(yarn --silent yaml2json .describe.temp.yml | npx json UserPoolClientId)\""
+echo "NEXT_STATIC_AWS_API_ROOT_URI=\"$(yarn --silent yaml2json .describe.temp.yml | npx json ServiceEndpoint)\""
+
+rm .describe.temp.yml

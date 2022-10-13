@@ -1,0 +1,22 @@
+functions:
+  ApiAuditEvents:
+    handler: auditing/api/handler.default
+    events:
+      - http:
+          path: audit-events/{id}
+          method: GET
+          authorizer: ${self:custom.authorizers.api}
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: audit-events
+          method: GET
+          authorizer: ${self:custom.authorizers.api}
+    provisionedConcurrency: ${self:custom.lambda.provisionedConcurrency.${self:custom.stage}}
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint

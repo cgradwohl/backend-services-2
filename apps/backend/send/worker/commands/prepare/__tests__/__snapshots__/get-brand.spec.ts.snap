@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Get brand utils messageBrandToIBrandContext should transform message brand to IBrandContext 1`] = `
+Object {
+  "creator": "inline",
+  "id": "bdc0321cad38b7261d0196d61eaca8fa",
+  "name": "inline",
+  "settings": Object {
+    "colors": Object {
+      "primary": "#ff0000",
+      "secondary": "#ff0000",
+    },
+    "email": Object {
+      "header": Object {
+        "logo": Object {
+          "href": "https://example.com",
+          "image": "https://example.com/logo.png",
+        },
+      },
+    },
+  },
+  "updater": "inline",
+  "version": "2020-06-19T18:51:36.083Z",
+}
+`;
+
+exports[`Get brand utils messageBrandV2ToIBrandContext should transform message brand to IBrandContext 1`] = `
+Object {
+  "creator": "inline",
+  "id": "02b63d04bdb30476273410d694ac6170",
+  "locales": Object {
+    "eu-fr": Object {
+      "creator": "inline",
+      "id": "7ca99416848a36c95bf6feea5050665e",
+      "locales": Object {},
+      "name": "inline",
+      "settings": Object {
+        "colors": Object {
+          "primary": "#eee",
+          "secondary": "#eee",
+        },
+        "email": Object {
+          "header": Object {
+            "logo": Object {
+              "href": "https://fr.example.com",
+              "image": "https://fr.example.com/logo.png",
+            },
+          },
+        },
+      },
+      "updater": "inline",
+      "version": "2022-05-17",
+    },
+  },
+  "name": "inline",
+  "settings": Object {
+    "colors": Object {
+      "primary": "#ff0000",
+      "secondary": "#ff0000",
+    },
+    "email": Object {
+      "header": Object {
+        "logo": Object {
+          "href": "https://example.com",
+          "image": "https://example.com/logo.png",
+        },
+      },
+    },
+  },
+  "updater": "inline",
+  "version": "2022-05-17",
+}
+`;

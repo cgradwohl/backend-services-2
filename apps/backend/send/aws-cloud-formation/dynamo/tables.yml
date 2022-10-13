@@ -1,0 +1,156 @@
+Resources:
+  ActionStreamSequenceTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: sequenceNumber
+          AttributeType: S
+        - AttributeName: lambdaFunction
+          AttributeType: S
+      KeySchema:
+        - AttributeName: sequenceNumber
+          KeyType: HASH
+        - AttributeName: lambdaFunction
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Table to hold successfully processed sequences from SendTrafficStream"
+      - Key: VantaContainsUserData
+        Value: false # true if contains user data
+      - Key: tags.courier.com/service
+        Value: pipeline
+
+  ProviderSendStreamSequenceTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: sequenceNumber
+          AttributeType: S
+        - AttributeName: lambdaFunction
+          AttributeType: S
+      KeySchema:
+        - AttributeName: sequenceNumber
+          KeyType: HASH
+        - AttributeName: lambdaFunction
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Table to hold successfully processed sequences from SendTrafficStream"
+      - Key: VantaContainsUserData
+        Value: false # true if contains user data
+      - Key: tags.courier.com/service
+        Value: pipeline
+
+  ProviderRenderStreamSequenceTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: sequenceNumber
+          AttributeType: S
+        - AttributeName: lambdaFunction
+          AttributeType: S
+      KeySchema:
+        - AttributeName: sequenceNumber
+          KeyType: HASH
+        - AttributeName: lambdaFunction
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Table to hold successfully processed sequences from SendTrafficStream"
+      - Key: VantaContainsUserData
+        Value: false # true if contains user data
+      - Key: tags.courier.com/service
+        Value: pipeline
+
+  RetryMessageSequenceTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: sequenceNumber
+          AttributeType: S
+        - AttributeName: lambdaFunction
+          AttributeType: S
+      KeySchema:
+        - AttributeName: sequenceNumber
+          KeyType: HASH
+        - AttributeName: lambdaFunction
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Table to hold successfully processed sequences from SendTrafficStream"
+      - Key: VantaContainsUserData
+        Value: false # true if contains user data
+      - Key: tags.courier.com/service
+        Value: pipeline
+
+  RetryMessageTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        # <tenantId>#<requestId | messageId>#<command | actionType>
+        # If message needs to be retried during prepare
+        # ce79b74a-caad-451c-9bd3-0fd95a2d4ea8#1-617b277e-6b17e47279d2a85a380a61bc#prepare
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      StreamSpecification:
+        StreamViewType: OLD_IMAGE
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Table that contains data necessary to retry failed messages from send stream"
+      - Key: VantaContainsUserData
+        Value: false
+      - Key: tags.courier.com/service
+        Value: pipeline

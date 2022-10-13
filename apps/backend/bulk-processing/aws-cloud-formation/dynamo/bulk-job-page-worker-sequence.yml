@@ -1,0 +1,29 @@
+Resources:
+  BulkJobPageWorkerSequenceTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: sequenceNumber
+          AttributeType: S
+        - AttributeName: lambdaFunction
+          AttributeType: S
+      KeySchema:
+        - AttributeName: sequenceNumber
+          KeyType: HASH
+        - AttributeName: lambdaFunction
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Sequence table used to ensure bulk job page records are not reprocessed"
+      - Key: VantaContainsUserData
+        Value: false # true if contains user data

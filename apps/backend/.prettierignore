@@ -1,0 +1,4 @@
+.serverless
+.webpack
+aws-cloud-formation
+*.hbs

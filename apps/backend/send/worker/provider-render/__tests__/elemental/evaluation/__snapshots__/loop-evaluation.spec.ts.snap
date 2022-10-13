@@ -1,0 +1,98 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`loop evaluation evaluateLoops should evaluate a basic loop 1`] = `
+Array [
+  Object {
+    "elements": Array [
+      Object {
+        "content": "1. Hello Drew!",
+        "index": 1,
+        "type": "text",
+        "visible": true,
+      },
+      Object {
+        "content": "2. Hello Chris!",
+        "index": 1,
+        "type": "text",
+        "visible": true,
+      },
+      Object {
+        "content": "3. Hello Suhas!",
+        "index": 1,
+        "type": "text",
+        "visible": true,
+      },
+    ],
+    "index": 0,
+    "type": "group",
+    "visible": true,
+  },
+]
+`;
+
+exports[`loop evaluation evaluateLoops should evaluate a complex loop with groups and recursion 1`] = `
+Array [
+  Object {
+    "elements": Array [
+      Object {
+        "content": "# Name: Ice Cream, Price: $9.00",
+        "index": 1,
+        "type": "text",
+        "visible": true,
+      },
+      Object {
+        "content": "Flavors:",
+        "index": 2,
+        "type": "text",
+        "visible": true,
+      },
+      Object {
+        "content": "- Chocolate",
+        "index": 3,
+        "type": "text",
+        "visible": true,
+      },
+      Object {
+        "content": "- Vanilla",
+        "index": 3,
+        "type": "text",
+        "visible": true,
+      },
+    ],
+    "index": 0,
+    "type": "group",
+    "visible": true,
+  },
+  Object {
+    "elements": Array [
+      Object {
+        "content": "# Name: Cake, Price: $9.00",
+        "index": 1,
+        "type": "text",
+        "visible": true,
+      },
+      Object {
+        "content": "Flavors:",
+        "index": 2,
+        "type": "text",
+        "visible": true,
+      },
+      Object {
+        "content": "- German Chocolate",
+        "index": 3,
+        "type": "text",
+        "visible": true,
+      },
+      Object {
+        "content": "- Cheesecake",
+        "index": 3,
+        "type": "text",
+        "visible": true,
+      },
+    ],
+    "index": 0,
+    "type": "group",
+    "visible": true,
+  },
+]
+`;

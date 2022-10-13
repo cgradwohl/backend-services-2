@@ -1,0 +1,122 @@
+# https://docs.aws.amazon.com/apigateway/latest/developerguide/supported-gateway-response-types.html
+Resources:
+  AccessDeniedGatewayResponse:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Strict-Transport-Security: "'max-age=31536000;includeSubDomains;preload'"
+        gatewayresponse.header.X-Content-Type-Options: "'nosniff'"
+      ResponseTemplates:
+        application/json: '{"message":$context.error.messageString,"type":"authorization_error"}'
+      ResponseType: ACCESS_DENIED
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      StatusCode: 403
+  Default4xxGatewayResponse:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Strict-Transport-Security: "'max-age=31536000;includeSubDomains;preload'"
+        gatewayresponse.header.X-Content-Type-Options: "'nosniff'"
+      ResponseTemplates:
+        application/json: '{"message":$context.error.messageString,"type":"invalid_request_error"}'
+      ResponseType: DEFAULT_4XX
+      RestApiId:
+        Ref: ApiGatewayRestApi
+  Default5xxGatewayResponse:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Strict-Transport-Security: "'max-age=31536000;includeSubDomains;preload'"
+        gatewayresponse.header.X-Content-Type-Options: "'nosniff'"
+      ResponseTemplates:
+        application/json: '{"message":$context.error.messageString,"type":"api_error"}'
+      ResponseType: DEFAULT_5XX
+      RestApiId:
+        Ref: ApiGatewayRestApi
+  ExpiredTokenGatewayResponse:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Strict-Transport-Security: "'max-age=31536000;includeSubDomains;preload'"
+        gatewayresponse.header.X-Content-Type-Options: "'nosniff'"
+      ResponseTemplates:
+        application/json: '{"message":$context.error.messageString,"type":"authorization_error"}'
+      ResponseType: EXPIRED_TOKEN
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      StatusCode: 403
+  InvalidApiKeyGatewayResponse:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Strict-Transport-Security: "'max-age=31536000;includeSubDomains;preload'"
+        gatewayresponse.header.X-Content-Type-Options: "'nosniff'"
+      ResponseTemplates:
+        application/json: '{"message":$context.error.messageString,"type":"authorization_error"}'
+      ResponseType: INVALID_API_KEY
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      StatusCode: 403
+  InvalidSignatureGatewayResponse:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Strict-Transport-Security: "'max-age=31536000;includeSubDomains;preload'"
+        gatewayresponse.header.X-Content-Type-Options: "'nosniff'"
+      ResponseTemplates:
+        application/json: '{"message":$context.error.messageString,"type":"authorization_error"}'
+      ResponseType: INVALID_SIGNATURE
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      StatusCode: 403
+  MissingAuthenticationTokenGatewayResponse:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Strict-Transport-Security: "'max-age=31536000;includeSubDomains;preload'"
+        gatewayresponse.header.X-Content-Type-Options: "'nosniff'"
+      ResponseTemplates:
+        application/json: '{"message":$context.error.messageString,"type":"authorization_error"}'
+      ResponseType: MISSING_AUTHENTICATION_TOKEN
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      StatusCode: 403
+  QuotaExceededGatewayResponse:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Strict-Transport-Security: "'max-age=31536000;includeSubDomains;preload'"
+        gatewayresponse.header.X-Content-Type-Options: "'nosniff'"
+      ResponseTemplates:
+        application/json: '{"message":"Quota Exceeded","type":"rate_limit_error"}'
+      ResponseType: QUOTA_EXCEEDED
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      StatusCode: 429
+  ThrottledGatewayResponse:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Strict-Transport-Security: "'max-age=31536000;includeSubDomains;preload'"
+        gatewayresponse.header.X-Content-Type-Options: "'nosniff'"
+      ResponseTemplates:
+        application/json: '{"message":"Throttled","type":"rate_limit_error"}'
+      ResponseType: THROTTLED
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      StatusCode: 429
+  UnauthorizedGatewayResponse:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+        gatewayresponse.header.Strict-Transport-Security: "'max-age=31536000;includeSubDomains;preload'"
+        gatewayresponse.header.X-Content-Type-Options: "'nosniff'"
+      ResponseTemplates:
+        application/json: '{"message":"Unauthorized","type":"authentication_error"}'
+      ResponseType: UNAUTHORIZED
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      StatusCode: 401

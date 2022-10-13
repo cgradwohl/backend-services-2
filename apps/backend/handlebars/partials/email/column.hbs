@@ -1,0 +1,18 @@
+{{#courier-partial}}
+<mj-section css-class="c--block c--block-column">
+  {{#if @groupColumns}}
+  <mj-group>
+  {{/if}}
+  {{#each @columns}}
+    <mj-column {{#if @verticalAlign}}vertical-align={{@verticalAlign}} {{/if}}padding="0 6px" {{column-width @size layout=@layout width=@width index=@index groupColumns=@groupColumns}} {{border-config this.border.enabled color=this.border.color size=this.border.size}}>
+      {{#each this.blockIds}}
+{{#partial-block-indent-fix}}
+        {{else}}{{> (concat "block-" this) isInColumn="true"}}{{/partial-block-indent-fix}}
+      {{/each}}
+    </mj-column>
+  {{/each}}
+  {{#if @groupColumns}}
+  </mj-section>
+  {{/if}}
+</mj-section>
+{{/courier-partial}}

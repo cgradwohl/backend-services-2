@@ -1,0 +1,60 @@
+{
+  "object": "value",
+  "document": {
+    "object": "document",
+    "data": {},
+    "nodes": [
+      {
+        "object": "block",
+        "type": "line",
+        "data": {},
+        "nodes": [
+          {
+            "object": "text",
+            "text": "",
+            "marks": []
+          },
+          {
+            "object": "inline",
+            "type": "variable",
+            "data": {
+              "value": "app.data"
+            },
+            "nodes": [
+              {
+                "object": "text",
+                "text": "",
+                "marks": []
+              }
+            ]
+          },
+          {
+            "object": "text",
+            "text": "Click ",
+            "marks": []
+          },
+          {
+            "object": "inline",
+            "type": "link",
+            "data": {
+              "href": "https://example.com/link",
+              "text": "this link"
+            },
+            "nodes": [
+              {
+                "object": "text",
+                "text": "this link",
+                "marks": []
+              }
+            ]
+          },
+          {
+            "object": "text",
+            "text": " to learn more.",
+            "marks": []
+          }
+        ]
+      }
+    ]
+  }
+}

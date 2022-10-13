@@ -1,0 +1,45 @@
+Resources:
+  AutomationRunsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+        - AttributeName: gsi1pk
+          AttributeType: S
+        - AttributeName: gsi1sk
+          AttributeType: S
+      GlobalSecondaryIndexes:
+        - IndexName: gsi1
+          KeySchema:
+          - AttributeName: gsi1pk
+            KeyType: HASH
+          - AttributeName: gsi1sk
+            KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      KinesisStreamSpecification:
+        StreamArn: !GetAtt AutomationRunsStream.Arn
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Stores Automation Runs"
+      - Key: VantaContainsUserData
+        Value: false
+      - Key: tags.courier.com/service
+        Value: automations

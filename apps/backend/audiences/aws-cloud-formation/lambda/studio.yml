@@ -1,0 +1,22 @@
+functions:
+  StudioAudiences:
+    handler: audiences/studio/index.handler
+    events:
+      - http:
+          path: /studio-audiences/{any+}
+          method: ANY
+          authorizer: ${self:custom.cognitoUserPoolAuthorizer}
+          cors: true
+          headers:
+            - Content-Type
+            - X-Amz-Date
+            - Authorization
+            - X-Api-Key
+            - X-Amz-Security-Token
+            - X-Amz-User-Agent
+            - X-RateLimit-Limit
+            - X-RateLimit-Remaining
+    environment:
+      SESSION_MANAGEMENT_TABLE: ${self:custom.sessionManagementTable}
+      STRIPE_SECRET_KEY: ${env:STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${env:STRIPE_WEBHOOK_SECRET}

@@ -1,0 +1,17 @@
+Resources:
+  CourierEventBus:
+    Type: AWS::Events::EventBus
+    Properties:
+      Name: ${opt:stage, self:provider.stage}-courier-event-bus
+
+Outputs:
+  CourierEventBusArn:
+    Export:
+      Name: backend-${self:custom.stage}-CourierEventBusArn
+    Value:
+      Fn::GetAtt: [CourierEventBus, Arn]
+  CourierEventBusName:
+    Export:
+      Name: backend-${self:custom.stage}-CourierEventBusName
+    Value:
+      Fn::GetAtt: [CourierEventBus, Name]

@@ -1,0 +1,7 @@
+[
+  {
+    "id": "9cda4dbc-efa9-477a-b130-c1711e186a27",
+    "type": "text",
+    "config": "{\"backgroundColor\":\"transparent\",\"value\":{\"object\":\"value\",\"document\":{\"object\":\"document\",\"data\":{},\"nodes\":[{\"object\":\"block\",\"type\":\"line\",\"data\":{},\"nodes\":[{\"object\":\"text\",\"text\":\"You cannot hide forever, \",\"marks\":[{\"object\":\"mark\",\"type\":\"bold\",\"data\":{}}]},{\"object\":\"inline\",\"type\":\"variable\",\"data\":{\"value\":\"name\"},\"nodes\":[{\"object\":\"text\",\"text\":\"{name}\",\"marks\":[{\"object\":\"mark\",\"type\":\"bold\",\"data\":{}}]}]},{\"object\":\"text\",\"text\":\".\\n\",\"marks\":[{\"object\":\"mark\",\"type\":\"bold\",\"data\":{}}]},{\"object\":\"text\",\"text\":\"\\n\",\"marks\":[]},{\"object\":\"inline\",\"type\":\"variable\",\"data\":{\"value\":\"{message}\"},\"nodes\":[{\"object\":\"text\",\"text\":\"{message}\",\"marks\":[{\"object\":\"mark\",\"type\":\"italic\",\"data\":{}}]}]},{\"object\":\"text\",\"text\":\"\",\"marks\":[{\"object\":\"mark\",\"type\":\"italic\",\"data\":{}}]}]}]}}}"
+  }
+]

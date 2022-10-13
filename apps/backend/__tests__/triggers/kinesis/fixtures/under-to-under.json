@@ -1,0 +1,140 @@
+{
+  "awsRegion": "us-east-1",
+  "eventID": "9057b4c4-dcb4-4036-8c09-40e59b6166b8",
+  "eventName": "MODIFY",
+  "userIdentity": null,
+  "recordFormat": "application/json",
+  "tableName": "dev_backend-tenants",
+  "dynamodb": {
+    "ApproximateCreationDateTime": 1629931527639,
+    "Keys": {
+      "tenantId": {
+        "S": "b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302"
+      }
+    },
+    "NewImage": {
+      "notificationLastSentAt": {
+        "N": "123456789"
+      },
+      "customerRoutes": {
+        "hmacEnabled": {
+          "BOOL": "false"
+        }
+      },
+      "apiKey": {
+        "S": "api-key-new-image"
+      },
+      "creator": {
+        "S": "e336ad59-da79-4210-9d5a-32320c51c30f"
+      },
+      "tenantId": {
+        "S": "40d8ad86-d600-4b1b-b188-d64cdc9d451a"
+      },
+      "usageActual": {
+        "N": "1500"
+      },
+      "created": {
+        "N": "1624941290928"
+      },
+      "domains": {
+        "L": []
+      },
+      "usageCurrentPeriod": {
+        "N": "1500"
+      },
+      "name": {
+        "S": "oldImageTenantName"
+      },
+      "clickThroughTracking": {
+        "M": {
+          "enabled": {
+            "BOOL": true
+          }
+        }
+      },
+      "brandsAccepted": {
+        "BOOL": true
+      },
+      "emailOpenTracking": {
+        "M": {
+          "enabled": {
+            "BOOL": true
+          }
+        }
+      },
+      "showCourierFooter": {
+        "BOOL": true
+      },
+      "owner": {
+        "S": "11c42618-4542-4507-bba5-52bc95e68672"
+      },
+      "discoverable": {
+        "S": "NEEDS_ACCESS_REQUEST"
+      }
+    },
+    "OldImage": {
+      "notificationLastSentAt": {
+        "N": "123456789"
+      },
+      "customerRoutes": {
+        "hmacEnabled": {
+          "BOOL": "false"
+        }
+      },
+      "apiKey": {
+        "S": "api-key-new-image"
+      },
+      "creator": {
+        "S": "e336ad59-da79-4210-9d5a-32320c51c30f"
+      },
+      "tenantId": {
+        "S": "40d8ad86-d600-4b1b-b188-d64cdc9d451a"
+      },
+      "usageActual": {
+        "N": "1000"
+      },
+      "created": {
+        "N": "1624941290928"
+      },
+      "domains": {
+        "L": []
+      },
+      "usageCurrentPeriod": {
+        "N": "1000"
+      },
+      "name": {
+        "S": "oldImageTenantName"
+      },
+      "clickThroughTracking": {
+        "M": {
+          "enabled": {
+            "BOOL": true
+          }
+        }
+      },
+      "brandsAccepted": {
+        "BOOL": true
+      },
+      "emailOpenTracking": {
+        "M": {
+          "enabled": {
+            "BOOL": true
+          }
+        }
+      },
+      "showCourierFooter": {
+        "BOOL": true
+      },
+      "owner": {
+        "S": "11c42618-4542-4507-bba5-52bc95e68672"
+      },
+      "discoverable": {
+        "S": "NEEDS_ACCESS_REQUEST"
+      }
+    },
+    "SizeBytes": {
+      "N": "1040"
+    }
+  },
+  "eventSource": "aws:dynamodb"
+}

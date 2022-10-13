@@ -1,0 +1,228 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`plain blocks should render actionBlock 1`] = `
+Object {
+  "$.plain.d918bf09-4789-4c57-b930-3c0a5919dcc1.action": Object {
+    "context": "$.plain.d918bf09-4789-4c57-b930-3c0a5919dcc1.action",
+    "options": Object {
+      "href": "https://www.courier.com",
+      "text": "Click Here",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/bm9pdgnhljfjy2q5mtk1ytbjmy0wmzliltc1yzqtotg3nc05mgziode5zc5uawfscc4k",
+    "trackingId": "bm9pdgnhljfjy2q5mtk1ytbjmy0wmzliltc1yzqtotg3nc05mgziode5zc5uawfscc4k",
+  },
+}
+`;
+
+exports[`plain blocks should render actionBlockLink 1`] = `
+Object {
+  "$.plain.872b59d3-b1db-4ea4-8d3a-bdff41d529be.action": Object {
+    "context": "$.plain.872b59d3-b1db-4ea4-8d3a-bdff41d529be.action",
+    "options": Object {
+      "href": "https://www.example.com",
+      "text": "link text",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/bm9pdgnhlmvioti1zde0zmzkyi1hm2q4ltrhztqtymqxyi0zzdk1yji3oc5uawfscc4k",
+    "trackingId": "bm9pdgnhlmvioti1zde0zmzkyi1hm2q4ltrhztqtymqxyi0zzdk1yji3oc5uawfscc4k",
+  },
+}
+`;
+
+exports[`plain blocks should render actionBlockWebhook 1`] = `
+Object {
+  "$.plain.9bb67b21-2c98-48b3-ae16-d649f51b45ac.action": Object {
+    "context": "$.plain.9bb67b21-2c98-48b3-ae16-d649f51b45ac.action",
+    "options": Object {
+      "href": "https://www.courier.com",
+      "text": "Click Here",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/bm9pdgnhlmnhntrimtvmotq2zc02mwvhltniodqtodljmi0xmmi3nmjios5uawfscc4k",
+    "trackingId": "bm9pdgnhlmnhntrimtvmotq2zc02mwvhltniodqtodljmi0xmmi3nmjios5uawfscc4k",
+  },
+}
+`;
+
+exports[`plain blocks should render imageBlock 1`] = `
+Object {
+  "$.plain.a0c2d1d2-a9b6-4997-a6da-22762bd3b7b7.image": Object {
+    "context": "$.plain.a0c2d1d2-a9b6-4997-a6da-22762bd3b7b7.image",
+    "options": Object {
+      "href": "https://example.com/mountains",
+      "text": "mountains",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/zwdhbwkun2i3yjnkyji2nziylwfknmetnzk5nc02yjlhltjkmwqyyzbhlm5pywxwliq=",
+    "trackingId": "zwdhbwkun2i3yjnkyji2nziylwfknmetnzk5nc02yjlhltjkmwqyyzbhlm5pywxwliq=",
+  },
+}
+`;
+
+exports[`plain blocks should render imageBlockWithVars 1`] = `
+Object {
+  "$.plain.a0c2d1d2-a9b6-4997-a6da-22762bd3b7b7.image": Object {
+    "context": "$.plain.a0c2d1d2-a9b6-4997-a6da-22762bd3b7b7.image",
+    "options": Object {
+      "href": "https://example.com/{imageLink}",
+      "text": "Description: {imageDescription}",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/zwdhbwkun2i3yjnkyji2nziylwfknmetnzk5nc02yjlhltjkmwqyyzbhlm5pywxwliq=",
+    "trackingId": "zwdhbwkun2i3yjnkyji2nziylwfknmetnzk5nc02yjlhltjkmwqyyzbhlm5pywxwliq=",
+  },
+}
+`;
+
+exports[`plain blocks should render listBlockImagesWithLinks 1`] = `
+Object {
+  "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.0.child-item.0.rich-text.0": Object {
+    "context": "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.0.child-item.0.rich-text.0",
+    "options": Object {
+      "href": "https://example.com/lightsaber",
+      "text": "lightsaber",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/mc50egv0lwhjaxiumc5tzxrplwrsawhjljaubwv0as45m2u1yzbhyji5zjmtyjliyi0zmzy0ltqxywqtndzjztjhzjuubmlhbhauja==",
+    "trackingId": "mc50egv0lwhjaxiumc5tzxrplwrsawhjljaubwv0as45m2u1yzbhyji5zjmtyjliyi0zmzy0ltqxywqtndzjztjhzjuubmlhbhauja==",
+  },
+  "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.0.rich-text.0": Object {
+    "context": "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.0.rich-text.0",
+    "options": Object {
+      "href": "https://example.com/luke",
+      "text": "Luke Skywalker",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/mc50egv0lwhjaxiumc5tzxrpljkzztvjmgfimjlmmy1iowjiltmznjqtndfhzc00nmnlmmfmns5uawfscc4k",
+    "trackingId": "mc50egv0lwhjaxiumc5tzxrpljkzztvjmgfimjlmmy1iowjiltmznjqtndfhzc00nmnlmmfmns5uawfscc4k",
+  },
+  "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.1.child-item.0.rich-text.0": Object {
+    "context": "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.1.child-item.0.rich-text.0",
+    "options": Object {
+      "href": "https://example.com/blaster",
+      "text": "blaster",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/mc50egv0lwhjaxiumc5tzxrplwrsawhjljeubwv0as45m2u1yzbhyji5zjmtyjliyi0zmzy0ltqxywqtndzjztjhzjuubmlhbhauja==",
+    "trackingId": "mc50egv0lwhjaxiumc5tzxrplwrsawhjljeubwv0as45m2u1yzbhyji5zjmtyjliyi0zmzy0ltqxywqtndzjztjhzjuubmlhbhauja==",
+  },
+  "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.1.child-item.1.rich-text.0": Object {
+    "context": "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.1.child-item.1.rich-text.0",
+    "options": Object {
+      "href": "https://example.com/z-6-jetpack",
+      "text": "Z-6 Jetpack",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/mc50egv0lwhjaxiums5tzxrplwrsawhjljeubwv0as45m2u1yzbhyji5zjmtyjliyi0zmzy0ltqxywqtndzjztjhzjuubmlhbhauja==",
+    "trackingId": "mc50egv0lwhjaxiums5tzxrplwrsawhjljeubwv0as45m2u1yzbhyji5zjmtyjliyi0zmzy0ltqxywqtndzjztjhzjuubmlhbhauja==",
+  },
+  "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.1.child-item.2.rich-text.0": Object {
+    "context": "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.1.child-item.2.rich-text.0",
+    "options": Object {
+      "href": "https://example.com/flame-thrower",
+      "text": "flame thrower",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/mc50egv0lwhjaxiumi5tzxrplwrsawhjljeubwv0as45m2u1yzbhyji5zjmtyjliyi0zmzy0ltqxywqtndzjztjhzjuubmlhbhauja==",
+    "trackingId": "mc50egv0lwhjaxiumi5tzxrplwrsawhjljeubwv0as45m2u1yzbhyji5zjmtyjliyi0zmzy0ltqxywqtndzjztjhzjuubmlhbhauja==",
+  },
+  "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.1.rich-text.0": Object {
+    "context": "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.1.rich-text.0",
+    "options": Object {
+      "href": "https://example.com/boba-fett",
+      "text": "Boba Fett",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/mc50egv0lwhjaxiums5tzxrpljkzztvjmgfimjlmmy1iowjiltmznjqtndfhzc00nmnlmmfmns5uawfscc4k",
+    "trackingId": "mc50egv0lwhjaxiums5tzxrpljkzztvjmgfimjlmmy1iowjiltmznjqtndfhzc00nmnlmmfmns5uawfscc4k",
+  },
+  "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.2.child-item.0.rich-text.0": Object {
+    "context": "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.2.child-item.0.rich-text.0",
+    "options": Object {
+      "href": "https://example.com/blaster-pistol",
+      "text": "blaster pistol",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/mc50egv0lwhjaxiumc5tzxrplwrsawhjljiubwv0as45m2u1yzbhyji5zjmtyjliyi0zmzy0ltqxywqtndzjztjhzjuubmlhbhauja==",
+    "trackingId": "mc50egv0lwhjaxiumc5tzxrplwrsawhjljiubwv0as45m2u1yzbhyji5zjmtyjliyi0zmzy0ltqxywqtndzjztjhzjuubmlhbhauja==",
+  },
+  "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.2.rich-text.0": Object {
+    "context": "$.plain.5fa2ec64-da14-4633-bb9b-3f92ba0c5e39.item.2.rich-text.0",
+    "options": Object {
+      "href": "https://example.com/han",
+      "text": "Han Solo",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/mc50egv0lwhjaxiumi5tzxrpljkzztvjmgfimjlmmy1iowjiltmznjqtndfhzc00nmnlmmfmns5uawfscc4k",
+    "trackingId": "mc50egv0lwhjaxiumi5tzxrpljkzztvjmgfimjlmmy1iowjiltmznjqtndfhzc00nmnlmmfmns5uawfscc4k",
+  },
+}
+`;
+
+exports[`plain blocks should render quoteBlockWithLink 1`] = `
+Object {
+  "$.plain.ec58343f-2c14-4472-b132-94fb451fc7c0.rich-text.0": Object {
+    "context": "$.plain.ec58343f-2c14-4472-b132-94fb451fc7c0.rich-text.0",
+    "options": Object {
+      "href": "https://example.com",
+      "text": "link",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/mc50egv0lwhjaxiumgm3y2yxntrizjq5ltizmwitmjc0nc00mwmylwyzndm4nwnllm5pywxwliq=",
+    "trackingId": "mc50egv0lwhjaxiumgm3y2yxntrizjq5ltizmwitmjc0nc00mwmylwyzndm4nwnllm5pywxwliq=",
+  },
+}
+`;
+
+exports[`plain blocks should render templateBlockWithLinks 1`] = `Object {}`;
+
+exports[`plain blocks should render textBlockWithLink 1`] = `
+Object {
+  "$.plain.a75a20bf-bda9-4c77-9636-90c5079af37b.rich-text.0": Object {
+    "context": "$.plain.a75a20bf-bda9-4c77-9636-90c5079af37b.rich-text.0",
+    "options": Object {
+      "href": "https://example.com",
+      "text": "Luke",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/mc50egv0lwhjaxiuyjczzme5nza1yza5ltyznjktnzdjnc05ywrilwzimdjhntdhlm5pywxwliq=",
+    "trackingId": "mc50egv0lwhjaxiuyjczzme5nza1yza5ltyznjktnzdjnc05ywrilwzimdjhntdhlm5pywxwliq=",
+  },
+}
+`;
+
+exports[`plain blocks should render textBlockWithLinks 1`] = `
+Object {
+  "$.plain.4478b6ae-8e6e-4da3-b4af-b091bb748e74.rich-text.0": Object {
+    "context": "$.plain.4478b6ae-8e6e-4da3-b4af-b091bb748e74.rich-text.0",
+    "options": Object {
+      "href": "https://example.com/1",
+      "text": "Link 1",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/mc50egv0lwhjaxiunddlodq3ymixotbilwzhngitm2fknc1lnmu4lwvhnmi4nzq0lm5pywxwliq=",
+    "trackingId": "mc50egv0lwhjaxiunddlodq3ymixotbilwzhngitm2fknc1lnmu4lwvhnmi4nzq0lm5pywxwliq=",
+  },
+  "$.plain.4478b6ae-8e6e-4da3-b4af-b091bb748e74.rich-text.1": Object {
+    "context": "$.plain.4478b6ae-8e6e-4da3-b4af-b091bb748e74.rich-text.1",
+    "options": Object {
+      "href": "https://example.com/2",
+      "text": "Link 2",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/ms50egv0lwhjaxiunddlodq3ymixotbilwzhngitm2fknc1lnmu4lwvhnmi4nzq0lm5pywxwliq=",
+    "trackingId": "ms50egv0lwhjaxiunddlodq3ymixotbilwzhngitm2fknc1lnmu4lwvhnmi4nzq0lm5pywxwliq=",
+  },
+  "$.plain.4478b6ae-8e6e-4da3-b4af-b091bb748e74.rich-text.2": Object {
+    "context": "$.plain.4478b6ae-8e6e-4da3-b4af-b091bb748e74.rich-text.2",
+    "options": Object {
+      "href": "https://example.com/3",
+      "text": "Link 3",
+    },
+    "renderCount": 1,
+    "trackingHref": "https://abc-tenant-id.ct0.app/r/mi50egv0lwhjaxiunddlodq3ymixotbilwzhngitm2fknc1lnmu4lwvhnmi4nzq0lm5pywxwliq=",
+    "trackingId": "mi50egv0lwhjaxiunddlodq3ymixotbilwzhngitm2fknc1lnmu4lwvhnmi4nzq0lm5pywxwliq=",
+  },
+}
+`;

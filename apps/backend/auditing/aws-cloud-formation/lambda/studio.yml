@@ -1,0 +1,26 @@
+functions:
+  StudioAuditing:
+    handler: auditing/studio/index.handler
+    events:
+      - http:
+          path: /studio-auditing/{any+}
+          method: ANY
+          authorizer: ${self:custom.cognitoUserPoolAuthorizer}
+          cors: true
+          headers:
+            - Content-Type
+            - X-Amz-Date
+            - Authorization
+            - X-Api-Key
+            - X-Amz-Security-Token
+            - X-Amz-User-Agent
+            - X-RateLimit-Limit
+            - X-RateLimit-Remaining
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+      SESSION_MANAGEMENT_TABLE: ${self:custom.sessionManagementTable}
+      STRIPE_SECRET_KEY: ${env:STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${env:STRIPE_WEBHOOK_SECRET}

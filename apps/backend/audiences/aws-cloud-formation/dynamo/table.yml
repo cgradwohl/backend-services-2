@@ -1,0 +1,107 @@
+Resources:
+  AudiencesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: gsi1pk
+          AttributeType: S
+        - AttributeName: gsi2pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      GlobalSecondaryIndexes:
+        - IndexName: gsi1
+          KeySchema:
+            - AttributeName: gsi1pk
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: gsi2
+          KeySchema:
+            - AttributeName: gsi2pk
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      KinesisStreamSpecification:
+        StreamArn: !GetAtt [TableStream, Arn]
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Description of the Table"
+      - Key: VantaContainsUserData
+        Value: false # true if contains user data
+      - Key: tags.courier.com/service
+        Value: audiences
+
+  AudiencesTriggerStreamSequenceTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: sequenceNumber
+          AttributeType: S
+        - AttributeName: lambdaFunction
+          AttributeType: S
+      KeySchema:
+        - AttributeName: sequenceNumber
+          KeyType: HASH
+        - AttributeName: lambdaFunction
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Table to hold successfully processed sequences from SendTrafficStream"
+      - Key: VantaContainsUserData
+        Value: false # true if contains user data
+      - Key: tags.courier.com/service
+        Value: audiences
+
+  MembershipIteratorStreamSequenceTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: sequenceNumber
+          AttributeType: S
+        - AttributeName: lambdaFunction
+          AttributeType: S
+      KeySchema:
+        - AttributeName: sequenceNumber
+          KeyType: HASH
+        - AttributeName: lambdaFunction
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+      - Key: VantaOwner
+        Value: ${self:custom.vanta.owner}
+      - Key: VantaNonProd
+        Value: ${self:custom.vanta.nonProd}
+      - Key: VantaDescription
+        Value: "Table to hold successfully processed sequences from SendTrafficStream"
+      - Key: VantaContainsUserData
+        Value: false # true if contains user data
+      - Key: tags.courier.com/service
+        Value: audiences

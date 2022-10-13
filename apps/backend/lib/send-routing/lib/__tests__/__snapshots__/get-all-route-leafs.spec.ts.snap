@@ -1,0 +1,148 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`get all route leafs should return all live and dead leafs 1`] = `
+Array [
+  Object {
+    "address": Array [
+      0,
+      0,
+    ],
+    "channel": "sms",
+    "provider": "twilio",
+    "providerConfigurationId": "7593c6b6-f241-47f0-85b4-b5386cd60086",
+    "providerFailoverIndex": 1,
+    "taxonomy": "direct_message:sms:twilio",
+    "type": "leaf",
+  },
+  Object {
+    "address": Array [
+      0,
+      1,
+    ],
+    "channel": "sms",
+    "failureReason": "unknown",
+    "failureType": "FILTERED",
+    "provider": "shrug",
+    "type": "dead-leaf",
+  },
+]
+`;
+
+exports[`get all route leafs should return all live leafs including from failover branches 1`] = `
+Array [
+  Object {
+    "address": Array [
+      0,
+      0,
+    ],
+    "channel": "sms",
+    "provider": "twilio",
+    "providerConfigurationId": "7593c6b6-f241-47f0-85b4-b5386cd60086",
+    "providerFailoverIndex": 1,
+    "taxonomy": "direct_message:sms:twilio",
+    "type": "leaf",
+  },
+  Object {
+    "address": Array [
+      0,
+      "failover",
+      0,
+    ],
+    "channel": "sms",
+    "provider": "vonage",
+    "providerConfigurationId": "7593c6b6-f241-47f0-85b4-vonage",
+    "providerFailoverIndex": 2,
+    "taxonomy": "direct_message:sms:vonage",
+    "type": "leaf",
+  },
+  Object {
+    "address": Array [
+      0,
+      "failover",
+      "failover",
+      0,
+    ],
+    "channel": "sms",
+    "provider": "sinch",
+    "providerConfigurationId": "7593c6b6-f241-47f0-85b4-sinch",
+    "providerFailoverIndex": 3,
+    "taxonomy": "direct_message:sms:sinch",
+    "type": "leaf",
+  },
+  Object {
+    "address": Array [
+      0,
+      "failover",
+      "failover",
+      1,
+      0,
+    ],
+    "channel": "sms",
+    "provider": "abc",
+    "providerConfigurationId": "7593c6b6-f241-47f0-85b4-abc",
+    "providerFailoverIndex": 3,
+    "taxonomy": "direct_message:sms:abc",
+    "type": "leaf",
+  },
+  Object {
+    "address": Array [
+      0,
+      "failover",
+      "failover",
+      1,
+      "failover",
+      0,
+    ],
+    "channel": "sms",
+    "provider": "123",
+    "providerConfigurationId": "7593c6b6-f241-47f0-85b4-123",
+    "providerFailoverIndex": 4,
+    "taxonomy": "direct_message:sms:123",
+    "type": "leaf",
+  },
+  Object {
+    "address": Array [
+      "failover",
+      0,
+      0,
+    ],
+    "channel": "email",
+    "provider": "mailjet",
+    "providerConfigurationId": "7593c6b6-f241-47f0-85b4-b5386cd600er6",
+    "providerFailoverIndex": 1,
+    "taxonomy": "email:mailjet",
+    "type": "leaf",
+  },
+  Object {
+    "address": Array [
+      "failover",
+      0,
+      "failover",
+      0,
+    ],
+    "channel": "email",
+    "provider": "sendgrid",
+    "providerConfigurationId": "2321",
+    "providerFailoverIndex": 2,
+    "taxonomy": "email:sendgrid",
+    "type": "leaf",
+  },
+]
+`;
+
+exports[`get all route leafs should return only live non-failover leafs 1`] = `
+Array [
+  Object {
+    "address": Array [
+      0,
+      0,
+    ],
+    "channel": "sms",
+    "provider": "twilio",
+    "providerConfigurationId": "7593c6b6-f241-47f0-85b4-b5386cd60086",
+    "providerFailoverIndex": 1,
+    "taxonomy": "direct_message:sms:twilio",
+    "type": "leaf",
+  },
+]
+`;

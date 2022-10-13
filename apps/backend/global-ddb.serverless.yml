@@ -1,0 +1,44 @@
+configValidationMode: error
+custom:
+  prefix: ${self:custom.stage}
+  stage: dev
+  vanta:
+    disabled:
+      default: true
+      production: false
+    nonProd: ${self:custom.vanta.disabled.${self:custom.stage}, self:custom.vanta.disabled.default}
+    owner: "seth@courier.com"
+
+plugins:
+  - serverless-cloudformation-sub-variables
+  - serverless-plugin-conditional-functions
+  - serverless-stack-termination-protection
+
+provider:
+  deploymentBucket:
+    blockPublicAccess: true
+    tags:
+      tags.courier.com/elasticity: variable
+      VantaOwner: ${self:custom.vanta.owner}
+      VantaNonProd: ${self:custom.vanta.nonProd}
+      VantaDescription: Contains the Cloudfront distribution and the lambda@edge function to route requests to the regional API gateway
+      VantaContainsUserData: false
+  name: aws
+  region: us-east-1
+  runtime: nodejs14.x
+  stage: dev
+  tags:
+    tags.courier.com/monitoring-level: high
+
+resources:
+  - ${file('global-ddb/aws-cloud-formation/dynamo/daily-metrics.yml')}
+  - ${file('global-ddb/aws-cloud-formation/dynamo/event-maps.yml')}
+  - ${file('global-ddb/aws-cloud-formation/dynamo/feature-toggles.yml')}
+  - ${file('global-ddb/aws-cloud-formation/dynamo/objects.yml')}
+  - ${file('global-ddb/aws-cloud-formation/dynamo/origin-lookup.yml')}
+  - ${file('global-ddb/aws-cloud-formation/dynamo/tenant-access-rights.yml')}
+  - ${file('global-ddb/aws-cloud-formation/dynamo/tenant-auth-tokens.yml')}
+  - ${file('global-ddb/aws-cloud-formation/dynamo/tenant-metrics.yml')}
+  - ${file('global-ddb/aws-cloud-formation/dynamo/tenants.yml')}
+
+service: global-ddb

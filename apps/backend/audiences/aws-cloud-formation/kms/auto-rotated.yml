@@ -1,0 +1,20 @@
+Resources:
+  AutoRotatedKmsKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: Auto-rotated KMS key
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              AWS:
+                Fn::Join:
+                  - ":"
+                  - - "arn:aws:iam:"
+                    - Ref: AWS::AccountId
+                    - "root"
+            Action: "kms:*"
+            Resource: "*"
+

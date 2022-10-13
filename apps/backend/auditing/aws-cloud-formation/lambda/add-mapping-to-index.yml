@@ -1,0 +1,11 @@
+functions:
+  BinAddMappingToElasticSearchIndex:
+    environment:
+      ELASTIC_SEARCH_ENDPOINT:
+        Fn::GetAtt:
+          - ElasticSearch
+          - DomainEndpoint
+    handler: auditing/bin/fns/add-mapping-to-index.handle
+    timeout: 300
+    tags:
+      tags.courier.com/service: auditing

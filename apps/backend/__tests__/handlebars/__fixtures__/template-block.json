@@ -1,0 +1,7 @@
+[
+  {
+    "config": "{\"template\":\"<!-- block title -->\\n<style>\\n  .template {\\n    color: blue;\\n  }\\n</style>\\n<div class=\\\"template\\\">Hello World</div>\"}",
+    "id": "89d91144-7e1b-4c4f-9131-771db882d6a4",
+    "type": "template"
+  }
+]

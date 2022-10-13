@@ -1,0 +1,17 @@
+{{#courier-partial}}
+<mj-body css-class="c--email-body" background-color="#f5f5f5" width="{{@templateWidth}}">
+  <mj-wrapper>
+    {{#link-context "email-header"}}
+    <mj-section padding="0px" css-class="c--email-header">
+      <mj-column padding-top="20px" padding-left="20px" padding-bottom="20px">
+        {{#if @logoSrc}}
+        <mj-image width="{{default @logoRenderSize "140px"}}" src="{{@logoSrc}}" {{#if @logoHref}}
+          href="{{get-href @logoHref context="logo"}}" {{/if}} align="{{default @logoAlign "left"}}" />
+        {{/if}}
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column></mj-column>
+    </mj-section>
+    {{/link-context}}
+  {{/courier-partial}}

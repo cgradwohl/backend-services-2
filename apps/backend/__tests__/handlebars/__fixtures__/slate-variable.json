@@ -1,0 +1,41 @@
+{
+  "object": "value",
+  "document": {
+    "object": "document",
+    "data": {},
+    "nodes": [
+      {
+        "object": "block",
+        "type": "line",
+        "data": {},
+        "nodes": [
+          {
+            "object": "text",
+            "text": "This is a ",
+            "marks": []
+          },
+          {
+            "object": "inline",
+            "type": "variable",
+            "data": {
+              "value": "{variable}",
+              "whenVariableIsEmpty": "hide"
+            },
+            "nodes": [
+              {
+                "object": "text",
+                "text": "{variable}",
+                "marks": []
+              }
+            ]
+          },
+          {
+            "object": "text",
+            "text": ".",
+            "marks": []
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,2 @@
+{{#prerender "prerenderedLinkText"}}{{> @partial-block }}{{/prerender}}{{#courier-partial}}{{@prerenderedLinkText}}
+({{get-href @href text=@prerenderedLinkText disableLinkTracking=@disableLinkTracking}}){{/courier-partial}}

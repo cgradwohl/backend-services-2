@@ -1,0 +1,17 @@
+[
+  {
+    "config": "{\"columns\":[{\"blockIds\":[\"123\"]},{\"blockIds\":[\"456\"]}],\"width\":\"30%\",\"size\":2,\"layout\":\"center\"}",
+    "id": "4648d06c-fbe1-41ac-a174-1337158730f0",
+    "type": "column"
+  },
+  {
+    "config": "{\"backgroundColor\": \"transparent\",\"value\": {\"object\": \"value\",\"document\": {\"object\": \"document\",\"data\": {},\"nodes\": [{\"object\": \"block\",\"type\": \"line\",\"data\": {},\"nodes\": [{\"object\": \"text\",\"text\": \"This is a text block\",\"marks\": []}]}]}}}",
+    "id": "123",
+    "type": "text"
+  },
+  {
+    "config": "{\"backgroundColor\": \"transparent\",\"value\": {\"object\": \"value\",\"document\": {\"object\": \"document\",\"data\": {},\"nodes\": [{\"object\": \"block\",\"type\": \"line\",\"data\": {},\"nodes\": [{\"object\": \"text\",\"text\": \"This is a text block\",\"marks\": []}]}]}}}",
+    "id": "456",
+    "type": "text"
+  }
+]

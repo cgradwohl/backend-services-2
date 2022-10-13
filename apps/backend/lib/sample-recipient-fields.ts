@@ -1,0 +1,72 @@
+import { IRecipient, IRecipientFields } from "~/types.api";
+
+const sampleRecipient: Readonly<IRecipientFields> = {
+  address: {
+    country: "",
+    formatted: "",
+    locality: "",
+    postal_code: "",
+    region: "",
+    street_address: "",
+  },
+  birthdate: "",
+  email: "",
+  email_verified: false,
+  family_name: "",
+  firstName: "",
+  gender: "",
+  given_name: "",
+  lastName: "",
+  locale: "",
+  middle_name: "",
+  name: "",
+  nickname: "",
+  phone_number: "",
+  phone_number_verified: false,
+  picture: "",
+  preferred_username: "",
+  profile: "",
+  sub: "",
+  updated_at: 0,
+  website: "",
+  zoneinfo: "",
+};
+
+export const recipientMappingDefaultValues_2022_01_28: Readonly<IRecipient> = {
+  address: {
+    country: "",
+    formatted: "",
+    locality: "",
+    postal_code: "",
+    region: "",
+    street_address: "",
+  },
+  birthdate: "",
+  email: "",
+  email_verified: false,
+  family_name: "",
+  firstName: "", // segment idenfity
+  first_name: "",
+  gender: "",
+  given_name: "",
+  id: "",
+  lastName: "", // segment idenfity
+  last_name: "",
+  locale: "",
+  middle_name: "",
+  name: "",
+  nickname: "",
+  phone_number: "",
+  phone_number_verified: false,
+  picture: "",
+  preferred_username: "",
+  profile: "",
+  sub: "",
+  tenantId: "",
+  type: "user",
+  updated_at: 0,
+  website: "",
+  zoneinfo: "",
+};
+
+export default sampleRecipient;

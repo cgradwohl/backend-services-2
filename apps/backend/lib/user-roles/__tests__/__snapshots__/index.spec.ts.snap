@@ -1,0 +1,733 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`delete should attempt to delete item from dynamo 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "Key": Object {
+          "pk": "mockWorkspaceId",
+          "sk": "role/id",
+        },
+        "TableName": undefined,
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`get custom roles should return a custom role when found 1`] = `
+Object {
+  "description": "description",
+  "key": "custom-role",
+  "label": "label",
+  "policies": Array [],
+}
+`;
+
+exports[`get should attempt to fetch the role from dynamo 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "Key": Object {
+          "pk": "mockWorkspaceId",
+          "sk": "role/custom-role",
+        },
+        "TableName": undefined,
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`get system roles should return role 1`] = `
+Object {
+  "description": "Best for company administrators and business owners.  Has permissions for everything.",
+  "key": "ADMINISTRATOR",
+  "label": "Administrator",
+  "policies": Array [
+    Object {
+      "statements": Array [
+        Object {
+          "actions": Array [
+            "*",
+          ],
+          "effect": "ALLOW",
+          "resources": Array [
+            "*",
+          ],
+        },
+      ],
+      "version": "2020-11-09",
+    },
+  ],
+}
+`;
+
+exports[`get system roles should return role 2`] = `
+Object {
+  "description": "Best for users who need full read-only access to the platform (except logs).",
+  "key": "ANALYST",
+  "label": "Analyst",
+  "policies": Array [
+    Object {
+      "statements": Array [
+        Object {
+          "actions": Array [
+            "analytics:*",
+            "brand:ListItems",
+            "brand:ReadItem",
+            "category:ListItems",
+            "category:ReadItem",
+            "integration:ListItems",
+            "integration:ReadItem",
+            "list:ListItems",
+            "list:ReadItem",
+            "metrics:GetMetrics",
+            "template:ListItems",
+            "template:ReadItem",
+            "user:ListItems",
+            "user:ReadItem",
+          ],
+          "effect": "ALLOW",
+          "resources": Array [
+            "*",
+          ],
+        },
+      ],
+      "version": "2020-11-09",
+    },
+  ],
+}
+`;
+
+exports[`get system roles should return role 3`] = `
+Object {
+  "description": "Has the ability to update templates and brands but can't update integrations or settings.",
+  "key": "DESIGNER",
+  "label": "Designer",
+  "policies": Array [
+    Object {
+      "statements": Array [
+        Object {
+          "actions": Array [
+            "analytics:*",
+            "brand:ListItems",
+            "brand:ReadItem",
+            "category:ListItems",
+            "category:ReadItem",
+            "integration:ListItems",
+            "integration:ReadItem",
+            "list:ListItems",
+            "list:ReadItem",
+            "metrics:GetMetrics",
+            "template:ListItems",
+            "template:ReadItem",
+            "user:ListItems",
+            "user:ReadItem",
+          ],
+          "effect": "ALLOW",
+          "resources": Array [
+            "*",
+          ],
+        },
+      ],
+      "version": "2020-11-09",
+    },
+    Object {
+      "statements": Array [
+        Object {
+          "actions": Array [
+            "automationTemplate:*",
+            "brand:*",
+            "category:*",
+            "preferenceTemplate:*",
+            "template:*",
+          ],
+          "effect": "ALLOW",
+          "resources": Array [
+            "*",
+          ],
+        },
+      ],
+      "version": "2020-11-09",
+    },
+  ],
+}
+`;
+
+exports[`get system roles should return role 4`] = `
+Object {
+  "description": "Best for engineers and developers who will primarily work with Courier's API and template designer.",
+  "key": "DEVELOPER",
+  "label": "Developer",
+  "policies": Array [
+    Object {
+      "statements": Array [
+        Object {
+          "actions": Array [
+            "analytics:*",
+            "brand:ListItems",
+            "brand:ReadItem",
+            "category:ListItems",
+            "category:ReadItem",
+            "integration:ListItems",
+            "integration:ReadItem",
+            "list:ListItems",
+            "list:ReadItem",
+            "metrics:GetMetrics",
+            "template:ListItems",
+            "template:ReadItem",
+            "user:ListItems",
+            "user:ReadItem",
+          ],
+          "effect": "ALLOW",
+          "resources": Array [
+            "*",
+          ],
+        },
+      ],
+      "version": "2020-11-09",
+    },
+    Object {
+      "statements": Array [
+        Object {
+          "actions": Array [
+            "apikey:ReadItem",
+            "apikey:ListItems",
+            "automationLogs:*",
+            "automationTemplate:*",
+            "brand:*",
+            "category:*",
+            "integration:*",
+            "list:*",
+            "message:*",
+            "preferenceTemplate:*",
+            "recipient:*",
+            "template:*",
+            "webhook:*",
+          ],
+          "effect": "ALLOW",
+          "resources": Array [
+            "test/*",
+          ],
+        },
+        Object {
+          "actions": Array [
+            "message:ListItems",
+            "message:ReadItem",
+            "automationLogs:ListItems",
+            "automationLogs:ReadItem",
+            "automationTemplate:ListItems",
+            "automationTemplate:ReadItem",
+          ],
+          "effect": "ALLOW",
+          "resources": Array [
+            "*",
+          ],
+        },
+      ],
+      "version": "2020-11-09",
+    },
+  ],
+}
+`;
+
+exports[`get system roles should return role 5`] = `
+Object {
+  "description": "Best for a manager of a team that doesn't need the ability to update users or billing.",
+  "key": "MANAGER",
+  "label": "Manager",
+  "policies": Array [
+    Object {
+      "statements": Array [
+        Object {
+          "actions": Array [
+            "analytics:*",
+            "brand:ListItems",
+            "brand:ReadItem",
+            "category:ListItems",
+            "category:ReadItem",
+            "integration:ListItems",
+            "integration:ReadItem",
+            "list:ListItems",
+            "list:ReadItem",
+            "metrics:GetMetrics",
+            "template:ListItems",
+            "template:ReadItem",
+            "user:ListItems",
+            "user:ReadItem",
+          ],
+          "effect": "ALLOW",
+          "resources": Array [
+            "*",
+          ],
+        },
+      ],
+      "version": "2020-11-09",
+    },
+    Object {
+      "statements": Array [
+        Object {
+          "actions": Array [
+            "analytics:*",
+            "apikey:ReadItem",
+            "apikey:ListItems",
+            "automationLogs:*",
+            "automationTemplate:*",
+            "brand:*",
+            "category:*",
+            "integration:*",
+            "list:*",
+            "message:*",
+            "preferenceTemplate:*",
+            "recipient:*",
+            "template:*",
+            "webhook:*",
+          ],
+          "effect": "ALLOW",
+          "resources": Array [
+            "*",
+          ],
+        },
+      ],
+      "version": "2020-11-09",
+    },
+  ],
+}
+`;
+
+exports[`get system roles should return role 6`] = `
+Object {
+  "description": "Best for customer support specialists regularly use the platform but don't need to update templates or brands.",
+  "key": "SUPPORT_SPECIALIST",
+  "label": "Support",
+  "policies": Array [
+    Object {
+      "statements": Array [
+        Object {
+          "actions": Array [
+            "analytics:*",
+            "brand:ListItems",
+            "brand:ReadItem",
+            "category:ListItems",
+            "category:ReadItem",
+            "integration:ListItems",
+            "integration:ReadItem",
+            "list:ListItems",
+            "list:ReadItem",
+            "metrics:GetMetrics",
+            "template:ListItems",
+            "template:ReadItem",
+            "user:ListItems",
+            "user:ReadItem",
+          ],
+          "effect": "ALLOW",
+          "resources": Array [
+            "*",
+          ],
+        },
+      ],
+      "version": "2020-11-09",
+    },
+    Object {
+      "statements": Array [
+        Object {
+          "actions": Array [
+            "automationLogs:*",
+            "list:*",
+            "message:*",
+            "preferenceTemplate:ListItems",
+            "preferenceTemplate:ReadItem",
+            "recipient:*",
+          ],
+          "effect": "ALLOW",
+          "resources": Array [
+            "*",
+          ],
+        },
+      ],
+      "version": "2020-11-09",
+    },
+  ],
+}
+`;
+
+exports[`list should query dynamo for list of items 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ExpressionAttributeNames": Object {
+          "#pk": "pk",
+          "#sk": "sk",
+        },
+        "ExpressionAttributeValues": Object {
+          ":pk": "mockWorkspaceId",
+          ":sk": "role/",
+        },
+        "KeyConditionExpression": "#pk = :pk AND begins_with(#sk, :sk)",
+        "TableName": undefined,
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
+
+exports[`list should return list of items 1`] = `
+Array [
+  Object {
+    "description": "Best for company administrators and business owners.  Has permissions for everything.",
+    "key": "ADMINISTRATOR",
+    "label": "Administrator",
+    "policies": Array [
+      Object {
+        "statements": Array [
+          Object {
+            "actions": Array [
+              "*",
+            ],
+            "effect": "ALLOW",
+            "resources": Array [
+              "*",
+            ],
+          },
+        ],
+        "version": "2020-11-09",
+      },
+    ],
+  },
+  Object {
+    "description": "Best for users who need full read-only access to the platform (except logs).",
+    "key": "ANALYST",
+    "label": "Analyst",
+    "policies": Array [
+      Object {
+        "statements": Array [
+          Object {
+            "actions": Array [
+              "analytics:*",
+              "brand:ListItems",
+              "brand:ReadItem",
+              "category:ListItems",
+              "category:ReadItem",
+              "integration:ListItems",
+              "integration:ReadItem",
+              "list:ListItems",
+              "list:ReadItem",
+              "metrics:GetMetrics",
+              "template:ListItems",
+              "template:ReadItem",
+              "user:ListItems",
+              "user:ReadItem",
+            ],
+            "effect": "ALLOW",
+            "resources": Array [
+              "*",
+            ],
+          },
+        ],
+        "version": "2020-11-09",
+      },
+    ],
+  },
+  Object {
+    "description": "Has the ability to update templates and brands but can't update integrations or settings.",
+    "key": "DESIGNER",
+    "label": "Designer",
+    "policies": Array [
+      Object {
+        "statements": Array [
+          Object {
+            "actions": Array [
+              "analytics:*",
+              "brand:ListItems",
+              "brand:ReadItem",
+              "category:ListItems",
+              "category:ReadItem",
+              "integration:ListItems",
+              "integration:ReadItem",
+              "list:ListItems",
+              "list:ReadItem",
+              "metrics:GetMetrics",
+              "template:ListItems",
+              "template:ReadItem",
+              "user:ListItems",
+              "user:ReadItem",
+            ],
+            "effect": "ALLOW",
+            "resources": Array [
+              "*",
+            ],
+          },
+        ],
+        "version": "2020-11-09",
+      },
+      Object {
+        "statements": Array [
+          Object {
+            "actions": Array [
+              "automationTemplate:*",
+              "brand:*",
+              "category:*",
+              "preferenceTemplate:*",
+              "template:*",
+            ],
+            "effect": "ALLOW",
+            "resources": Array [
+              "*",
+            ],
+          },
+        ],
+        "version": "2020-11-09",
+      },
+    ],
+  },
+  Object {
+    "description": "Best for engineers and developers who will primarily work with Courier's API and template designer.",
+    "key": "DEVELOPER",
+    "label": "Developer",
+    "policies": Array [
+      Object {
+        "statements": Array [
+          Object {
+            "actions": Array [
+              "analytics:*",
+              "brand:ListItems",
+              "brand:ReadItem",
+              "category:ListItems",
+              "category:ReadItem",
+              "integration:ListItems",
+              "integration:ReadItem",
+              "list:ListItems",
+              "list:ReadItem",
+              "metrics:GetMetrics",
+              "template:ListItems",
+              "template:ReadItem",
+              "user:ListItems",
+              "user:ReadItem",
+            ],
+            "effect": "ALLOW",
+            "resources": Array [
+              "*",
+            ],
+          },
+        ],
+        "version": "2020-11-09",
+      },
+      Object {
+        "statements": Array [
+          Object {
+            "actions": Array [
+              "apikey:ReadItem",
+              "apikey:ListItems",
+              "automationLogs:*",
+              "automationTemplate:*",
+              "brand:*",
+              "category:*",
+              "integration:*",
+              "list:*",
+              "message:*",
+              "preferenceTemplate:*",
+              "recipient:*",
+              "template:*",
+              "webhook:*",
+            ],
+            "effect": "ALLOW",
+            "resources": Array [
+              "test/*",
+            ],
+          },
+          Object {
+            "actions": Array [
+              "message:ListItems",
+              "message:ReadItem",
+              "automationLogs:ListItems",
+              "automationLogs:ReadItem",
+              "automationTemplate:ListItems",
+              "automationTemplate:ReadItem",
+            ],
+            "effect": "ALLOW",
+            "resources": Array [
+              "*",
+            ],
+          },
+        ],
+        "version": "2020-11-09",
+      },
+    ],
+  },
+  Object {
+    "description": "Best for a manager of a team that doesn't need the ability to update users or billing.",
+    "key": "MANAGER",
+    "label": "Manager",
+    "policies": Array [
+      Object {
+        "statements": Array [
+          Object {
+            "actions": Array [
+              "analytics:*",
+              "brand:ListItems",
+              "brand:ReadItem",
+              "category:ListItems",
+              "category:ReadItem",
+              "integration:ListItems",
+              "integration:ReadItem",
+              "list:ListItems",
+              "list:ReadItem",
+              "metrics:GetMetrics",
+              "template:ListItems",
+              "template:ReadItem",
+              "user:ListItems",
+              "user:ReadItem",
+            ],
+            "effect": "ALLOW",
+            "resources": Array [
+              "*",
+            ],
+          },
+        ],
+        "version": "2020-11-09",
+      },
+      Object {
+        "statements": Array [
+          Object {
+            "actions": Array [
+              "analytics:*",
+              "apikey:ReadItem",
+              "apikey:ListItems",
+              "automationLogs:*",
+              "automationTemplate:*",
+              "brand:*",
+              "category:*",
+              "integration:*",
+              "list:*",
+              "message:*",
+              "preferenceTemplate:*",
+              "recipient:*",
+              "template:*",
+              "webhook:*",
+            ],
+            "effect": "ALLOW",
+            "resources": Array [
+              "*",
+            ],
+          },
+        ],
+        "version": "2020-11-09",
+      },
+    ],
+  },
+  Object {
+    "description": "Best for customer support specialists regularly use the platform but don't need to update templates or brands.",
+    "key": "SUPPORT_SPECIALIST",
+    "label": "Support",
+    "policies": Array [
+      Object {
+        "statements": Array [
+          Object {
+            "actions": Array [
+              "analytics:*",
+              "brand:ListItems",
+              "brand:ReadItem",
+              "category:ListItems",
+              "category:ReadItem",
+              "integration:ListItems",
+              "integration:ReadItem",
+              "list:ListItems",
+              "list:ReadItem",
+              "metrics:GetMetrics",
+              "template:ListItems",
+              "template:ReadItem",
+              "user:ListItems",
+              "user:ReadItem",
+            ],
+            "effect": "ALLOW",
+            "resources": Array [
+              "*",
+            ],
+          },
+        ],
+        "version": "2020-11-09",
+      },
+      Object {
+        "statements": Array [
+          Object {
+            "actions": Array [
+              "automationLogs:*",
+              "list:*",
+              "message:*",
+              "preferenceTemplate:ListItems",
+              "preferenceTemplate:ReadItem",
+              "recipient:*",
+            ],
+            "effect": "ALLOW",
+            "resources": Array [
+              "*",
+            ],
+          },
+        ],
+        "version": "2020-11-09",
+      },
+    ],
+  },
+  Object {
+    "description": "description",
+    "key": "role",
+    "label": "label",
+    "policies": Array [],
+  },
+]
+`;
+
+exports[`replace should attempt to replace item in dynamo 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ExpressionAttributeNames": Object {
+          "#description": "description",
+          "#label": "label",
+          "#policies": "policies",
+        },
+        "ExpressionAttributeValues": Object {
+          ":description": "description",
+          ":label": "label",
+          ":policies": Array [],
+        },
+        "Key": Object {
+          "pk": "mockWorkspaceId",
+          "sk": "role/role",
+        },
+        "TableName": undefined,
+        "UpdateExpression": "SET #description = :description, #label = :label, #policies = :policies",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;

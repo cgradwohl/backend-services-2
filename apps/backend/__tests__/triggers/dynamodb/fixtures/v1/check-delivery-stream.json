@@ -1,0 +1,40 @@
+{
+  "eventID": "d256ee01a9f8d62e52fb6c10b95babb9",
+  "eventName": "REMOVE",
+  "eventVersion": "1.1",
+  "eventSource": "aws:dynamodb",
+  "awsRegion": "us-east-1",
+  "dynamodb": {
+    "ApproximateCreationDateTime": 1627587301,
+    "Keys": {
+      "tenantId": {
+        "S": "b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302"
+      },
+      "id": {
+        "S": "check-delivery-status/1-6102ffcc-3ace4c3254dc19466d0f2724"
+      }
+    },
+    "OldImage": {
+      "tenantId": {
+        "S": "b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302"
+      },
+      "json": {
+        "S": "{\"channel\":{\"id\":\"99609c1f-2336-48ad-b154-616f9059cc7c\",\"label\":\"\",\"taxonomy\":\"email:*\"},\"configuration\":\"6e6adc5b-aaaa-4a68-9959-c8583a2d17ac\",\"messageId\":\"1-6102ffcc-3ace4c3254dc19466d0f2724\",\"messageLocation\":{\"path\":\"b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302/delivery_status_1-6102ffcc-3ace4c3254dc19466d0f2724.json\",\"type\":\"S3\"},\"provider\":\"postmark\",\"tenantId\":\"b9b0b8da-15a4-4d84-a6f9-cc0ec4f37302\",\"type\":\"check-delivery-status\",\"retryCount\":6,\"ttl\":1627586589}"
+      },
+      "id": {
+        "S": "check-delivery-status/1-6102ffcc-3ace4c3254dc19466d0f2724"
+      },
+      "ttl": {
+        "N": "1627586589"
+      }
+    },
+    "SequenceNumber": "911879500000000033354627465",
+    "SizeBytes": 683,
+    "StreamViewType": "NEW_AND_OLD_IMAGES"
+  },
+  "userIdentity": {
+    "principalId": "dynamodb.amazonaws.com",
+    "type": "Service"
+  },
+  "eventSourceARN": "arn:aws:dynamodb:us-east-1:947692775381:table/backend-dev-DeliveryStatusTable-HS8SZH6WJHRS/stream/2021-01-19T05:18:14.314"
+}

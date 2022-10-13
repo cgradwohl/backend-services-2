@@ -1,0 +1,11 @@
+{{#courier-partial}}
+{{#prerender "prerenderedText"}}{{#link-context "rich-text"}}{{> @partial-block}}{{/link-context}}{{/prerender}}<mj-section css-class="c--block c--block-quote">
+  <mj-column padding="4px 20px"
+    border-left="2px solid {{#if (condition @align "!=" "center")}}{{@borderColor}}{{else}}transparent{{/if}}">
+    <mj-text {{courier-email-text-style "quote"}} align="{{default @align "left"}}" css-class="{{trim (concat "c--text-quote" " " (text-direction @prerenderedText))}}">
+{{#partial-block-indent-fix}}
+        {{else}}{{{@prerenderedText}}}{{/partial-block-indent-fix}}
+    </mj-text>
+  </mj-column>
+</mj-section>
+{{/courier-partial}}
