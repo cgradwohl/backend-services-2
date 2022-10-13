@@ -1,0 +1,33 @@
+{
+  "name": "backend",
+  "scripts": {
+    "elasticsearch:repopulate-messages": "serverless invoke -s dev -r us-east-1 -f StreamExistingMessagesToElasticSearch --log --aws-profile default",
+    "format": "prettier --write \"{tsconfig.json,webpack.config.js,serverless.yml,{api,aws-cloud-formation,lib,providers,studio,triggers,workers,bin/invokable}/**/*.{js,ts,json,yml,yaml}}\"",
+    "generate-keys": "ts-node bin/generate-keys.ts",
+    "generate-validators": "ts-node -r tsconfig-paths/register scripts/ajv/generate-ajv-validators.ts",
+    "lint": "tslint -p tsconfig.json",
+    "prettier": "prettier \"**/*.ts\" --write",
+    "sentry:release": "bin/sentry-release.sh",
+    "serverless:bootstrap": "serverless invoke stepf -s dev -r us-east-1 -n BootstrapNewEnvironment --aws-profile default",
+    "serverless:deploy-force": "serverless deploy -v --force",
+    "serverless:package": "serverless package",
+    "serverless:logs": "serverless logs",
+    "serverless:deploy": "NODE_OPTIONS=--max_old_space_size=4096 serverless deploy --aws-s3-accelerate",
+    "serverless:deploy:audiences": "serverless deploy -c ./audiences.serverless.yml --aws-s3-accelerate",
+    "serverless:deploy:auditing": "serverless deploy -c ./auditing.serverless.yml --aws-s3-accelerate",
+    "serverless:deploy:bulk": "serverless deploy -c ./bulk.serverless.yml --aws-s3-accelerate",
+    "serverless:deploy:drain": "serverless deploy -c ./drain.serverless.yml --aws-s3-accelerate",
+    "serverless:deploy:global-request-router": "serverless deploy -c ./global-request-router.serverless.yml  --aws-s3-accelerate",
+    "serverless:deploy:global-ddb": "serverless deploy -c ./global-ddb.serverless.yml  --aws-s3-accelerate",
+    "serverless:destroy-stack": "serverless remove",
+    "serverless:info-verbose": "serverless info --verbose",
+    "serverless:invoke-local": "serverless invoke local",
+    "serverless:offline": "serverless offline --port 5000",
+    "serverless:validate": "serverless deploy --noDeploy",
+    "test": "node --max_old_space_size=4096 ./node_modules/.bin/jest",
+    "test:dev": "VERBOSE=true yarn test --runInBand --no-coverage",
+    "test:smoke": "SMOKE_TEST=true yarn test --runInBand --no-coverage",
+    "typecheck": "tsc --noEmit",
+    "yaml-get": "yaml get $1 $2"
+  }
+}
