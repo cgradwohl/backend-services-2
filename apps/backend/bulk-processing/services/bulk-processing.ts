@@ -384,178 +384,166 @@ export default (workspaceId: string): IBulkProcessingService => {
 
           const messageId = createTraceId();
 
-          const translateMessage = (request: any) => {
-            if (request.message) {
-              return request;
+          // logic borrowed from api/send/index
+          if (bulkMessage.message) {
+            const { message: v2Message } = bulkMessage;
+            const { to: v2Recipient } = userObject;
+
+            // build a merged request
+            const request: RequestV2 = {
+              message: {
+                ...v2Message,
+                to: {
+                  ...v2Recipient,
+                  data: {
+                    ...v2Message.data,
+                    ...v2Recipient.data,
+                  },
+                },
+              } as Message,
+            };
+
+            // land onto newer send pipeline infra
+            const { filePath } = await requestService(workspaceId).create({
+              apiVersion: "2021-11-01",
+              ...(dryRunKey && { dryRunKey }),
+              idempotencyKey: undefined,
+              jobId,
+              request,
+              requestId: messageId,
+              scope,
+              source: undefined,
+            });
+
+            // TODO: test BULK PROCESSING
+            await actionService(workspaceId).emit<IRequestAction>({
+              command: "request",
+              apiVersion: "2021-11-01",
+              dryRunKey,
+              requestFilePath: filePath,
+              requestId: messageId,
+              scope,
+              source: undefined,
+              tenantId: workspaceId,
+            });
+          } else {
+            const {
+              event,
+              brand,
+              data: messageData,
+              locale: messageLocale,
+              override,
+              routing,
+            } = bulkMessage;
+
+            const {
+              data: userData,
+              profile: userProfile,
+              preferences,
+              recipient,
+            } = userObject;
+
+            const {
+              locale: profileLocale,
+              email,
+              phone_number,
+              ...rest
+            } = userProfile ?? {};
+            const locale = profileLocale ?? messageLocale;
+
+            const profile: IProfile = {
+              ...(locale && { locale }),
+              ...(email && { email }),
+              ...(phone_number && {
+                phone_number,
+              }),
+              ...rest,
+            };
+
+            // build a merged request
+            const request: ApiSendRequest = {
+              ...(brand && { brand }),
+              ...(routing && { routing }),
+              ...((messageData || userData) && {
+                data: { ...messageData, ...userData },
+              }),
+              event,
+              ...(locale && { locale }),
+              ...(override && { override }),
+              ...(preferences && { preferences }),
+              recipient,
+              ...(Object.keys(profile).length !== 0 && { profile }),
+            };
+
+            const [state] = scope.split("/");
+            assertStateIsValid(state);
+
+            let brandObject: IBrand;
+            if (brand) {
+              brandObject = await getScopedBrand(
+                workspaceId,
+                brand,
+                state,
+                true
+              );
             }
 
-            return translate(request);
-          };
+            // land onto older send pipeline infra
+            const messageObject: S3PrepareMessage = {
+              ...(brand && { brand: brandObject }),
+              // Accept the input, in the form of declarative routing tree from the api user
+              ...(routing && { routing }),
+              dryRunKey,
+              ...((messageData || userData) && {
+                eventData: { ...messageData, ...userData },
+              }),
+              eventId: event,
+              ...(preferences && { eventPreferences: preferences }),
+              ...(Object.keys(profile).length !== 0 && {
+                eventProfile: profile,
+              }),
+              ...(override && { override }),
+              recipientId: recipient,
+              scope,
+            };
 
-          const message = translateMessage(bulkMessage);
+            await createMessageItem(
+              workspaceId,
+              messageObject.eventId,
+              messageObject.recipientId,
+              messageId,
+              undefined, // pattern
+              undefined, // listId
+              undefined, // listMessageId
+              {
+                jobId,
+              }
+            );
 
-          const { message: v2Message } = bulkMessage;
-          const { to: v2Recipient } = userObject;
+            await putMessageObject(
+              getPrepareFilePath(workspaceId, messageId),
+              messageObject
+            );
 
-          // build a merged request
-          const request: RequestV2 = {
-            message: {
-              ...v2Message,
-              to: {
-                ...v2Recipient,
-                data: {
-                  ...v2Message.data,
-                  ...v2Recipient.data,
-                },
+            await createLogEntry(
+              workspaceId,
+              messageId,
+              EntryTypes.eventReceived,
+              {
+                body: request,
+              }
+            );
+
+            await enqueuePrepare({
+              messageId,
+              messageLocation: {
+                path: getPrepareFilePath(workspaceId, messageId),
+                type: "S3",
               },
-            } as Message,
-          };
-
-          // land onto newer send pipeline infra
-          const { filePath } = await requestService(workspaceId).create({
-            apiVersion: "2021-11-01",
-            ...(dryRunKey && { dryRunKey }),
-            idempotencyKey: undefined,
-            jobId,
-            request,
-            requestId: messageId,
-            scope,
-            source: undefined,
-          });
-
-          // TODO: test BULK PROCESSING
-          await actionService(workspaceId).emit<IRequestAction>({
-            command: "request",
-            apiVersion: "2021-11-01",
-            dryRunKey,
-            requestFilePath: filePath,
-            requestId: messageId,
-            scope,
-            source: undefined,
-            tenantId: workspaceId,
-          });
-
-          // logic borrowed from api/send/index
-          // if (bulkMessage.message) {
-
-          // } else {
-          //   const {
-          //     event,
-          //     brand,
-          //     data: messageData,
-          //     locale: messageLocale,
-          //     override,
-          //     routing,
-          //   } = bulkMessage;
-
-          //   const {
-          //     data: userData,
-          //     profile: userProfile,
-          //     preferences,
-          //     recipient,
-          //   } = userObject;
-
-          //   const {
-          //     locale: profileLocale,
-          //     email,
-          //     phone_number,
-          //     ...rest
-          //   } = userProfile ?? {};
-          //   const locale = profileLocale ?? messageLocale;
-
-          //   const profile: IProfile = {
-          //     ...(locale && { locale }),
-          //     ...(email && { email }),
-          //     ...(phone_number && {
-          //       phone_number,
-          //     }),
-          //     ...rest,
-          //   };
-
-          //   // build a merged request
-          //   const request: ApiSendRequest = {
-          //     ...(brand && { brand }),
-          //     ...(routing && { routing }),
-          //     ...((messageData || userData) && {
-          //       data: { ...messageData, ...userData },
-          //     }),
-          //     event,
-          //     ...(locale && { locale }),
-          //     ...(override && { override }),
-          //     ...(preferences && { preferences }),
-          //     recipient,
-          //     ...(Object.keys(profile).length !== 0 && { profile }),
-          //   };
-
-          //   const [state] = scope.split("/");
-          //   assertStateIsValid(state);
-
-          //   let brandObject: IBrand;
-          //   if (brand) {
-          //     brandObject = await getScopedBrand(
-          //       workspaceId,
-          //       brand,
-          //       state,
-          //       true
-          //     );
-          //   }
-
-          //   // land onto older send pipeline infra
-          //   const messageObject: S3PrepareMessage = {
-          //     ...(brand && { brand: brandObject }),
-          //     // Accept the input, in the form of declarative routing tree from the api user
-          //     ...(routing && { routing }),
-          //     dryRunKey,
-          //     ...((messageData || userData) && {
-          //       eventData: { ...messageData, ...userData },
-          //     }),
-          //     eventId: event,
-          //     ...(preferences && { eventPreferences: preferences }),
-          //     ...(Object.keys(profile).length !== 0 && {
-          //       eventProfile: profile,
-          //     }),
-          //     ...(override && { override }),
-          //     recipientId: recipient,
-          //     scope,
-          //   };
-
-          //   await createMessageItem(
-          //     workspaceId,
-          //     messageObject.eventId,
-          //     messageObject.recipientId,
-          //     messageId,
-          //     undefined, // pattern
-          //     undefined, // listId
-          //     undefined, // listMessageId
-          //     {
-          //       jobId,
-          //     }
-          //   );
-
-          //   await putMessageObject(
-          //     getPrepareFilePath(workspaceId, messageId),
-          //     messageObject
-          //   );
-
-          //   await createLogEntry(
-          //     workspaceId,
-          //     messageId,
-          //     EntryTypes.eventReceived,
-          //     {
-          //       body: request,
-          //     }
-          //   );
-
-          //   await enqueuePrepare({
-          //     messageId,
-          //     messageLocation: {
-          //       path: getPrepareFilePath(workspaceId, messageId),
-          //       type: "S3",
-          //     },
-          //     tenantId: workspaceId,
-          //     type: "prepare",
-          //   });
-          // }
+              tenantId: workspaceId,
+              type: "prepare",
+            });
+          }
 
           // mark as enqueued with messageId
           const status: BulkMessageUserStatus = "ENQUEUED";
