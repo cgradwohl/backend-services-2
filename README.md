@@ -4,6 +4,7 @@
 2. `yarn install`
 3. `yarn nx typecheck backend`
 4. `yarn nx serverless:package backend`
+5. `yarn nx test:dev backend`
 
 ## POC Tasks
 
