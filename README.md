@@ -43,6 +43,8 @@ NX is an monorepo framework and build system, that provides a solutions to these
 1. Microservice Convention
    NX provides an opinionated folder structure, which it uses to provide powerful functionality. Each folder in the `apps` directory is a service, and implements its own unique `build`, `test`, `deploy` process. This
 
+   serverles framework couples the build and deploy steps
+
 2. Adding Services
 
 - we can use any CF framework to build our stacks and CF Resources (SAM, CDK, Serverless Framework)
