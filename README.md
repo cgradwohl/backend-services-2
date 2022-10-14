@@ -15,7 +15,7 @@
 4. 🟢build Cloudformation template with `serverless package`
 5. 🟢tests pass locally
 6. 🟢deploy locally
-7. 🔴update exiting GHA
+7. 🟡update exiting GHA
 8. 🔴deploy production
 9. 🔴discover unknowns
 10. 🔴create a “smart” GHA with nx affected
