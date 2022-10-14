@@ -13,7 +13,7 @@
 3. 🟢resolve files and ts linter passes
 4. 🟢build Cloudformation template with `serverless package`
 5. 🟢tests pass locally
-6. 🔴deploy locally
+6. 🟢deploy locally
 7. 🔴update exiting GHA
 8. 🔴deploy production
 9. 🔴discover unknowns

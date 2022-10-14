@@ -35,6 +35,7 @@
 - 🟢 running `yarn nx typecheck backend` works (see #Breaking Folder Convention and Migration Suggestion below for details)
 - 🟢 running `yarn nx serverless:package backend` works (see #Breaking Folder Convention and Migration Suggestion below for details)
 - 🟢 running `yarn nx test:dev backend` works and tests pass locally (see #Breaking Folder Convention and Migration Suggestion below for details)
+- 🟢 running `yarn nx serverless:deploy backend` works and deploys the stack based on dev-config.yml (see #Breaking Folder Convention and Migration Suggestion below for details)
 
 ### Breaking Folder Convention and Migration Suggestion
 
