@@ -34,6 +34,7 @@
 - remove `backend-services-2/apps/backend/.git`
 - 🟢 running `yarn nx typecheck backend` works (see #Breaking Folder Convention and Migration Suggestion below for details)
 - 🟢 running `yarn nx serverless:package backend` works (see #Breaking Folder Convention and Migration Suggestion below for details)
+- 🟢 running `yarn nx test:dev backend` works and tests pass locally (see #Breaking Folder Convention and Migration Suggestion below for details)
 
 ### Breaking Folder Convention and Migration Suggestion
 
@@ -41,3 +42,5 @@
 
 - for now i will shove everything into the src folder so that all the relative paths are the same. (get it to work mode)
 - decided to completely abandon nx file structure
+
+- this seems to get backend working, but I do not know the consequences this will have later down the road, when we attempt to do more sophisticated tasks with NX. I am hoping that this is isolated to this service.
