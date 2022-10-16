@@ -13,6 +13,7 @@ export const acceptableFeatureNames = [
   "METER", // This is temporary
   "block_translate_and_delivery",
   "DELIVERY_METER",
+  "INBOUND_SEGMENT",
 ] as const;
 
 export const handle = async (event: IEvent) => {

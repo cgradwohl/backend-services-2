@@ -18,7 +18,6 @@ import { Unit } from "aws-embedded-metrics";
 type SequenceProcessor = (params: {
   event: IRequestAction;
   idempotencyKey: string | undefined;
-  originFilePath: string;
   request: SequenceRequest;
   translated: boolean;
 }) => Promise<void>;
@@ -26,7 +25,6 @@ type SequenceProcessor = (params: {
 const sequenceProcessing: SequenceProcessor = async ({
   event,
   idempotencyKey,
-  originFilePath,
   request,
   translated = false,
 }) => {
@@ -48,7 +46,6 @@ const sequenceProcessing: SequenceProcessor = async ({
     dryRunKey,
     idempotencyKey,
     jobId: undefined,
-    originFilePath,
     requestId,
     request,
     scope,
@@ -97,7 +94,6 @@ export const request = async (action: IRequestAction) => {
     scope,
     source,
     tenantId,
-    shouldUseRouteTree,
     translated,
   } = action;
 
@@ -108,7 +104,6 @@ export const request = async (action: IRequestAction) => {
   if (request?.sequence) {
     return await sequenceProcessing({
       event: action,
-      originFilePath: requestFilePath,
       request: request as SequenceRequest,
       idempotencyKey,
       translated,
@@ -120,7 +115,6 @@ export const request = async (action: IRequestAction) => {
     dryRunKey,
     idempotencyKey,
     jobId: undefined,
-    originFilePath: requestFilePath,
     requestId,
     request,
     scope,
@@ -146,6 +140,5 @@ export const request = async (action: IRequestAction) => {
     shouldVerifyRequestTranslation:
       action?.shouldVerifyRequestTranslation ?? false,
     translated: action?.translated ?? false,
-    shouldUseRouteTree,
   });
 };

@@ -38,15 +38,5 @@ Object {
     ],
     "type": "branch",
   },
-  "strategy": Object {
-    "channels": Object {},
-    "providers": Object {},
-    "routing": Object {
-      "channels": Array [
-        "sms",
-      ],
-      "method": "all",
-    },
-  },
 }
 `;

@@ -4,29 +4,32 @@ import {
   IAutomationRunContext,
   IRenderedAutomationTemplate,
 } from "~/automations/types";
-import { InboundSegmentRequestTypes } from "~/segment/types";
+import { InboundSegmentRequestTypes, IRecord } from "~/segment/types";
 import createEventHandler from "~/lib/kinesis/create-event-handler";
 import createTraceId from "~/lib/x-ray/create-trace-id";
 import requests from "~/tracking-requests/services/tracking-requests";
-import { ITrackingRequest } from "~/tracking-requests/types";
-import ingestService from "../../lib/services/ingest";
-import runsService from "../../lib/services/runs";
-import stepFactory from "../../lib/services/step-factory";
-import automationTemplatesService from "../../lib/services/templates";
-
-type IRecord = Pick<
-  ITrackingRequest,
-  "dryRunKey" | "scope" | "tenantId" | "trackingId"
->;
+import ingestService from "~/automations/lib/services/ingest";
+import runsService from "~/automations/lib/services/runs";
+import stepFactory from "~/automations/lib/services/step-factory";
+import automationTemplatesService from "~/automations/lib/services/templates";
 
 async function handler(record: IRecord) {
-  const { dryRunKey, scope, tenantId, trackingId } = record;
+  const {
+    dryRunKey,
+    scope,
+    tenantId,
+    trackingId,
+    shouldUseInboundSegmentEventsKinesis,
+  } = record;
   const factory = stepFactory(tenantId);
 
   const { createAutomationRun } = ingestService(tenantId);
   const { updateStatus } = runsService(tenantId);
 
-  const request = await requests(tenantId, scope, dryRunKey).get(trackingId);
+  const request = await requests(tenantId, scope, dryRunKey).get(
+    trackingId,
+    shouldUseInboundSegmentEventsKinesis
+  );
   const { automation, brand, data, event, profile, user } = request;
   const segmentRequestType = data.type as InboundSegmentRequestTypes;
 

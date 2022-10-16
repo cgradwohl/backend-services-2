@@ -48,6 +48,5 @@ export const handleV2Request: IRequestV2Handler = async ({
     scope,
     source,
     tenantId,
-    shouldUseRouteTree: context.shouldUseRouteTree,
   });
 };

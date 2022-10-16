@@ -1,5 +1,6 @@
 import { Sequence } from "~/api/send/types";
 import { PaymentRequired } from "~/lib/http-errors";
+import isNil from "~/lib/is-nil";
 import logger from "~/lib/logger";
 import { isCustomTierTenantId } from "~/lib/plan-pricing";
 
@@ -61,7 +62,7 @@ function messageHasCustomTierFeature(message?: any): boolean {
 }
 
 function someRecordHasKey(record: unknown, key: string): boolean {
-  if (typeof record !== "object") return false;
+  if (typeof record !== "object" || isNil(record)) return false;
   return Object.values(record).some((record) => hasKey(record, key));
 }
 

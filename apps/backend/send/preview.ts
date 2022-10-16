@@ -9,8 +9,6 @@ import { get as getTenant } from "~/lib/tenant-service";
 
 import { getMessageBrands } from "./worker/commands/prepare/get-brand";
 import { getVariableData } from "./worker/commands/prepare/get-variables";
-import { generateRoutingSummary } from "./worker/commands/route/lib/generate-routing-summary";
-import { IRoutingSummary } from "./worker/commands/route/types";
 import { getRenderedTemplates } from "./worker/provider-render/get-rendered-templates";
 
 import { nanoid } from "nanoid";
@@ -24,6 +22,8 @@ import getPublishedState from "./utils/get-published-state";
 
 import getNotification from "./worker/commands/prepare/get-notification";
 import { INotificationWire } from "~/types.api";
+import { routeTreeToRouteSummary } from "./worker/commands/route/lib/route-tree-to-route-summary";
+import { getRoutingTree } from "./worker/commands/prepare/get-routing";
 
 export const MissingProvidersError = makeError("MissingProviders");
 
@@ -90,6 +90,19 @@ const handleSingleMessage = async (
     scope: getPublishedState(scope),
   });
 
+  const routing = await getRoutingTree({
+    message,
+    tenantId,
+    profile,
+    providerConfigs: providers,
+    strategy: {
+      routing: message.routing,
+      channels: message.channels ?? {},
+      providers: message.providers ?? {},
+    },
+    variableData,
+  });
+
   const sendContext: ISendMessageContext = {
     brands,
     category: undefined,
@@ -101,26 +114,14 @@ const handleSingleMessage = async (
     preferences: undefined,
     profile,
     providers,
-    strategy: {
-      routing: message.routing,
-      channels: message.channels ?? {},
-      providers: message.providers ?? {},
-    },
     scope,
     tenant,
     variableData,
     overrides: undefined,
+    ...routing,
   };
 
-  const routingSummary: Array<Partial<IRoutingSummary>> =
-    await generateRoutingSummary({
-      providerConfigs: sendContext.providers,
-      strategy: sendContext.strategy,
-      params: {
-        data: sendContext.data,
-        profile: sendContext.profile,
-      },
-    });
+  const routingSummary = routeTreeToRouteSummary(sendContext.routingTree);
 
   const renderedChannels = await Promise.all(
     routingSummary?.map(async (route) => {

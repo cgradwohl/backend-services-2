@@ -28,6 +28,7 @@ describe("Experiment Data Firehose", async () => {
       event_name: "mockExperiment",
       event_params: {
         experiment: "mockExperiment",
+        feature_flag: "mockFeatureFlag",
         tenantId: "mockTenantId",
         timestamp: new Date().toISOString(),
         user_id: "mockUserId",
@@ -37,6 +38,7 @@ describe("Experiment Data Firehose", async () => {
 
     await putExperimentData(
       "mockExperiment",
+      "mockFeatureFlag",
       "mockTenantId",
       mockData.event_params.timestamp,
       "mockUserId",

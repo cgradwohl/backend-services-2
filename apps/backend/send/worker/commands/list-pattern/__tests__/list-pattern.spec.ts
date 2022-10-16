@@ -38,7 +38,6 @@ const mock_requestService_getPayload = jest.fn(async () => {
     dryRunKey: "default",
     filePath: MOCK_FILE_PATH,
     idempotencyKey: undefined,
-    originFilePath: MOCK_FILE_PATH,
     jobId: undefined,
     message: MOCK_MESSAGE,
     requestId: MOCK_REQUEST_ID,

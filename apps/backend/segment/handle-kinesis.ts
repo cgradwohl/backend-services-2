@@ -1,20 +1,23 @@
 import logger from "~/lib/logger";
 import { identifyInbound } from "./identify";
 import { trackInbound } from "./track";
-import { InboundSegmentRequestTypesEnum } from "./types";
+import { InboundSegmentRequestTypesEnum, IRecord } from "./types";
 
 import { createEventHandlerWithFailures } from "~/lib/kinesis/create-event-handler";
 import requests from "~/tracking-requests/services/tracking-requests";
-import { ITrackingRequest } from "~/tracking-requests/types";
-
-type IRecord = Pick<
-  ITrackingRequest,
-  "dryRunKey" | "scope" | "tenantId" | "trackingId"
->;
 
 export const handleRecord = async (record: IRecord) => {
-  const { dryRunKey, scope, tenantId, trackingId: messageId } = record;
-  const request = await requests(tenantId, scope, dryRunKey).get(messageId);
+  const {
+    dryRunKey,
+    scope,
+    tenantId,
+    trackingId: messageId,
+    shouldUseInboundSegmentEventsKinesis,
+  } = record;
+  const request = await requests(tenantId, scope, dryRunKey).get(
+    messageId,
+    shouldUseInboundSegmentEventsKinesis
+  );
   const body = request.data;
 
   const context = {

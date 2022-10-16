@@ -8,101 +8,17 @@ import getTableName, { TABLE_NAMES } from "~/lib/dynamo/tablenames";
 import logger from "~/lib/logger";
 import * as notificationService from "~/lib/notification-service";
 import { isCustomTierTenantId } from "~/lib/plan-pricing";
+import { mapExistingUserPreferencesToV4 } from "~/preferences/lib/map-existing-user-preferences-to-v4";
 import { preferenceTemplateService } from "~/preferences/services/dynamo-service";
 import { preferenceSectionService } from "~/preferences/services/section-service";
-import {
-  IPreferenceSection,
-  IPreferenceTemplateAttachment,
-} from "~/preferences/types";
 import { CourierObject } from "~/types.api";
 import { INotificationJsonWire } from "~/types.api.d";
-import { IPreferences, IProfilePreferences } from "~/types.public.d";
 
 const lambda = new Lambda({ apiVersion: "2015-03-31" });
 
 interface IEvent extends IDataFixEvent {
   exclusiveStartKey?: DocumentClient.Key;
 }
-
-function getPreferenceValue(
-  userId: string,
-  preferences: IPreferences,
-  _meta: IPreferenceSection["_meta"] = "migrated-categories"
-): Array<
-  IPreferenceTemplateAttachment & {
-    _meta: IPreferenceSection["_meta"];
-  }
-> {
-  return Object.entries(preferences).flatMap(([id, value]) => ({
-    _meta,
-    resourceId: userId,
-    resourceType: "recipients",
-    templateId: toUuid(id),
-    value: {
-      status: value.status,
-      ...(value?.channel_preferences && {
-        channel_preferences: value.channel_preferences.map(
-          ({ channel }) => channel
-        ),
-      }),
-      ...(value?.rules?.length && {
-        rules: value.rules,
-      }),
-    },
-  }));
-}
-
-/* */
-const mapExistingUserPreferencesToV4 = (
-  userId: string,
-  preferences: IProfilePreferences
-): Array<
-  IPreferenceTemplateAttachment & {
-    _meta: IPreferenceSection["_meta"];
-  }
-> => {
-  let mappedPreferences: Array<
-    IPreferenceTemplateAttachment & {
-      _meta: IPreferenceSection["_meta"];
-    }
-  > = [];
-  /*
-    preferences?.notifications = {
-      [templateId]: {
-        status: "OPTED_OUT",
-      }
-    } -> migrate this structure to the new structure
-    {
-      resourceId: toUUID(userId),
-      resourceType: "recipients",
-      templateId: toUUID(templateId),
-    }
-  */
-
-  if (preferences?.notifications) {
-    mappedPreferences = [
-      ...mappedPreferences,
-      ...getPreferenceValue(
-        userId,
-        preferences.notifications,
-        "migrated-notifications"
-      ),
-    ];
-  }
-
-  if (preferences?.categories) {
-    mappedPreferences = [
-      ...mappedPreferences,
-      ...getPreferenceValue(
-        userId,
-        preferences?.categories,
-        "migrated-categories"
-      ),
-    ];
-  }
-
-  return mappedPreferences;
-};
 
 const getSectionId = async (workspaceId: string, isCustomTier: boolean) => {
   const sectionService = preferenceSectionService(workspaceId, "default");

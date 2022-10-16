@@ -46,7 +46,7 @@ async function validateListOrPatternIfExists(
 
 export const handle = handleApi<IInboundSegmentPostResponse>(
   async (context) => {
-    const { tenantId } = context;
+    const { tenantId, shouldUseInboundSegmentEventsKinesis } = context;
     const messageId = createTraceId();
 
     const body = assertBody<IInboundSegmentPostRequest>(context);
@@ -142,11 +142,16 @@ export const handle = handleApi<IInboundSegmentPostResponse>(
     if (!response) {
       const { anonymousId, event, userId } = body;
 
-      await requests(context.tenantId, context.scope).create(messageId, {
-        event,
-        user: userId ?? anonymousId,
-        data: body,
-      });
+      // Here we write to s3
+      await requests(context.tenantId, context.scope).create(
+        messageId,
+        {
+          event,
+          user: userId ?? anonymousId,
+          data: body,
+        },
+        shouldUseInboundSegmentEventsKinesis
+      );
 
       response = {
         body: {

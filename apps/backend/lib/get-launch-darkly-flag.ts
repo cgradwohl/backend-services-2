@@ -52,6 +52,27 @@ export const getFeatureTenantTemplateVariation = async <T>(
   }
 };
 
+// This function is used to track custom events for Launch Darkly experiments
+export const trackEvent = async (
+  eventName: string,
+  userId: string,
+  tenantId: string
+): Promise<void> => {
+  try {
+    await launchdarkly.waitForInitialization();
+    launchdarkly.track(
+      eventName,
+      {
+        key: userId,
+      },
+      { tenantId }
+    );
+    launchdarkly.flush();
+  } catch (err) {
+    logger.error("Error initializing", err);
+  }
+};
+
 // Do not use outside of onboarding.
 // For now we want to user experience consistent for all users within a workspace.
 // Scope feature flagging by tenantId

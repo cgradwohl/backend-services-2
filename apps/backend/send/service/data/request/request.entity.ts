@@ -25,7 +25,6 @@ export class Request implements IRequestItem {
   idempotencyKey: string | undefined;
   filePath!: string;
   jobId: string | undefined;
-  originFilePath: string;
   requestId!: string;
   scope: TenantScope = "draft/production";
   source: string | undefined;
@@ -43,7 +42,6 @@ export class Request implements IRequestItem {
     idempotencyKey,
     filePath,
     jobId,
-    originFilePath,
     requestId,
     scope,
     source,
@@ -61,7 +59,6 @@ export class Request implements IRequestItem {
       filePath,
       idempotencyKey,
       jobId,
-      originFilePath,
       requestId,
       scope,
       source,
@@ -96,7 +93,6 @@ export class Request implements IRequestItem {
       filePath,
       idempotencyKey,
       jobId,
-      originFilePath,
       requestId,
       scope,
       sequenceId,
@@ -114,7 +110,6 @@ export class Request implements IRequestItem {
       filePath,
       idempotencyKey,
       jobId,
-      originFilePath,
       requestId,
       scope,
       source,

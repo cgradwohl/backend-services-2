@@ -41,7 +41,6 @@ export const adHocList = async (action: IAdHocListAction) => {
             apiVersion: "2021-11-01",
             dryRunKey: request.dryRunKey,
             idempotencyKey: request.idempotencyKey,
-            originFilePath: request.originFilePath,
             jobId: request.jobId,
             request: {
               message: {
@@ -90,7 +89,6 @@ export const adHocList = async (action: IAdHocListAction) => {
             apiVersion: "2021-11-01",
             dryRunKey: request.dryRunKey,
             idempotencyKey: request.idempotencyKey,
-            originFilePath: request.originFilePath,
             jobId: request.jobId,
             request: {
               message: {

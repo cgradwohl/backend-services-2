@@ -49,7 +49,7 @@ export interface RawRequestContext {
   useMaterializedBrands: boolean;
   translateToV2: boolean;
   shouldTranslateAndDeliver: boolean;
-  shouldUseRouteTree: boolean;
+  shouldUseInboundSegmentEventsKinesis: boolean;
 }
 
 export type RequestAuthType =
@@ -97,7 +97,7 @@ interface IUserContext {
   useMaterializedBrands: boolean;
   translateToV2: boolean;
   shouldTranslateAndDeliver: boolean;
-  shouldUseRouteTree: boolean;
+  shouldUseInboundSegmentEventsKinesis: boolean;
 }
 
 export const getRequestHeader = (
@@ -121,7 +121,7 @@ export const getUserContext = ({ requestContext, queryStringParameters }) => {
     useMaterializedBrands: false,
     translateToV2: false,
     shouldTranslateAndDeliver: false,
-    shouldUseRouteTree: false,
+    shouldUseInboundSegmentEventsKinesis: false,
   };
   const {
     authorizer,
@@ -151,8 +151,8 @@ export const getUserContext = ({ requestContext, queryStringParameters }) => {
     userContext.translateToV2 = authorizer.translateToV2String === "true";
     userContext.shouldTranslateAndDeliver =
       authorizer.shouldTranslateAndDeliverString === "true";
-    userContext.shouldUseRouteTree =
-      authorizer.shouldUseRouteTreeString === "true";
+    userContext.shouldUseInboundSegmentEventsKinesis =
+      authorizer.shouldUseInboundSegmentEventsKinesisString === "true";
   } else if (queryStringParameters) {
     userContext.tenantId = queryStringParameters.tenantId;
   }
@@ -238,7 +238,8 @@ export function handleApi<TOutput>(
       useMaterializedBrands: rawContext.useMaterializedBrands ?? false,
       translateToV2: rawContext.translateToV2 ?? false,
       shouldTranslateAndDeliver: rawContext.shouldTranslateAndDeliver ?? false,
-      shouldUseRouteTree: rawContext.shouldUseRouteTree,
+      shouldUseInboundSegmentEventsKinesis:
+        rawContext.shouldUseInboundSegmentEventsKinesis,
     };
     return callback(context);
   });

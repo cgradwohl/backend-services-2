@@ -119,7 +119,7 @@ const inviteUser = async ({
     recipient
   );
 
-  const dayOfTheWeek = new Date().getDate();
+  const dayOfTheWeek = new Date().getDay();
   let invitedUserId;
   try {
     const invitedUser = await getUserByEmail(email);

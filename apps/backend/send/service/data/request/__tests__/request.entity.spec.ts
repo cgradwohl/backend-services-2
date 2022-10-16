@@ -10,7 +10,6 @@ describe("class Request", () => {
     dryRunKey: undefined,
     filePath: "abcd",
     idempotencyKey: undefined,
-    originFilePath: "xyz",
     jobId: undefined,
     requestId: "abcd",
     scope: "published/production",

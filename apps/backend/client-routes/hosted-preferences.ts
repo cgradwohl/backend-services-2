@@ -52,7 +52,7 @@ export const handle = handleRaw(async ({ event }) => {
     "base64"
   )
     .toString()
-    .split("/");
+    .split("#");
 
   const apiUrl = `${getEnvVar("API_URL")}/client/q`;
 

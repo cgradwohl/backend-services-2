@@ -7,6 +7,8 @@ import { BadRequest } from "~/lib/http-errors";
 import { getPatchedDocument } from "~/lib/json-patch";
 import { assertAndDecodePathParam, assertBody } from "~/lib/lambda-response";
 import { mapPreferences } from "~/lib/preferences";
+import { mapExistingUserPreferencesToV4 } from "~/preferences/lib/map-existing-user-preferences-to-v4";
+import { preferenceTemplateService } from "~/preferences/services/dynamo-service";
 import {
   ApiPreferencesPatchRequest,
   IProfilePreferences,
@@ -40,6 +42,26 @@ export const patch: IPatchFn = async (context) => {
     await updateProfile(context.tenantId, profileId, {
       preferences: patchedPreferences,
     });
+  }
+
+  // update user preferences in preferences service
+
+  const mappedV4Preferences = mapExistingUserPreferencesToV4(
+    profileId,
+    patchedPreferences
+  );
+
+  if (mappedV4Preferences.length > 0 && process.env.migrate_preferences_to_v4) {
+    const { updatePreferences } = preferenceTemplateService(
+      context.tenantId,
+      profileId
+    );
+
+    await Promise.all(
+      mappedV4Preferences.map(({ _meta, ...userPreferences }) =>
+        updatePreferences(userPreferences)
+      )
+    );
   }
 
   return {

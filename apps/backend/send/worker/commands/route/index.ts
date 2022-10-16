@@ -1,8 +1,6 @@
-import { deepStrictEqual } from "assert";
 import { Logger, LoggerOptions } from "pino";
 import {
   DeliveryProgressionMetric,
-  routeTreeSummaryDifferedCount,
   translationProgressionMetric,
 } from "~/lib/courier-emf/logger-metrics-utils";
 import {
@@ -14,17 +12,13 @@ import {
 import { InternalCourierError } from "~/lib/errors";
 import { CourierLogger } from "~/lib/logger";
 import { mapPreferences } from "~/lib/preferences";
-import { getRouteNode, RoutingSummary } from "~/lib/send-routing";
+import { getRouteNode } from "~/lib/send-routing";
 import { contextService } from "~/send/service";
 import { IRouteAction, SendActionCommands } from "~/send/types";
 import assertIsType from "~/send/utils/assert-is-type";
-import { handlePossibleRouteTimeout } from "~/send/utils/get-age";
-import { dispatchRouteSummaryToRenderService } from "./lib";
 import { dispatchRouteTreeToRenderService } from "./lib/dispatch-route-tree-to-render";
 import { ChannelHandleFailedError } from "~/lib/send-routing";
-import { getRoutingSummary } from "./lib/get-routing-summary";
 import { getUserRoutingPreferences } from "./lib/get-user-routing-preferences";
-import { isRouteTreeEnabled } from "./lib/is-route-tree-enabled";
 import { routeTreeToRouteSummary } from "./lib/route-tree-to-route-summary";
 import {
   FailedPreconditionSendError,
@@ -46,7 +40,6 @@ const routeForTranslationVerification = async (
     messageFilePath,
     requestId,
     tenantId,
-    retryCount,
   } = action;
 
   try {
@@ -71,7 +64,9 @@ const routeForTranslationVerification = async (
       return;
     }
 
-    let routingSummary = await getRoutingSummary(context);
+    const routingSummary = routeTreeToRouteSummary(
+      getRouteNode(action.failedAddress ?? [], context.routingTree)
+    );
 
     if (!routingSummary.length) {
       logger.warn({
@@ -86,21 +81,6 @@ const routeForTranslationVerification = async (
       return;
     }
 
-    // TODO: Remove once the july-2022-routing-tree-enabled has been enabled for everyone and run without issue
-    const maxAge = context.variableData?.maxAge;
-    if (retryCount && maxAge && !context.routingTree) {
-      const timedout = await handlePossibleRouteTimeout({
-        retryCount,
-        messageId,
-        maxAge,
-        routingSummary: routingSummary as any,
-        translateToV2: true,
-        tenantId,
-        logger,
-      });
-      if (timedout) return;
-    }
-
     if (routingSummary.every((summary) => !summary.selected)) {
       logger.warn({
         tenantId: action.tenantId,
@@ -113,15 +93,17 @@ const routeForTranslationVerification = async (
       return;
     }
 
-    await dispatchRouteSummaryToRenderService({
+    await dispatchRouteTreeToRenderService({
       contextFilePath,
       dryRunKey,
       messageFilePath,
       messageId,
       requestId,
-      routingSummary,
+      routingTree: context.routingTree,
       tenantId,
-      shouldVerifyRequestTranslation: true,
+      times: action.times,
+      failedAddress: action.failedAddress,
+      timeouts: context.timeouts,
     });
 
     return;
@@ -174,7 +156,7 @@ export const route = async (action: IRouteAction) => {
 
     return;
   }
-  const { logger } = new CourierLogger("route");
+
   assertIsType<IRouteAction>(action);
   const {
     contextFilePath,
@@ -184,7 +166,6 @@ export const route = async (action: IRouteAction) => {
     requestId,
     tenantId,
     retryCount,
-    shouldUseRouteTree,
     translated,
   } = action;
   const context = await getContext({ tenantId, filePath: contextFilePath });
@@ -205,30 +186,9 @@ export const route = async (action: IRouteAction) => {
       return;
     }
 
-    const routeTreeEnabled =
-      isRouteTreeEnabled(context.tenant, shouldUseRouteTree) &&
-      !!context.routingTree;
-
-    const routeSummaryNew = routeTreeToRouteSummary(
+    const routingSummary = routeTreeToRouteSummary(
       getRouteNode(action.failedAddress ?? [], context.routingTree)
     );
-
-    const routingSummary = routeTreeEnabled
-      ? routeSummaryNew
-      : await getRoutingSummary(context);
-
-    if (!action.failedAddress && !routeTreeEnabled && context.routingTree) {
-      try {
-        deepStrictEqual(
-          routeSummaryNew.map(selectImportantSummaryFields),
-          routingSummary.map(selectImportantSummaryFields)
-        );
-      } catch (e) {
-        const { logger } = new CourierLogger("Route Summary Mismatch");
-        logger.warn(e);
-        await routeTreeSummaryDifferedCount();
-      }
-    }
 
     if (!routingSummary.length) {
       await createUnroutableEvent(
@@ -240,23 +200,7 @@ export const route = async (action: IRouteAction) => {
       return;
     }
 
-    // TODO: Remove once the july-2022-routing-tree-enabled has been enabled for everyone and run without issue
-    const maxAge = context.variableData?.maxAge;
-    if (retryCount && maxAge && !routeTreeEnabled) {
-      const timedout = await handlePossibleRouteTimeout({
-        retryCount,
-        messageId,
-        maxAge,
-        routingSummary: routingSummary as any,
-        tenantId,
-        logger,
-      });
-      if (timedout) return;
-    }
-
-    if (
-      (routingSummary as RoutingSummary[]).every((summary) => !summary.selected)
-    ) {
+    if (routingSummary.every((summary) => !summary.selected)) {
       await Promise.all(
         routingSummary.map(async (summary) =>
           createUnroutableEvent(
@@ -272,17 +216,12 @@ export const route = async (action: IRouteAction) => {
     }
 
     await createRoutedEvent(tenantId, messageId, {
-      channelSummary: routingSummary.map((summary) => {
-        if (!summary.timedout) {
-          return {
-            channel: summary.channel,
-            provider: summary.provider,
-            selected: summary.selected,
-            ...(summary?.reason && { reason: summary.reason }),
-            ...(summary?.conditional && { condition: summary.conditional }),
-          };
-        }
-      }),
+      channelSummary: routingSummary.map((summary) => ({
+        channel: summary.channel,
+        provider: summary.provider,
+        selected: summary.selected,
+        ...(summary?.reason && { reason: summary.reason }),
+      })),
       preferences: mapPreferences(context.preferences),
     });
 
@@ -294,33 +233,17 @@ export const route = async (action: IRouteAction) => {
       },
     });
 
-    // TODO: Remove the condition once the july-2022-routing-tree-enabled has been enabled for everyone and run without issue
-    if (routeTreeEnabled) {
-      await dispatchRouteTreeToRenderService({
-        contextFilePath,
-        dryRunKey,
-        messageFilePath,
-        messageId,
-        requestId,
-        routingTree: context.routingTree,
-        tenantId,
-        times: action.times,
-        failedAddress: action.failedAddress,
-        timeouts: context.timeouts,
-      });
-      return;
-    }
-
-    // TODO: Remove once the july-2022-routing-tree-enabled has been enabled for everyone and run without issue
-    await dispatchRouteSummaryToRenderService({
+    await dispatchRouteTreeToRenderService({
       contextFilePath,
       dryRunKey,
       messageFilePath,
       messageId,
       requestId,
-      routingSummary,
+      routingTree: context.routingTree,
       tenantId,
-      translated,
+      times: action.times,
+      failedAddress: action.failedAddress,
+      timeouts: context.timeouts,
     });
   } catch (error) {
     // TODO: we need to create better error events during specific function calls
@@ -342,7 +265,6 @@ export const route = async (action: IRouteAction) => {
       requestId,
       tenantId,
       retryCount: String(retryCount),
-      shouldUseRouteTree: String(shouldUseRouteTree),
       translated: String(translated),
     };
 
@@ -356,15 +278,4 @@ export const route = async (action: IRouteAction) => {
 
     throw new FailedPreconditionSendError(error, errorContext);
   }
-};
-
-const selectImportantSummaryFields = (summary: RoutingSummary) => {
-  return {
-    channel: summary.channel,
-    configurationId: summary.configurationId,
-    provider: summary.provider,
-    taxonomy: summary.taxonomy,
-    selected: summary.selected,
-    id: summary.id,
-  };
 };

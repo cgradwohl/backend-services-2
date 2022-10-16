@@ -7,6 +7,7 @@ const firehoseDeliveryStreamName = getEnvVar("EXPERIMENTS_FIREHOSE_STREAM");
 
 const putExperimentData = async (
   experiment: string,
+  feature_flag: string,
   tenantId: string,
   timestamp: string,
   user_id: string,
@@ -16,6 +17,7 @@ const putExperimentData = async (
     event_name: experiment,
     event_params: {
       experiment,
+      feature_flag,
       tenantId,
       timestamp,
       user_id,

@@ -1,7 +1,6 @@
 import signedRequest from "aws-signed-axios";
 import { join as joinPath } from "path";
 import logger from "~/lib/logger";
-import https from "https";
 
 const includeHttps = (endpoint: string): string => {
   const hasScheme = /[a-zA-Z0-9+.-]+:/.test(endpoint);
@@ -129,7 +128,6 @@ const elasticSearch = (endpoint: string, index?: string) => {
       },
       method,
       url,
-      httpsAgent: new https.Agent({ keepAlive: true }),
     };
 
     let res;

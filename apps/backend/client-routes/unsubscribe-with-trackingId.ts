@@ -1,11 +1,15 @@
-import * as lists from "~/lib/lists";
+import uuidPackage from "uuid-apikey";
+import { get as getMessage } from "~/lib/dynamo/messages";
 import * as profiles from "~/lib/dynamo/profiles";
 import { BadRequest, NotFound } from "~/lib/http-errors";
+import { getPatchedDocument } from "~/lib/json-patch";
+import * as lists from "~/lib/lists";
 import { PREFERENCE_STATUS } from "~/lib/preferences";
 import { getTrackingRecord } from "~/lib/tracking-service";
-import { get as getMessage } from "~/lib/dynamo/messages";
-import { getPatchedDocument } from "~/lib/json-patch";
-import uuidPackage from "uuid-apikey";
+import { mapExistingUserPreferencesToV4 } from "~/preferences/lib/map-existing-user-preferences-to-v4";
+import { preferenceTemplateService } from "~/preferences/services/dynamo-service";
+import { get as getNotification } from "~/lib/notification-service";
+import { toApiKey } from "~/lib/api-key-uuid";
 const cttDomainName = process.env.CLICK_THROUGH_TRACKING_DOMAIN_NAME || "";
 
 // Ex: (.*)\.ct0\.app$
@@ -138,8 +142,23 @@ const trackingIdUnsubscribeHandle = async (event) => {
   } else {
     //notification not sent through a list update notification level preferences
     const profile = await profiles.get(tenantId, recipientId);
+    // we need notification object to determine wheather to update category or notification level preferences
+    // This might have been a regression from long time. $.urls.unsubscribe should be able to unsubscribe user based on type of call
+    // list | notification | notification with category | notification with subscription topic
 
-    const path = `/notifications/${notificationApiKeyId}/status`;
+    const notification = await getNotification({
+      tenantId,
+      id: notificationId,
+    });
+
+    const hasCategoryOnTemplate = Boolean(notification?.json.categoryId);
+    const hasSubscriptionTopicOnTemplate = Boolean(
+      notification?.json.preferenceTemplateId
+    );
+
+    const path = hasCategoryOnTemplate
+      ? `/categories/${toApiKey(notification?.json.categoryId)}/status`
+      : `/notifications/${notificationApiKeyId}/status`;
 
     const patchedPreferences = getPatchedDocument(
       profile && profile.preferences
@@ -156,10 +175,34 @@ const trackingIdUnsubscribeHandle = async (event) => {
         },
       ]
     );
+    // this updates existing category or notification level preferences
+    // and also updates preferences-v4
+    // if hasSubscriptionTopicOnTemplate is true, template should be using {$.urls.preferences} to update preferences
+    // and not {$.urls.unsubscribe}
+    if (!hasSubscriptionTopicOnTemplate) {
+      await profiles.update(tenantId, recipientId, {
+        preferences: patchedPreferences,
+      });
+      const mappedV4Preferences = mapExistingUserPreferencesToV4(
+        recipientId,
+        patchedPreferences
+      );
 
-    await profiles.update(tenantId, recipientId, {
-      preferences: patchedPreferences,
-    });
+      if (
+        mappedV4Preferences.length > 0 &&
+        process.env.migrate_preferences_to_v4
+      ) {
+        const { updatePreferences } = preferenceTemplateService(
+          tenantId,
+          recipientId
+        );
+        await Promise.all(
+          mappedV4Preferences.map(({ _meta, ...userPreferences }) =>
+            updatePreferences(userPreferences)
+          )
+        );
+      }
+    }
   }
 
   return {

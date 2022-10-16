@@ -89,7 +89,11 @@ interface IsMeteredOpts {
   percent: number;
   tenantId: string;
   awsRequestId: string;
-  type?: "translation" | "delivery" | "use-route-tree";
+  type?:
+    | "translation"
+    | "delivery"
+    | "use-route-tree"
+    | "inbound-segment-events";
 }
 
 async function isMetered({
@@ -137,7 +141,7 @@ export const isDeliveryMetered = async ({
   });
 };
 
-export const isUseRouteTreeMetered = async ({
+export const isInboundSegmentEventsMetered = async ({
   awsRequestId,
   percent,
   tenantId,
@@ -146,7 +150,7 @@ export const isUseRouteTreeMetered = async ({
     awsRequestId,
     percent,
     tenantId,
-    type: "use-route-tree",
+    type: "inbound-segment-events",
   });
 };
 

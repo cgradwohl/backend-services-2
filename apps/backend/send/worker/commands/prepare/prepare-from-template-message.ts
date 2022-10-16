@@ -13,11 +13,9 @@ import { generateTrackingId } from "~/lib/tracking-service/generate-tracking-id"
 import createVariableHandler from "~/lib/variable-handler";
 import { RequestPayload } from "~/send/service/data/request/request.types";
 import { ISendMessageContext } from "~/send/types";
-import { getMaxAge } from "~/send/utils/get-age";
 import getPublishedState from "~/send/utils/get-published-state";
 import { ITenant } from "~/types.api";
 import { buildUtmMap } from "../../provider-render/augment-href";
-import { NotificationNotFoundError } from "./errors";
 import { extendRoutingStrategy } from "./extend-routing-strategy";
 import { getMessageBrands } from "./get-brand";
 import getCategory from "./get-category";
@@ -136,14 +134,6 @@ export async function prepareFromTemplateMessage({
     plan: findPricingPlanForTenant(tenant),
   });
 
-  /** @deprecated in favor of timeouts. */
-  const maxAge = getMaxAge({
-    timeout: message.timeout,
-    channels: message.channels,
-    providers: message.providers,
-    plan: findPricingPlanForTenant(tenant),
-  });
-
   const variableData = await getVariableData(
     {
       messageId,
@@ -151,8 +141,6 @@ export async function prepareFromTemplateMessage({
       emailOpenTracking: !!tenant.emailOpenTracking?.enabled,
       environment,
       event: message.metadata?.event,
-      /** TODO: Remove once the july-2022-routing-tree-enabled has been enabled for everyone and run without issue */
-      maxAge,
       openTrackingId,
       unsubscribeTrackingId,
       profile,
@@ -161,7 +149,6 @@ export async function prepareFromTemplateMessage({
       template: message.template,
       tenantId: tenant.tenantId,
       utmMap,
-      tokens,
     },
     // use whatever brand is used in send call (if any) or fallback to the default brand
     brands.main?.id

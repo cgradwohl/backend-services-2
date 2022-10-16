@@ -9,11 +9,14 @@ export default gql`
 
   input ExperimentEventType {
     experiment: String
+    linkedExperiments: [String]
+    featureFlag: String
     variation: String
   }
 
   type SaveExperimentEvaluationResponse {
     experimentKey: String
+    featureFlag: String
     variation: String
   }
 `;

@@ -149,10 +149,9 @@ export interface IAction extends IRetryableAction {
   dryRunKey: string;
   requestId: string;
   tenantId: string;
-  /** TODO: Remove once route tree reaches GA */
-  shouldUseRouteTree?: boolean;
   shouldVerifyRequestTranslation?: boolean;
   translated?: boolean;
+  shouldUseInboundSegmentEventKinesis?: boolean;
 }
 
 export interface IRequestAction extends IAction {
@@ -332,8 +331,6 @@ export interface ISendMessageContext {
   providers: IProviderConfiguration[];
   routingTree?: RouteNode;
   timeouts?: RouteTimeoutTable;
-  /** TODO: Remove once the july-2022-routing-tree-enabled has been enabled for everyone and run without issue */
-  strategy?: RoutingStrategy;
   scope: string;
   tenant: ITenant;
   /** Note: Only available to v2 pipeline. We should add snake_case aliases for these values */
@@ -343,8 +340,6 @@ export interface ISendMessageContext {
     messageId: string;
     event?: string; // In v1 this is templateId, V2 message.metadata.event ?? message.template
     template?: string; // V2 send specified template
-    /** TODO: Remove once the july-2022-routing-tree-enabled has been enabled for everyone and run without issue */
-    maxAge?: TimeoutDateEpochSeconds;
     profile: IProfile;
     recipient?: string; // Alias for user_id for v1 back compat
     openTrackingId?: string;
@@ -355,8 +350,6 @@ export interface ISendMessageContext {
       preferences?: string | null;
     };
     utmMap?: UTMMap;
-    /** TODO: Remove once the july-2022-routing-tree-enabled has been enabled for everyone and run without issue */
-    tokens?: TokensByProvider;
   };
   brands: IMessageBrands;
 }

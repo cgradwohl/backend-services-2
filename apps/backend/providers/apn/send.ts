@@ -1,4 +1,3 @@
-// we prob want to use an HTTP call to apple
 import apn, {
   NotificationAlertOptions,
   ProviderOptions,
@@ -59,7 +58,6 @@ const send: DeliveryHandler = async (params, template) => {
   const notification = new apn.Notification();
   const payload: string | { [key: string]: any } =
     params.override?.body?.payload ?? {};
-
   if (params?.channelTrackingUrl && typeof payload !== "string") {
     payload.trackingUrl = params.channelTrackingUrl;
   }

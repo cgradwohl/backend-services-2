@@ -5,7 +5,8 @@ import trackingRequests from "../services/tracking-requests";
 import { NewTrackingRequest } from "../types";
 
 export default handleIdempotentApi(async (context) => {
-  const { dryRunKey, scope, tenantId } = context;
+  const { dryRunKey, scope, tenantId, shouldUseInboundSegmentEventsKinesis } =
+    context;
   const body = assertBody<NewTrackingRequest>(context);
   const { event, override, user } = body;
 
@@ -32,7 +33,11 @@ export default handleIdempotentApi(async (context) => {
   }
 
   const trackingId = createTraceId();
-  await trackingRequests(tenantId, scope, dryRunKey).create(trackingId, body);
+  await trackingRequests(tenantId, scope, dryRunKey).create(
+    trackingId,
+    body,
+    shouldUseInboundSegmentEventsKinesis
+  );
 
   return {
     body: {

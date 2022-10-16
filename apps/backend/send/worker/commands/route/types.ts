@@ -22,7 +22,6 @@ export interface IRoutingSummary {
   channel: string;
   provider?: string;
   selected: boolean;
-  timedout?: boolean;
   blockIds?: string[] | null;
   config?: IChannelConfiguration | IChannelProviderConfiguration | undefined;
   id?: string;

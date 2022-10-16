@@ -65,8 +65,8 @@ export default gql`
     direct_message
     email
     push
+    sms
   }
-
   enum PreferenceRuleType {
     channel_preferences
     snooze

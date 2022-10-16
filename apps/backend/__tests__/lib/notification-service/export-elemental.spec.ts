@@ -1,6 +1,7 @@
 import {
   ElementalActionNode,
   ElementalCommentNode,
+  ElementalImageNode,
   ElementalMetaNode,
   ElementalTextNode,
 } from "~/api/send/types";
@@ -82,6 +83,40 @@ describe("Export to Elemental", () => {
     });
   });
 
+  describe("Image Block", () => {
+    it("will emit an image node", async () => {
+      const notification: CourierObject<INotificationJsonWire> = {
+        created: 123,
+        creator: "abc",
+        id: "foo-bar",
+        json: {
+          blocks: [
+            {
+              config:
+                '{"align":"center","imageHref":"https://www.courier.com/imageHref","altText":"Foo","imagePath":"https://www.courier.com/imagePath","width":"100px"}',
+              id: "123",
+              type: "image",
+            },
+          ],
+          channels: {
+            always: [],
+            bestOf: [],
+          },
+        },
+        objtype: "event",
+        tenantId: "tenant-1",
+        title: "foo",
+      };
+      const nodes = exportElemental({ notification });
+
+      expect(nodes.length).toBe(1);
+      expect(nodes[0].type).toBe("image");
+
+      const imageNode = nodes[0] as ElementalImageNode;
+      expect(imageNode.src).toBe("https://www.courier.com/imagePath");
+    });
+  });
+
   describe("Unimplemented block", () => {
     it("will emit a comment node if block is not supported", () => {
       const notification: CourierObject<INotificationJsonWire> = {
@@ -93,7 +128,7 @@ describe("Export to Elemental", () => {
             {
               config: "",
               id: "123",
-              type: "image",
+              type: "column",
             },
           ],
           channels: {

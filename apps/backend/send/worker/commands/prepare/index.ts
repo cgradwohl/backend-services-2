@@ -182,7 +182,6 @@ export const prepare = async (action: IPrepareAction) => {
     scheduleJobId,
     requestId,
     tenantId,
-    shouldUseRouteTree,
   } = action;
 
   try {
@@ -264,7 +263,6 @@ export const prepare = async (action: IPrepareAction) => {
       messageFilePath,
       requestId,
       tenantId,
-      shouldUseRouteTree,
       translated: request?.translated,
     });
   } catch (error) {

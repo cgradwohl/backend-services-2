@@ -2,38 +2,6 @@ import * as eventLogFns from "~/lib/dynamo/event-logs";
 import { IRouteAction } from "~/send/types";
 import { route } from "~/send/worker/commands/route";
 
-jest.mock("~/workers/route/channel-handles", () => ({
-  channelHandles: jest
-    .fn()
-    .mockResolvedValueOnce({
-      channel: {
-        id: "f1bfb93f-a0a2-44ca-b8ec-67971f5e9d20",
-        taxonomy: "email:*",
-        disabled: false,
-      },
-      channelProvider: {
-        configurationId: "62736569-abbb-41d5-a8f9-c573830c10cb",
-        key: "postmark",
-      },
-      channelsSummary: [
-        {
-          channel: "email",
-          provider: "postmark",
-          selected: true,
-        },
-      ],
-    })
-    .mockResolvedValueOnce({
-      channelsSummary: [
-        {
-          channel: "email",
-          provider: "postmark",
-          selected: false,
-        },
-      ],
-    }),
-}));
-
 jest.mock("~/send/service", () => {
   const mockContext = {
     content: {
@@ -68,6 +36,22 @@ jest.mock("~/send/service", () => {
     tenant: {
       stripeSubscriptionItemPriceId: "custom",
     },
+    variableData: {},
+    routingTree: {
+      type: "branch",
+      address: [],
+      nodes: [
+        {
+          channel: "email",
+          provider: "twilio",
+          providerConfigurationId: "62736569-abbb-41d5-a8f9-c573830c10cb",
+          taxonomy: "email:postmark",
+          address: [0, 0],
+          providerFailoverIndex: 1,
+          type: "leaf",
+        },
+      ],
+    },
   };
 
   return {
@@ -88,18 +72,6 @@ jest.mock("~/send/service", () => {
               },
             },
           },
-        })
-        .mockResolvedValueOnce({
-          ...mockContext,
-          variableData: {
-            maxAge: {
-              message: 16839394,
-              channel: 5000,
-              channels: { email: { channel: 16839392 } },
-              provider: 16894940,
-              providers: { sendgrid: 16894940 },
-            },
-          },
         }),
     }),
   };
@@ -111,7 +83,6 @@ jest.mock("~/lib/dynamo/event-logs", () => ({
   createErrorEvent: jest.fn(() => {
     throw new Error("We had an error");
   }),
-  createTimedoutEvent: jest.fn(),
 }));
 
 const createRoutedEventSpy = jest.spyOn(eventLogFns, "createRoutedEvent");
@@ -119,7 +90,6 @@ const createUndeliverableEventSpy = jest.spyOn(
   eventLogFns,
   "createUndeliverableEvent"
 );
-const createTimedoutEventSpy = jest.spyOn(eventLogFns, "createTimedoutEvent");
 
 describe("[Router] event logs and action emitting", () => {
   afterEach(() => {
@@ -155,22 +125,5 @@ describe("[Router] event logs and action emitting", () => {
     await route(routeAction);
     expect(createRoutedEventSpy).toHaveBeenCalledTimes(0);
     expect(createUndeliverableEventSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it("should perform fire off `timedout` if channel/provider has expired", async () => {
-    const routeAction: IRouteAction = {
-      command: "route",
-      dryRunKey: undefined,
-      requestId: "1-618f5782-3c12de043027b9246138098e",
-      tenantId: "56f10a9f-4d79-458f-83e1-6d14a8822299",
-      messageId: "1-618f5782-3c12de043027b9246138098e",
-      messageFilePath: "filepath.json",
-      contextFilePath: "filepath.json",
-      retryCount: 1,
-    };
-    await route(routeAction);
-    expect(createRoutedEventSpy).toHaveBeenCalledTimes(0);
-    expect(createUndeliverableEventSpy).toHaveBeenCalledTimes(0);
-    expect(createTimedoutEventSpy).toHaveBeenCalledTimes(2);
   });
 });

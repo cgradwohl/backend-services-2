@@ -37,12 +37,6 @@ describe("get routing tree", () => {
     expect(getUserRouting).toHaveBeenCalled();
   });
 
-  it("returns the standard supplied strategy when routing tree is not enabled", async () => {
-    expect.assertions(1);
-    const routing = await getRoutingTree(baseOpts);
-    expect((routing as any).strategy).toMatchObject(baseOpts.strategy);
-  });
-
   it("returns empty object when routing tree is not enabled, template is passed, and no message.routing is provided", async () => {
     expect.assertions(1);
     const routing = await getRoutingTree({

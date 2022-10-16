@@ -17,7 +17,7 @@ export type IApiAuthorizerContext = StringOnly<
     translateToV2String?: string;
     shouldTranslateAndDeliverString?: string;
     useMaterializedBrandsString?: string;
-    shouldUseRouteTreeString?: string;
+    shouldUseInboundSegmentEventsKinesisString?: string;
   }
 >;
 

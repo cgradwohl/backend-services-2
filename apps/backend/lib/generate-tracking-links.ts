@@ -50,5 +50,5 @@ export const generateHostedPreferencesLink = (
   userId: string
 ): string =>
   `${process.env.API_URL}/p/${Buffer.from(
-    `${workspaceId}/${brandId}/${userId}`
+    `${workspaceId}#${brandId}#${userId}`
   ).toString("base64")}`;

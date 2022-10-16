@@ -44,7 +44,6 @@ describe("Request Data Service", () => {
       apiVersion: "2021-11-01",
       dryRunKey: "default",
       idempotencyKey: "mock",
-      originFilePath: "mock",
       jobId: undefined,
       requestId: "abcd",
       request: {

@@ -26,6 +26,7 @@ export const Preferences = gql`
     direct_message
     email
     push
+    sms
   }
 
   input PreferencesInput {

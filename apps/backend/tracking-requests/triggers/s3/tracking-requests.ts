@@ -7,7 +7,7 @@ import { ITrackingRequest } from "../../types";
 const kinesis = new Kinesis();
 
 const getObject = async (record: S3EventRecord): Promise<ITrackingRequest> =>
-  jsonStore.get(record.s3.object.key);
+  jsonStore.trackingRequest.get(record.s3.object.key);
 
 const handleRecord = async (record: S3EventRecord) => {
   const { scope, tenantId, trackingId } = await getObject(record);

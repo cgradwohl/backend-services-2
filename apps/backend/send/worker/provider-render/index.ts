@@ -28,7 +28,6 @@ import {
   SendActionCommands,
 } from "~/send/types";
 import { failover, FailoverOpts } from "~/send/utils/failover";
-import { getMaxAge, handlePossibleTimeout } from "~/send/utils/get-age";
 import { isTemplateMessage } from "~/send/utils/is-template-message";
 import { retryMessage } from "~/send/utils/retry-message";
 import {
@@ -100,23 +99,6 @@ export async function handler(payload: IRenderProviderPayload) {
       getChannelName({
         taxonomy,
       }) ?? "custom";
-
-    // TODO: I don't believe there is a scenario where variableData?.maxAge would be undefined
-    const maxAge = context.variableData?.maxAge;
-    if (maxAge && !payload.address) {
-      const timedout = await handlePossibleTimeout({
-        maxAge,
-        channel,
-        provider: providerConfig.json.provider,
-        tenantId: payload.tenantId,
-        messageId: payload.messageId,
-        retryCount,
-      });
-
-      if (timedout) {
-        return;
-      }
-    }
 
     channelRendered = {
       ...channelContext.channelRendered,
@@ -447,24 +429,6 @@ const renderForTranslationVerification = async (
       getChannelName({
         taxonomy,
       }) ?? "custom";
-
-    // TODO: I don't believe there is a scenario where variableData?.maxAge would be undefined
-    const maxAge =
-      context.variableData?.maxAge ??
-      getMaxAge({ plan: findPricingPlanForTenant(context.tenant) });
-
-    const timedout = await handlePossibleTimeout({
-      maxAge,
-      channel,
-      provider: providerConfig.json.provider,
-      tenantId: payload.tenantId,
-      messageId: payload.messageId,
-      retryCount,
-    });
-
-    if (timedout) {
-      return; // TODO: Failover here
-    }
 
     channelRendered = {
       ...channelContext.channelRendered,

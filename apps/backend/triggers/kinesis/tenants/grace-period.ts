@@ -1,8 +1,4 @@
-import {
-  DynamoDBRecord,
-  KinesisStreamEvent,
-  KinesisStreamRecord,
-} from "aws-lambda";
+import { DynamoDBRecord } from "aws-lambda";
 import captureException from "~/lib/capture-exception";
 import courierClient from "~/lib/courier";
 import dynamoToJson from "~/lib/dynamo/to-json";
@@ -10,14 +6,14 @@ import { error } from "~/lib/log";
 import { findPricingPlan } from "~/lib/plan-pricing";
 import { FREE_PLAN_NOTIFICATION_CAP } from "~/studio/billing";
 import { ITenantDynamoObject } from "~/types.api";
-import kinesisToJson from "~/lib/kinesis/to-json";
 import { update as updateTenant } from "~/lib/tenant-service";
 import { createEventHandlerWithFailures } from "~/lib/kinesis/create-event-handler";
+import { listAccessRights } from "~/lib/tenant-access-rights-service";
 
 export const GRACE_PERIOD_MAX_DAYS = 14;
 const USAGE_GRACE_PERIOD_TEMPLATE_ALIAS = "usage-grace-period";
 
-async function gracePeriodDynamoHandler(data: DynamoDBRecord) {
+export async function gracePeriodDynamoHandler(data: DynamoDBRecord) {
   const newTenantImage = dynamoToJson<ITenantDynamoObject>(
     data.dynamodb.NewImage
   );
@@ -66,6 +62,28 @@ async function gracePeriodDynamoHandler(data: DynamoDBRecord) {
           cancellation_token: `${tenantId}/grace-period-automation`,
         },
       });
+    } else if (
+      pricingPlan === "good" &&
+      usageCurrentPeriod > FREE_PLAN_NOTIFICATION_CAP * 0.8 &&
+      !newTenantImage.sendLimitWarning
+    ) {
+      const administrators = await listAccessRights(tenantId, {
+        role: "ADMINISTRATOR",
+      });
+      const users = administrators.map((administrator) => ({
+        user_id: administrator.userId,
+      }));
+      await courierClient().send({
+        message: {
+          to: users,
+          template: "FREE_TIER_USAGE_REMINDER",
+          data: {
+            num_monthly_sends: usageCurrentPeriod,
+            workspaceName: name,
+          },
+        },
+      });
+      await updateTenant({ tenantId }, { sendLimitWarning: true });
     }
   }
 }

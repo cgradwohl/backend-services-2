@@ -11,7 +11,6 @@ import createVariableHandler from "~/lib/variable-handler";
 import sendHandlers from "~/providers/send-handlers";
 import { getRenderedOutput } from "~/send/service/rendered-output";
 import { ISendProviderPayload, SendActionCommands } from "~/send/types";
-import { handlePossibleTimeout } from "~/send/utils/get-age";
 import { IChannel } from "~/types.api";
 import { handleSendError } from "./handle-send-error";
 import { mockSend } from "./mock-send";
@@ -59,21 +58,6 @@ export async function handler(payload: ISendProviderPayload) {
         channel: deliveryHandlerParams.channel,
       });
       return;
-    }
-
-    // TODO remove after failover hits GA
-    const maxAge = deliveryHandlerParams.variableData?.maxAge;
-    if (maxAge && !payload.address) {
-      const timedout = await handlePossibleTimeout({
-        maxAge,
-        channel: payload.channel,
-        provider: providerConfig.json.provider,
-        tenantId: payload.tenantId,
-        messageId: payload.messageId,
-        retryCount,
-      });
-
-      if (timedout) return;
     }
 
     await createProviderAttemptEvent(

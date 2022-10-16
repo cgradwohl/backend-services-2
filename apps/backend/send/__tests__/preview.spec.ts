@@ -155,8 +155,7 @@ describe("preview", () => {
       {
         channel: "email",
         provider: "sendgrid",
-        reason:
-          "Message is missing the minimum data required to send with this provider. Please check the message's profile and data properties and try again.",
+        reason: "Information required by the provider was not included.",
         selected: false,
         type: "MISSING_PROVIDER_SUPPORT",
       },

@@ -1,3 +1,4 @@
+import { IProfilePreferences } from "~/types.public";
 import * as profiles from "~/lib/dynamo/profiles";
 import { BadRequest } from "~/lib/http-errors";
 import { getPatchedDocument } from "~/lib/json-patch";
@@ -135,7 +136,7 @@ export const handle = handleRaw(async (event) => {
   const path =
     classification === "n" ? `/notifications/${notificationId}/status` : "";
 
-  const patchedPreferences = getPatchedDocument(
+  const patchedPreferences = getPatchedDocument<IProfilePreferences>(
     profile && profile.preferences
       ? profile.preferences
       : {

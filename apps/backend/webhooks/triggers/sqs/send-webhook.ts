@@ -1,7 +1,5 @@
 import { SQSHandler, SQSRecord } from "aws-lambda";
 import axios, { AxiosRequestConfig } from "axios";
-import https from "https";
-import logger from "~/lib/logger";
 
 import { TIMEOUT_MS } from "~/webhooks/lib/constants";
 import { getWebhookHeader } from "~/webhooks/lib/get-webhook-header";
@@ -30,11 +28,7 @@ export const recordHandler = async (record: SQSRecord) => {
     }
     const webhookLogService = getWebhookLogService(tenantId);
 
-    logger.debug("before client");
-    const axiosClient = axios.create({
-      httpsAgent: new https.Agent({ keepAlive: true }),
-    });
-    logger.debug("after client");
+    const axiosClient = axios.create({});
 
     await Promise.all<void>(
       webhooks.map(async (webhook) => {

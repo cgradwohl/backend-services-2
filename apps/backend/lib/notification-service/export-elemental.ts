@@ -1,6 +1,7 @@
 import {
   ElementalActionNode,
   ElementalCommentNode,
+  ElementalImageNode,
   ElementalMetaNode,
   ElementalNode,
   ElementalTextNode,
@@ -10,6 +11,7 @@ import {
   CourierObject,
   IActionBlockConfig,
   IChannel,
+  IImageBlockConfig,
   INotificationJsonWire,
   ITextBlockConfig,
 } from "~/types.api";
@@ -31,6 +33,22 @@ const blockToNode = (block: BlockWire): ElementalNode => {
           type: "text",
         } as ElementalTextNode;
         // TODO support locales
+      } catch (ex) {
+        // TODO handle failures
+      }
+      break;
+    }
+    case "image": {
+      try {
+        const blockConfig = JSON.parse(block.config) as IImageBlockConfig;
+        return {
+          align: blockConfig.align,
+          alt_text: blockConfig.altText,
+          href: blockConfig.imageHref,
+          src: blockConfig.imagePath,
+          type: "image",
+          width: blockConfig.width,
+        } as ElementalImageNode;
       } catch (ex) {
         // TODO handle failures
       }

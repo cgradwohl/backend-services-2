@@ -66,15 +66,9 @@ export const getRoutingTree = async (
       params: { profile: opts.profile, data: opts.message.data },
       strategy,
     }),
-    strategy,
   };
 };
 
 export interface RoutingContext {
   routingTree: RouteNode;
-  /**
-   * TODO: Remove once routing tree reaches GA
-   * @deprecated as of July 2022 (replaced by RoutingTreeContext)
-   */
-  strategy?: RoutingStrategy;
 }

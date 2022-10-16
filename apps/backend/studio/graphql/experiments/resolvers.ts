@@ -4,6 +4,8 @@ import putExperimentData from "~/lib/experiments/put-experiment-data";
 type ExperimentsEventType = {
   experiment: string;
   variation: string;
+  linkedExperiments: string[];
+  featureFlag: string;
 };
 
 const saveExperimentEvaluation: IResolver<ExperimentsEventType> = async (
@@ -13,14 +15,37 @@ const saveExperimentEvaluation: IResolver<ExperimentsEventType> = async (
 ) => {
   const { tenantId, user } = context;
 
-  const { experiment, variation } = args.event;
+  const { experiment, variation, linkedExperiments, featureFlag } = args.event;
 
   const timestamp = new Date().toISOString();
 
-  await putExperimentData(experiment, tenantId, timestamp, user.id, variation);
+  if (linkedExperiments?.length) {
+    await Promise.all(
+      linkedExperiments.map(async (experiment) => {
+        await putExperimentData(
+          experiment,
+          featureFlag,
+          tenantId,
+          timestamp,
+          user.id,
+          variation
+        );
+      })
+    );
+  } else {
+    await putExperimentData(
+      experiment,
+      experiment,
+      tenantId,
+      timestamp,
+      user.id,
+      variation
+    );
+  }
 
   return {
     experimentKey: experiment,
+    featureFlag,
     variation,
   };
 };

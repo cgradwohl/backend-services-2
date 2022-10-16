@@ -119,7 +119,7 @@ export const accept = async (action: IAcceptAction) => {
     return;
   }
 
-  const { requestId, tenantId, shouldUseRouteTree } = action;
+  const { requestId, tenantId } = action;
   const request = await requests(tenantId).getPayload(requestId);
 
   if (Array.isArray(request?.message?.to)) {
@@ -199,7 +199,6 @@ export const accept = async (action: IAcceptAction) => {
     messageFilePath,
     requestId,
     tenantId,
-    shouldUseRouteTree,
     translated: request?.translated,
   });
 };

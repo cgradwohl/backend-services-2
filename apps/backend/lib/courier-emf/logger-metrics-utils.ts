@@ -271,20 +271,6 @@ export const translateAndDeliverBooleanCount = async (params: {
   await emf.end();
 };
 
-export const routeTreeSummaryDifferedCount = async () => {
-  const emf = new CourierEmf("RouteTreeSummary");
-
-  emf.addMetrics([
-    {
-      metricName: "Route Summary To Route Tree Mismatch Count",
-      unit: Unit.Count,
-      value: 1,
-    },
-  ]);
-
-  await emf.end();
-};
-
 export async function sendErrorMetric(params: {
   action: IAction | IRenderProviderPayload | ISendProviderPayload;
   error: SendError | unknown;

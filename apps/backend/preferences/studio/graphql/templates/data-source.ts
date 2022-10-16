@@ -166,6 +166,9 @@ export default class PreferenceTemplatesDataSource extends DataSource {
   }
 
   protected map = (template): IPreferenceTemplate => {
+    if (!template) {
+      return null;
+    }
     return {
       ...template,
       id: createEncodedId(template.templateId, this.objtype),

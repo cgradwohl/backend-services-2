@@ -9,14 +9,8 @@ const handler = async (event: ISequenceAction) => {
   const { requestId, sequenceId, sequenceActionId, tenantId } = event;
 
   // get original request
-  const {
-    apiVersion,
-    dryRunKey,
-    idempotencyKey,
-    originFilePath,
-    scope,
-    source,
-  } = await requests(tenantId).getPayload(requestId);
+  const { apiVersion, dryRunKey, idempotencyKey, scope, source } =
+    await requests(tenantId).getPayload(requestId);
 
   const sequenceAction = await sequenceActions(event.tenantId).getPayloadById(
     sequenceActionId
@@ -29,7 +23,6 @@ const handler = async (event: ISequenceAction) => {
     apiVersion,
     dryRunKey,
     idempotencyKey,
-    originFilePath,
     jobId: undefined,
     params: {
       originalRequestId: requestId,

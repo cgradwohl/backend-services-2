@@ -15,8 +15,6 @@ export interface VariableData {
   emailOpenTracking: boolean;
   environment: Environment;
   event?: string;
-  /** @deprecated */
-  maxAge?: TimeoutDateEpochSeconds;
   openTrackingId: string;
   unsubscribeTrackingId: string;
   profile: IProfile;
@@ -30,7 +28,6 @@ export interface VariableData {
     preferences?: string;
   };
   utmMap?: UTMMap;
-  tokens?: Record<string, RecipientToken[]>;
   messageId: string;
 }
 
@@ -40,7 +37,6 @@ export async function getVariableData(
     emailOpenTracking,
     environment,
     event,
-    maxAge,
     openTrackingId,
     unsubscribeTrackingId,
     profile,
@@ -48,7 +44,6 @@ export async function getVariableData(
     template,
     tenantId,
     utmMap,
-    tokens,
     recipientId,
     messageId,
   }: VariableData,
@@ -63,7 +58,6 @@ export async function getVariableData(
       scope,
     },
     data,
-    maxAge,
     openTrackingId,
     unsubscribeTrackingId,
     profile,
@@ -89,6 +83,5 @@ export async function getVariableData(
       ),
     },
     utmMap,
-    tokens,
   };
 }

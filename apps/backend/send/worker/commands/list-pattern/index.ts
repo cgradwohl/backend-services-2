@@ -51,7 +51,6 @@ export const listPattern = async (action: IListPatternAction) => {
           apiVersion: "2021-11-01",
           dryRunKey: request.dryRunKey,
           idempotencyKey: request.idempotencyKey,
-          originFilePath: request.originFilePath,
           jobId: request.jobId,
           request: {
             message: {

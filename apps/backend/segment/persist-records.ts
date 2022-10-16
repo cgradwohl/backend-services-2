@@ -4,19 +4,22 @@ import kinesisToJson from "~/lib/kinesis/to-json";
 import logger from "~/lib/logger";
 
 import requests from "~/tracking-requests/services/tracking-requests";
-import { ITrackingRequest } from "~/tracking-requests/types";
-
 import incomingSegmentEventsFactory from "./services/incoming-events";
-
-type IRecord = Pick<
-  ITrackingRequest,
-  "dryRunKey" | "scope" | "tenantId" | "trackingId"
->;
+import { IRecord } from "./types";
 
 export const handleRecord = async (record: KinesisStreamRecord) => {
   const item = kinesisToJson<IRecord>(record.kinesis.data);
-  const { dryRunKey, scope, tenantId, trackingId: messageId } = item;
-  const request = await requests(tenantId, scope, dryRunKey).get(messageId);
+  const {
+    dryRunKey,
+    scope,
+    tenantId,
+    trackingId: messageId,
+    shouldUseInboundSegmentEventsKinesis,
+  } = item;
+  const request = await requests(tenantId, scope, dryRunKey).get(
+    messageId,
+    shouldUseInboundSegmentEventsKinesis
+  );
   const incomingEventsService = incomingSegmentEventsFactory(tenantId);
   const body = request.data;
 

@@ -1,5 +1,6 @@
 import { IAutomationTemplate } from "~/automations/types";
 import { ApiRequestContext } from "~/lib/lambda-response";
+import { ITrackingRequest } from "~/tracking-requests/types";
 import { ISegmentEventItem } from "./services/incoming-events";
 
 export type InboundSegmentRequestTypes = "identify" | "group" | "track";
@@ -69,3 +70,8 @@ export interface ISegmentItemWithMappings {
   item: ISegmentEventItem;
   automationTemplateMappings?: IAutomationTemplate[];
 }
+
+export type IRecord = Pick<
+  ITrackingRequest,
+  "dryRunKey" | "scope" | "tenantId" | "trackingId"
+> & { shouldUseInboundSegmentEventsKinesis?: boolean };

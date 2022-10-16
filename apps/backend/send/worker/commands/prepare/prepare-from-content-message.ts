@@ -3,13 +3,11 @@ import { ContentMessage, UserRecipient } from "~/api/send/types";
 import { listProviders } from "~/lib/configurations-service";
 import { createUnroutableEvent } from "~/lib/dynamo/event-logs";
 import { generateTrackingId } from "~/lib/tracking-service/generate-tracking-id";
-
 import { Environment, ISendMessageContext } from "~/send/types";
 import { ITenant } from "~/types.api";
 import { getMessageBrands } from "./get-brand";
 import { getOverrides } from "./get-overrides";
 import { getVariableData } from "./get-variables";
-
 import getPublishedState from "~/send/utils/get-published-state";
 import getCategory from "./get-category";
 import getUserPreferences from "./get-user-preferences";
@@ -17,7 +15,6 @@ import loadProfile from "./load-profile";
 import { getTokens } from "./get-tokens";
 import { RequestPayload } from "~/send/service/data/request/request.types";
 import { buildUtmMap } from "../../provider-render/augment-href";
-import { getMaxAge } from "~/send/utils/get-age";
 import { getRoutingTree } from "./get-routing";
 import { getTimeoutTable } from "~/lib/send-routing";
 import { extendRoutingStrategy } from "./extend-routing-strategy";
@@ -93,21 +90,12 @@ export async function prepareFromContentMessage({
 
   const utmMap = buildUtmMap({ message });
 
-  /** @deprecated in favor of timeouts. */
-  const maxAge = getMaxAge({
-    timeout: message.timeout,
-    channels: message.channels,
-    providers: message.providers,
-    plan: findPricingPlanForTenant(tenant),
-  });
-
   const variableData = await getVariableData({
     messageId,
     data,
     emailOpenTracking: tenant?.emailOpenTracking?.enabled!,
     environment,
     event: message.metadata?.event,
-    maxAge,
     openTrackingId,
     unsubscribeTrackingId,
     profile,
@@ -115,7 +103,6 @@ export async function prepareFromContentMessage({
     scope: getPublishedState(request?.scope!),
     tenantId: tenant.tenantId,
     utmMap,
-    tokens,
   });
 
   const routing = await getRoutingTree({

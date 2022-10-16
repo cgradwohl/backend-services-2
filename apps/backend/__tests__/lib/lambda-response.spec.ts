@@ -29,7 +29,7 @@ export const apiRequestContext: ApiRequestContext = {
   useMaterializedBrands: false,
   translateToV2: false,
   shouldTranslateAndDeliver: false,
-  shouldUseRouteTree: false,
+  shouldUseInboundSegmentEventsKinesis: false,
 };
 
 jest.mock("~/lib/capture-exception", () => {
@@ -40,7 +40,7 @@ const apiVersion: ApiVersion = "2019-04-01";
 const useMaterializedBrands = false;
 const translateToV2 = false;
 const shouldTranslateAndDeliver = false;
-const shouldUseRouteTree = false;
+const shouldUseInboundSegmentEventsKinesis = false;
 
 describe("when asserting the body", () => {
   [null, "", undefined].forEach((testCase) => {
@@ -51,7 +51,7 @@ describe("when asserting the body", () => {
         useMaterializedBrands,
         translateToV2,
         shouldTranslateAndDeliver,
-        shouldUseRouteTree,
+        shouldUseInboundSegmentEventsKinesis,
       };
 
       expect(() => assertBody(context)).toThrow(BadRequest);
@@ -65,7 +65,7 @@ describe("when asserting the body", () => {
       useMaterializedBrands,
       translateToV2,
       shouldTranslateAndDeliver,
-      shouldUseRouteTree,
+      shouldUseInboundSegmentEventsKinesis,
     };
 
     expect(() => assertBody(context)).toThrow(BadRequest);
@@ -78,7 +78,7 @@ describe("when asserting the body", () => {
       useMaterializedBrands,
       translateToV2,
       shouldTranslateAndDeliver,
-      shouldUseRouteTree,
+      shouldUseInboundSegmentEventsKinesis,
     };
 
     expect(() => assertBody(context)).toThrow(BadRequest);
@@ -92,7 +92,7 @@ describe("when asserting the body", () => {
         useMaterializedBrands,
         translateToV2,
         shouldTranslateAndDeliver,
-        shouldUseRouteTree,
+        shouldUseInboundSegmentEventsKinesis,
       };
 
       expect(assertBody(context, { allowEmptyBody: true })).toEqual({});
@@ -106,7 +106,7 @@ describe("when asserting the body", () => {
       useMaterializedBrands,
       translateToV2,
       shouldTranslateAndDeliver,
-      shouldUseRouteTree,
+      shouldUseInboundSegmentEventsKinesis,
     };
 
     expect(assertBody(context, { allowEmptyBody: true })).toEqual({
@@ -121,7 +121,7 @@ describe("when asserting the body", () => {
       useMaterializedBrands,
       translateToV2,
       shouldTranslateAndDeliver,
-      shouldUseRouteTree,
+      shouldUseInboundSegmentEventsKinesis,
     };
 
     expect(assertBody(context, { allowEmptyBody: true })).toEqual([
@@ -138,7 +138,7 @@ describe("when asserting the body", () => {
       useMaterializedBrands,
       translateToV2,
       shouldTranslateAndDeliver,
-      shouldUseRouteTree,
+      shouldUseInboundSegmentEventsKinesis,
     };
 
     expect(assertBody(context, { allowEmptyBody: true })).toEqual({
@@ -155,7 +155,7 @@ describe("when asserting path parameters", () => {
       useMaterializedBrands,
       translateToV2,
       shouldTranslateAndDeliver,
-      shouldUseRouteTree,
+      shouldUseInboundSegmentEventsKinesis,
     };
 
     expect(() => assertPathParam(context, "id")).toThrow(BadRequest);
@@ -171,7 +171,7 @@ describe("when asserting path parameters", () => {
       useMaterializedBrands,
       translateToV2,
       shouldTranslateAndDeliver,
-      shouldUseRouteTree,
+      shouldUseInboundSegmentEventsKinesis,
     };
 
     expect(() => assertPathParam(context, "id")).toThrow(BadRequest);
@@ -184,7 +184,7 @@ describe("when asserting path parameters", () => {
       useMaterializedBrands,
       translateToV2,
       shouldTranslateAndDeliver,
-      shouldUseRouteTree,
+      shouldUseInboundSegmentEventsKinesis,
     };
 
     expect(() => assertPathParam(context, "id")).toThrow(BadRequest);
@@ -197,7 +197,7 @@ describe("when asserting path parameters", () => {
       useMaterializedBrands,
       translateToV2,
       shouldTranslateAndDeliver,
-      shouldUseRouteTree,
+      shouldUseInboundSegmentEventsKinesis,
     };
 
     expect(assertPathParam(context, "id")).toBe("hootyhoo");

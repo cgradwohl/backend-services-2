@@ -5,7 +5,7 @@ import generatePolicy, {
 } from "~/lib/lambda-access-policy";
 import { ApiVersion } from "~/send/types";
 import {
-  isUseRouteTreeMetered,
+  isInboundSegmentEventsMetered,
   sanitizeArn,
   validateDeliveryFlags,
   validateFlags,
@@ -47,7 +47,7 @@ export async function authorizeApiKey({
     allowTranslationAndDelivery, // TODO: Clean up unused flag
     blockTranslationAndDelivery,
     TRANSLATE_AND_DELIVERY_TRAFFIC_PERCENTAGE,
-    useRouteTreePercent, // TODO: Clean up unused flag
+    useInboundSegmentEventsKinesisPercent,
   ] = await Promise.all([
     apiFeatureService(tenantId).variation<boolean>(
       "route_to_v2",
@@ -67,23 +67,24 @@ export async function authorizeApiKey({
       false
     ),
     apiFeatureService("TRAFFIC").variation<number>("DELIVERY_METER", 0), // TODO: Remove when we are done,
-    100, // USE_ROUTE_TREE
+    apiFeatureService("TRAFFIC").variation<number>("INBOUND_SEGMENT", 0), // TODO: Remove when we are done,
   ]);
 
-  const [shouldTranslateAndDeliver, shouldUseRouteTree] = await Promise.all([
-    validateDeliveryFlags({
-      allowTranslationAndDelivery,
-      awsRequestId,
-      blockTranslationAndDelivery,
-      tenantId,
-      trafficPercentageToDeliver: TRANSLATE_AND_DELIVERY_TRAFFIC_PERCENTAGE,
-    }),
-    isUseRouteTreeMetered({
-      percent: useRouteTreePercent,
-      tenantId,
-      awsRequestId,
-    }),
-  ]);
+  const [shouldTranslateAndDeliver, shouldUseInboundSegmentEventsKinesis] =
+    await Promise.all([
+      validateDeliveryFlags({
+        allowTranslationAndDelivery,
+        awsRequestId,
+        blockTranslationAndDelivery,
+        tenantId,
+        trafficPercentageToDeliver: TRANSLATE_AND_DELIVERY_TRAFFIC_PERCENTAGE,
+      }),
+      isInboundSegmentEventsMetered({
+        percent: useInboundSegmentEventsKinesisPercent,
+        tenantId,
+        awsRequestId,
+      }),
+    ]);
 
   const shouldTranslateAndVerify = await validateFlags({
     allowTranslation,
@@ -104,7 +105,9 @@ export async function authorizeApiKey({
     useMaterializedBrandsString: String(useMaterializedBrands),
     translateToV2String: String(shouldTranslateAndVerify),
     shouldTranslateAndDeliverString: String(shouldTranslateAndDeliver),
-    shouldUseRouteTreeString: String(shouldUseRouteTree),
+    shouldUseInboundSegmentEventsKinesisString: String(
+      shouldUseInboundSegmentEventsKinesis
+    ),
     authType: "api-key",
   };
 

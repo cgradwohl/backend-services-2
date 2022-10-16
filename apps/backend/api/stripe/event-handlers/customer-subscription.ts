@@ -66,6 +66,7 @@ export const customerSubscriptionHandler = eventHandler<Stripe.Subscription>(
     if (stripeCurrentPeriodStart !== incomingStripeCurrentPeriodStart) {
       // reset usageCurrentPeriod to 0, _ONLY_ when a new period starts
       updateTenantPayload.usageCurrentPeriod = 0;
+      updateTenantPayload.sendLimitWarning = false;
 
       const incomingStripePricingPlan = findPricingPlan(
         subscriptionItem?.price?.id

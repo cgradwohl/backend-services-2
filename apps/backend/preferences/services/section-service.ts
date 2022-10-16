@@ -35,7 +35,10 @@ export const preferenceSectionService = (tenantId: string, userId: string) => {
   return {
     async saveSection(section: IPreferenceSectionDataInput) {
       const date = new Date().toISOString();
-      const sectionId = section.sectionId ?? nanoid();
+      const sectionId =
+        section.sectionId === "" || !section.sectionId
+          ? nanoid()
+          : section.sectionId;
 
       const updateExpressions = [
         "#sectionId = if_not_exists(sectionId, :sectionId)",

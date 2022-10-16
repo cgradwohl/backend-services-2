@@ -19,7 +19,6 @@ export interface IRequestItem extends SendDyanmoItem {
   idempotencyKey: string | undefined;
   filePath: string;
   jobId: string | undefined;
-  originFilePath: string;
   requestId: string;
   scope: TenantScope;
   source: string | undefined;

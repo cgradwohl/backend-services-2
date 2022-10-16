@@ -40,7 +40,6 @@ import deleteElasticsearchIndex from "./20220927-delete-elasticsearch-index";
 import categoryToTopic from "./20220928-category-to-topic";
 import preferenceTemplatesToTopic from "./20220929-preference-template-to-topic";
 import migrateUserPreferences from "./20221002-migrate-user-preferences";
-import { findMessageById } from "./20221007-find-message-by-id";
 
 import { Handler } from "./types";
 
@@ -99,7 +98,6 @@ const handlers: IHandlers = {
   "20220928-category-to-topic": categoryToTopic,
   "20220929-preference-templates-to-topic": preferenceTemplatesToTopic,
   "20221002-migrate-user-preferences": migrateUserPreferences,
-  "20221007-find-message-by-id": findMessageById,
 };
 
 export default handlers;
