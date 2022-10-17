@@ -95,3 +95,14 @@ You may need an appropriate loader to handle this file type, currently no loader
  @ ./lib/s3.ts
  @ ./api/send/index.ts
 ```
+
+- additionally when comparing the compiled webpack output from `trycourier/backend/.webpack` I see that there are incorrect imports from `node_modules`. For example we can see imports in `backend-services-2/apps/backend/.webpack/ApiSend/api/send/index.js` that are not present in the corresponding `trycourier/backend/.webpack`:
+
+```
+/***/ "../../node_modules/@babel/helper-validator-identifier/lib/identifier.js":
+/*!********************************************************************************************************************!*\
+  !*** /Users/chef/me/projects/backend-services-2/node_modules/@babel/helper-validator-identifier/lib/identifier.js ***!
+  \********************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+```
