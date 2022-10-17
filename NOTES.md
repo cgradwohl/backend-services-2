@@ -45,3 +45,8 @@
 - decided to completely abandon nx file structure
 
 - this seems to get backend working, but I do not know the consequences this will have later down the road, when we attempt to do more sophisticated tasks with NX. I am hoping that this is isolated to this service.
+
+### Deployment Nuance
+
+- during the compilation phase, serverless-webpack is not building correctly since it is not including
+  the required source maps required by the serverless framework to deploy to CloudFormation.
