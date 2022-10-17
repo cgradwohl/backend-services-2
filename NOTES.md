@@ -46,7 +46,52 @@
 
 - this seems to get backend working, but I do not know the consequences this will have later down the road, when we attempt to do more sophisticated tasks with NX. I am hoping that this is isolated to this service.
 
-### Deployment Nuance
+### Compilation Build Nuance
 
 - during the compilation phase, serverless-webpack is not building correctly since it is not including
   the required source maps required by the serverless framework to deploy to CloudFormation.
+- since an NX workspace contains a global `node_modules` which each service has access to, we need to resolve to tell webpack to resolve these dependencies by providing a specific path to them: https://webpack.js.org/configuration/resolve/#resolvemodules
+- after updating `apps/backend/webpack.config.js` file to the following:
+
+```
+modules: [
+  path.resolve(__dirname, '../../node_modules'),
+]
+```
+
+This seems to resolve correctly to the global `node_modules`, and all module warning have been removed.
+
+However there is still an issue with `better-ajv-errors` and `@aws-sdk` dependencies:
+
+```
+ERROR in /Users/chef/me/projects/backend-services-2/node_modules/better-ajv-errors/lib/esm/validation-errors/base.mjs 25:11-27
+Can't import the named export 'codeFrameColumns' from non EcmaScript module (only default export is available)
+ @ /Users/chef/me/projects/backend-services-2/node_modules/better-ajv-errors/lib/esm/validation-errors/additional-prop.mjs
+ @ /Users/chef/me/projects/backend-services-2/node_modules/better-ajv-errors/lib/esm/validation-errors/index.mjs
+ @ /Users/chef/me/projects/backend-services-2/node_modules/better-ajv-errors/lib/esm/helpers.mjs
+ @ /Users/chef/me/projects/backend-services-2/node_modules/better-ajv-errors/lib/esm/index.mjs
+ @ ./lib/ajv.ts
+ @ ./lib/lambda-response.ts
+ @ ./api/send/index.ts
+
+ERROR in /Users/chef/me/projects/backend-services-2/node_modules/better-ajv-errors/lib/esm/index.mjs 7:18-23
+Can't import the named export 'parse' from non EcmaScript module (only default export is available)
+ @ ./lib/ajv.ts
+ @ ./lib/lambda-response.ts
+ @ ./api/send/index.ts
+
+ERROR in /Users/chef/me/projects/backend-services-2/node_modules/@aws-sdk/service-error-classification/dist-es/index.js 4:60
+Module parse failed: Unexpected token (4:60)
+You may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders
+| export const isRetryableByTrait = (error) => error.$retryable !== undefined;
+| export const isClockSkewError = (error) => CLOCK_SKEW_ERROR_CODES.includes(error.name);
+> export const isThrottlingError = (error) => error.$metadata?.httpStatusCode === 429 ||
+|     THROTTLING_ERROR_CODES.includes(error.name) ||
+|     error.$retryable?.throttling == true;
+ @ /Users/chef/me/projects/backend-services-2/node_modules/aws-xray-sdk-core/dist/lib/patchers/aws3_p.js 7:39-87
+ @ /Users/chef/me/projects/backend-services-2/node_modules/aws-xray-sdk-core/dist/lib/aws-xray.js
+ @ /Users/chef/me/projects/backend-services-2/node_modules/aws-xray-sdk-core/dist/lib/index.js
+ @ ./lib/aws-sdk.ts
+ @ ./lib/s3.ts
+ @ ./api/send/index.ts
+```
