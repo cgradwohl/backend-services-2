@@ -25,9 +25,6 @@ module.exports = (async () => ({
         /* options: see below */
       }),
     ],
-    modules: [
-      path.resolve(__dirname, '../../node_modules'),
-    ]
   },
   output: {
     libraryTarget: "commonjs2",
